@@ -1,0 +1,171 @@
+<%- include('./headerNav') %>
+
+    <ul class="side-menu top">
+        <li>
+            <a href="<%= (url_pathname) %>admin/dashboard">
+                <i class='bx bxs-dashboard'></i>
+                <span class="text">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="<%= (url_pathname) %>admin/category">
+                <i class='bx  bx-category'></i>
+                <span class="text">Category</span>
+            </a>
+        </li>
+        <li>
+			<a href="<%= (url_pathname) %>admin/brand">
+				<i class='bx  bx-category'></i>
+				<span class="text">Brand</span>
+			</a>
+		</li>
+        <li>
+			<a href="<%= (url_pathname) %>admin/flavour">
+				<i class='bx  bx-category'></i>
+				<span class="text">Flavour</span>
+			</a>
+		</li>
+        <li>
+            <a href="<%= (url_pathname) %>admin/products">
+                <i class='bx bx-package'></i>
+                <span class="text">Products</span>
+            </a>
+        </li>
+        <li>
+			<a href="<%= (url_pathname) %>admin/deletedproducts">
+				<i class='bx bxs-trash'></i>
+				<span class="text">Deleted Products</span>
+			</a>
+		</li>
+
+        <li>
+			<a href="<%= (url_pathname) %>admin/blogs">
+				<i class='bx bxs-pencil'></i>
+				<span class="text">Blogs</span>
+			</a>
+		</li>
+        <li>
+			<a href="<%= (url_pathname) %>admin/banner">
+				<i class='bx bxs-megaphone'></i>
+				<span class="text">Banner</span>
+			</a>
+		</li>
+        <li>
+            <a href="<%= (url_pathname) %>admin/order_details">
+                <i class='bx bxs-shopping-bag-alt'></i>
+                <span class="text">Order Details</span>
+            </a>
+        </li>
+        <li>
+			<a href="<%= (url_pathname) %>admin/customers">
+				<i class='bx bxs-user-check'></i>
+				<span class="text">Customers</span>
+			</a>
+		</li>
+        <li>
+			<a href="<%= (url_pathname) %>admin/customerservice">
+				<i class='bx bx-user-voice'></i>
+				<span class="text">Customer Service</span>
+			</a>
+		</li>
+        <li>
+			<a href="<%= (url_pathname) %>admin/customerreview">
+				<i class='bx bx-comment-dots'></i>
+				<span class="text">Customer Review</span>
+			</a>
+		</li>
+    </ul>
+    <ul class="side-menu logout">
+        <li>
+            <a href="/admin/login" class="logout" id="logoutButton">
+                <i class='bx bxs-log-out-circle'></i>
+                <span class="text">Logout</span>
+            </a>
+        </li>
+    </ul>
+    </section>
+
+    <main>
+        <div class="price_overlay"></div>
+        <div class="modals" id="confirmationModal" style="display: none;z-index: 10000;">
+            <div class="modals-content" >
+                <p>Are you sure you want to  deliver this order?</p>
+                <button id="confirmButton" class="btn" style="background-color: #6BB252;">Confirm</button>
+                <button id="cancelButton" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+
+        <div class="head-title">
+            <div class="left ind-ordersm" style="display: flex;align-items: center;">
+                <h1>Order</h1>
+                <ul class="breadcrumb"></ul>
+            </div>
+            <div class="left ind-ordersm">
+                <a href="/admin/order_details">View All Orders</a>
+            </div>
+            <div class="left ind-ordersm">
+                <% if (showButton) { %>
+                    <button type="button" id="delivery_status" class="btn ">Change Status</button>
+                    <% } else { %>
+                        <button type="button" id="delivery_status" style="display: none;" class="btn ">Change Status</button>
+                        <% } %>
+            </div>
+           
+      
+            <!-- <div class="left">
+                <button id="generate-pdf" style="display: block;" onclick="generateReceipt()">Generate Receipt</button>
+            </div> -->
+            <div class="left ind-ordersm">
+                <% if (showButton) { %>
+                    <button  class="btn btn-primary"  id="generate-pdf" style="display: block;" onclick="generateReceipt()">Generate
+                        Receipt</button>
+                    <% } else { %>
+                        <buttonid="generate-pdf" style="display: none;">Generate Receipt</buttonid=>
+                        <% } %>
+            </div>
+            <div class="left ind-ordersm"><button class="btn btn-primary" id="downloadExcelIndButton">Download Excel</button>
+            </div>
+
+        </div>
+
+
+        <main>
+            <div class="table-data">
+                <div class="order order-sm">
+                    <table id="individualtable">
+
+                        <thead>
+                            <tr>
+                                <th style="width: 3%;">Sr No</th>
+                                <th style="width: 14%;">Product Name</th>
+                                <th style="width: 11%;">Flavour</th>
+                                <th style="width: 15%;">Product Image</th>
+                                <th style="width: 15%;">Price</th>
+                                <th style="width: 13%;">Quantity</th>
+                                <th style="width: 10%;">Total Price</th>
+                                <th style="width: 19%;">Inserted Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                        </tbody>
+
+                    </table>
+                    <div id="pagination" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </main>
+        </section>
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+        <%-include("../javascriptss/individual_order.ejs")%>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+
+        </body>
+
+        </html>

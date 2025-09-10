@@ -1,0 +1,877 @@
+<script>
+    let products = [];
+    let cart = [];
+    let selectedBatches = {};
+    async function getPosProducts() {
+        let data = await fetch("<%= url_pathname %>admin/pos_products");
+        data = await data.json();
+
+        data.data.forEach((e) => {
+            let existingProduct = products.find((el) => el.id === e.id);
+            if (existingProduct) {
+                existingProduct.batches.push({
+                    batch_id: e.batch_id,
+                    label: e.label_name,
+                    batch_quantity: e.batch_quantity,
+                    mrp: e.mrp,
+                    discount_price: e.discount_price,
+                    stock: e.in_stock_status
+                });
+            }
+            else {
+
+                products.push({
+                    id: e.id,
+                    name: e.product_name,
+                    image: e.product_image,
+                    category: e.category_id,
+                    type: e.type,
+                    batch_id: e.batch_id,
+                    batches: [
+                        {
+                            batch_id: e.batch_id,
+                            label: e.label_name,
+                            batch_quantity: e.batch_quantity,
+                            mrp: e.mrp,
+                            discount_price: e.discount_price,
+                            stock: e.in_stock_status
+                        }
+                    ]
+                });
+
+            }
+
+
+        })
+
+        initProducts();
+        let currentCategory = 'all';
+
+    function initProducts(category = 'all') {
+            const productsContainer = document.getElementById('products');
+
+            const filteredProducts = products;
+
+            productsContainer.innerHTML = filteredProducts.map(product => {
+                const productIndex = product.batches.findIndex((e) => {
+                    return e.stock === true;
+                });
+                
+                let firstBatch = product.batches[productIndex];
+                firstBatch = firstBatch ? firstBatch : product.batches[0];
+
+                selectedBatches[product.id] = firstBatch.batch_id;
+                const data = product.batches.map((e) => { return e.stock });
+                let stock_status;
+                if (data.every((val) => val === false)) {
+                    stock_status = true;
+                }
+                return `
+                  <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300" style="position:relative;">
+                    ${stock_status ? `<div style='position:absolute;height:100%;width:100%;background:rgb(103 94 94 / 41%);display:flex;align-items:center;justify-content:center;'>
+                      <svg width="250" height="80" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+                            <text x="50%" y="50%" font-size="28" font-weight="bold" fill="red" text-anchor="middle" dominant-baseline="middle" transform="rotate(-10, 125, 40)" stroke="white" stroke-width="1">
+                                OUT OF STOCK
+                            </text>
+                      </svg>
+                   </div>`: ""}
+                  <div>
+                    <img src="<%= url_pathname %>${product.image}" 
+                        alt="${product.name}" 
+                        class="w-full h-40 object-contain p-3 cursor-pointer" 
+                        data-product-id="${product.id}" 
+                        onclick="addToCartFromImage(event)">
+
+                    <div class="p-2" style="text-align:center;">
+                        <h5 class="text-md mb-2">${product.name}</h5>
+                        <div>
+                            ${product.batches.filter(batch => batch.stock === true).map((batch, index) => `
+                                <button class="batch-btn text-sm  pill-btn text-black ${index === 0 ? 'selected' : ''}"
+                                    data-product-id="${product.id}" 
+                                    data-batch-id="${batch.batch_id}"
+                                    onclick="toggleBatch(${product.id}, ${batch.batch_id}, ${batch.discount_price})">
+                                    ${batch.label}
+                                </button>
+                            `).join('')}
+                            <p class='dis-price'>Price:&#8377;${firstBatch.discount_price}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+            }).join('');
+        }
+    }
+    getPosProducts();
+
+
+    function addToCart(batchId) {
+        batchId = Number(batchId); 
+
+
+        if (products.length === 0) {
+            console.error("Products array is empty!");
+            return;
+        }
+
+        const product = products.find(p => {
+            return p.batches && p.batches.some(batch => {
+                return batch.batch_id === batchId;
+            });
+        });
+
+        if (!product) {
+            console.error("No product found for batch:", batchId);
+            return;
+        }
+        const batch = product.batches.find(batch => batch.batch_id === batchId);
+        if (!batch) {
+            console.error("Batch not found in product:", product);
+            return;
+        }
+        const existingItem = cart.find(item => item.batch_id === batchId);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push({
+                ...batch,
+                id: product.id,
+                product_name: product.name,
+                image: product.image,
+                quantity: 1,
+                type: product.type,
+                batchId: batch.batch_id
+            });
+        }
+        updateCart();
+    }
+
+
+    function updateCart() {
+
+        const cartContainer = document.getElementById('cart-items');
+        cartContainer.innerHTML = cart.map(item => `
+                <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg gap-2">
+                    <div>
+                        <h6 class='text-sm'>${item.product_name} <span>(${item.label})</span></h6>
+                        <p class='text-sm'>&#8377; ${item.discount_price}</>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="updateQuantity(${item.batch_id}, ${item.quantity - 1})" 
+                                class="bg-gray-200 rounded" style="padding:2px 10px;">&#x2212;</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateQuantity(${item.batch_id}, ${item.quantity + 1})" 
+                                class="bg-gray-200  rounded" style="padding:2px 10px;">&#x002B;</button>
+                    </div>
+                </div>
+            `).join('');
+
+        updateTotals();
+    }
+
+    function updateQuantity(batchId, newQuantity) {
+
+        if (newQuantity < 1) {
+            cart = cart.filter(item => item.batch_id !== batchId);
+        } else {
+            const item = cart.find(item => item.batch_id === batchId);
+            item.quantity = newQuantity;
+        }
+        updateCart();
+    }
+
+
+    function updateTotals() {
+
+        const subtotal = cart.reduce((sum, item) => sum + (item.discount_price * item.quantity), 0);
+        const tax = 0;
+        const total = subtotal + tax;
+        // document.getElementById('subtotal').textContent = `&#8377;${subtotal.toFixed(2)}`;
+        // document.getElementById('tax').textContent = `&#8377;${tax.toFixed(2)}`;
+        // document.getElementById('total').textContent = `&#8377;${total.toFixed(2)}`;
+        document.getElementById('subtotal').innerHTML = `₹${subtotal.toFixed(2)}`;
+        document.getElementById('tax').innerHTML = `₹${tax.toFixed(2)}`;
+        document.getElementById('total').innerHTML = `₹${total.toFixed(2)}`;
+
+    }
+
+
+    function clearCart() {
+        cart = [];
+        setPaymentType()
+        updateCart();
+    }
+
+
+    function printRec(orderId) {
+        if (cart.length === 0) return;
+        const receipt = document.getElementById('receipt');
+        const subtotal = cart.reduce((sum, item) => sum + (item.discount_price * item.quantity), 0);
+        const tax = subtotal * 0;
+        const total = subtotal + tax;
+        const orderNumber = orderId;
+        receipt.innerHTML = `
+              <div id="receipt" class="page-break fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+            onclick="handleOutsideClick(event)" >
+            <div class="bg-white p-8 rounded-2xl shadow-xl max-w-2xl mx-auto w-full print-section font-sans" 
+            style="height:90%; overflow-y:auto;" onclick="event.stopPropagation();">
+
+            <!-- Header -->
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-extrabold text-blue-600 tracking-wide uppercase">ANH Supplements</h1>
+                    <h2 class="text-xl font-semibold mt-2 text-gray-700">Thank You For Your Order!</h2>
+                    <p class="text-sm text-gray-500">Order #<span class="font-medium">${orderNumber}</span></p>
+                    <p class="text-sm text-gray-500">${new Date().toLocaleString()}</p>
+                </div>
+
+                <!-- Order Table -->
+                <div class="overflow-x-auto mb-6">
+                    <table class="w-full text-sm text-left border border-gray-200">
+                    <thead class="bg-blue-100 text-blue-700 uppercase">
+                        <tr>
+                        <th class="px-4 py-2 border border-gray-300">Product</th>
+                        <th class="px-4 py-2 border border-gray-300">Quantity</th>
+                        <th class="px-4 py-2 border border-gray-300">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${cart.map(item => `
+                        <tr class="bg-white hover:bg-gray-50 transition">
+                        <td class="px-4 py-2 border border-gray-200">${item.product_name} <span class="text-gray-400 text-xs">(${item.label})</span></td>
+                        <td class="px-4 py-2 border border-gray-200 text-center">${item.quantity}</td>
+                        <td class="px-4 py-2 border border-gray-200 text-right">&#8377;${(item.discount_price * item.quantity).toFixed(2)}</td>
+                        </tr>
+                        `).join('')}
+                    </tbody>
+                    </table>
+                </div>
+
+                <div class="text-sm space-y-2 mb-6">
+                    <div class="flex justify-between">
+                    <span class="font-semibold text-gray-600">Subtotal:</span>
+                    <span>&#8377;${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                    <span class="font-semibold text-gray-600">Tax (0%):</span>
+                    <span>&#8377;${tax.toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between bg-blue-600 text-white font-bold text-md rounded-lg px-4 py-2 shadow mt-3">
+                    <span>Total:</span>
+                    <span>&#8377;${total.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div class="text-center text-gray-500 text-sm">
+                    <p>Thank you for shopping with us!</p>
+                    <p>We hope to see you again 💙</p>
+                </div>
+
+                <!-- Print Button -->
+                <button onclick="printReceipt(${orderNumber})" 
+                        class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl transition duration-200 shadow no-print">
+                    🖨️ Print Receipt
+                </button>
+                </div>
+
+                </div>
+
+            `;
+
+        receipt.classList.remove('hidden');
+    }
+    function handleOutsideClick(event) {
+        const receipt = document.getElementById('receipt');
+        const receiptContent = receipt.querySelector(".print-section");
+
+        if (!receiptContent.contains(event.target)) {
+            receipt.classList.add("hidden")
+        }
+    }
+
+
+    async function checkout() {
+
+        if (cart.length === 0) return;
+        let flag = false;
+
+        for (const data of cart) {
+            let productid = parseInt(data.id);
+            if (data.type === "UNITS") {
+                try {
+                    const res = await fetch(`<%= (url_pathname) %>ind-product/${productid}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! Status: ${res.status}`);
+                    }
+
+                    const datas = await res.json();
+                    if (datas.in_stock < data.quantity) {
+                        flag = true;
+                        showPopup(`${data.product_name} exceeds the max limit`, 'Cannot add more', 'failure', true);
+                        return;
+                    }
+
+                } catch (error) {
+                    console.error('Error fetching product:', error);
+                    showPopup(`Could not retrieve information `, "Please try again later.", "Failure");
+                }
+            }
+            else {
+                const batchId = data.batchId;
+                try {
+                    const res = await fetch(`<%= url_pathname %>ind-batch-product/${batchId}`);
+                    const datas = await res.json();
+                    if (datas.in_stock < data.quantity) {
+                        flag = true;
+                        showPopup(`${data.product_name} ${data.label} exceeds the max limit`, 'Cannot add more', 'failure');
+                        data.quantity = Number(datas.in_stock);
+                        updateCart()
+                        return
+                    }
+                } catch (error) {
+                    console.error('Error fetching product:', error);
+                    showPopup(`Could not retrieve information `, "Please try again later.", "Failure");
+                }
+            }
+        }
+
+        if (!flag) {
+            document.querySelector(".form-wrapper").style.display = "block";
+            document.querySelector(".overlay").style.display = "block";
+            document.querySelector(".close-button").addEventListener("click", () => {
+                document.querySelector(".form-wrapper").style.display = "none";
+                document.querySelector(".overlay").style.display = "none";
+                document.getElementById("customer_phone").value = "";
+                document.getElementById("customer_name").value = "";
+                document.getElementById("customer_email").value = "";
+                document.getElementById("customer_address").value = "";
+                document.getElementById("customer_pincode").value = "";
+                document.getElementById("customer_city").value = "";
+                document.getElementById("stateForm").value = "Na";
+                document.getElementById("customer_phone").value = "";
+                document.getElementById("customer_name").disabled = true;
+                document.getElementById("customer_email").disabled = true;
+                document.getElementById("customer_address").disabled = true;
+                document.getElementById("customer_pincode").disabled = true;
+                document.getElementById("customer_city").disabled = true;
+                document.getElementById("stateForm").disabled = true;
+            })
+        }
+    }
+
+    
+    function printReceipt(orderId) {
+        const url = `<%= url_pathname %>admin/emailsending/${orderId}`;
+        fetch(url)
+            .then(response => response.blob())
+            .then((blob) => {
+             console.log(blob);
+        
+            const fileURL = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = fileURL;
+            a.download = 'invoice.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+    })
+    .catch(error => console.error("Error fetching invoice:", error));
+    }
+
+
+    document.getElementById('search').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredProducts = products.filter(product =>
+            product.name.toLowerCase().includes(searchTerm)
+        );
+        console.log("filteredProducts",filteredProducts);
+        
+        const productsContainer = document.getElementById('products');
+        productsContainer.innerHTML = filteredProducts.map((product) => {
+            const productIndex = product.batches.findIndex((e) => {
+                return e.stock === true;
+            });
+
+            let firstBatch = product.batches[productIndex];
+            firstBatch = firstBatch ? firstBatch : product.batches[0];
+            selectedBatches[product.id] = firstBatch.batch_id;
+
+            const data = product.batches.map((e) => { return e.stock });
+            let stock_status;
+            if (data.every((val) => val === false)) {
+                stock_status = true;
+            }
+            return `
+                  <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300" style="position:relative;">
+                    ${stock_status ? `<div style='position:absolute;height:100%;width:100%;background:rgb(103 94 94 / 41%);display:flex;align-items:center;justify-content:center;'>
+                      <svg width="250" height="80" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+                            <text x="50%" y="50%" font-size="28" font-weight="bold" fill="red" text-anchor="middle" dominant-baseline="middle" transform="rotate(-10, 125, 40)" stroke="white" stroke-width="1">
+                                OUT OF STOCK
+                            </text>
+                      </svg>
+                   </div>`: ""}
+                  <div>
+                    <img src="<%= url_pathname %>${product.image}" 
+                        alt="${product.name}" 
+                        class="w-full h-40 object-contain p-3 cursor-pointer" 
+                        data-product-id="${product.id}" 
+                        onclick="addToCartFromImage(event)">
+
+                    <div class="p-2" style="text-align:center;">
+                        <h5 class="text-md mb-2">${product.name}</h5>
+                        <div>
+                            ${product.batches.filter(batch => batch.stock === true).map((batch, index) => `
+                                <button class="batch-btn text-sm  pill-btn text-black ${index === 0 ? 'selected' : ''}"
+                                    data-product-id="${product.id}" 
+                                    data-batch-id="${batch.batch_id}"
+                                    onclick="toggleBatch(${product.id}, ${batch.batch_id}, ${batch.discount_price})">
+                                    ${batch.label}
+                                </button>
+                            `).join('')}
+                         <p class='dis-price'>Price:&#8377;${firstBatch.discount_price}</p>
+                       </div>
+                    </div>
+                </div>
+            </div>
+`}).join('');
+    });
+
+
+    function toggleBatch(productId, batchId, discount_price) {
+        const productCard = document.querySelector(`[data-product-id="${productId}"]`).closest('.product-card');
+        const dis_price = productCard.querySelector(".dis-price");
+        dis_price.innerHTML = `<p>Price:&#8377;${discount_price}</p>`;
+        selectedBatches[productId] = batchId;
+        const batchButtons = document.querySelectorAll(`.batch-btn[data-product-id="${productId}"]`);
+        productCard.querySelectorAll(".batch-btn").forEach((btn) => {
+            btn.classList.remove("selected");
+        });
+        const selectedButton = productCard.querySelector(`.batch-btn[data-batch-id="${batchId}"]`);
+        selectedButton.classList.add("selected");
+    }
+
+    function addToCartFromImage(event) {
+        const productId = event.target.getAttribute('data-product-id');
+        const batchId = selectedBatches[productId];
+        
+        if (!batchId) {
+            alert("Please select a batch first!");
+            return;
+        }
+        addToCart(batchId);
+        const batchButtons = document.querySelectorAll(`.batch-btn[data-product-id="${productId}"]`);
+
+        // batchButtons.forEach(btn => {
+        //         btn.classList.remove("selected");
+        // });
+        // selectedBatches={}
+    }
+
+    document.getElementById("stateForm").addEventListener("submit", function (event) {
+        const selectedState = document.getElementById("stateSelect").value;
+        if (!selectedState) {
+            alert("Please select a state before submitting!");
+            event.preventDefault();
+        }
+    });
+
+    function validateFirstDigit(input) {
+        input.value = input.value.replace(/[^0-9]/g, '');
+        if (input.value.length > 0 && (input.value[0] < '6' || input.value[0] > '9')) {
+            input.value = "";
+        }
+    }
+
+    // document.getElementById("payment-type").addEventListener("submit", function (event) {
+    //     const selectedState = document.getElementById("payment-type").value;
+
+    //     if (!selectedState) {
+    //         alert("Please select a state before submitting!");
+    //         event.preventDefault();
+    //     }
+    // });
+    let selectedPaymentMode = "";
+    document.addEventListener("DOMContentLoaded", function () {
+        const paymentButtons = document.querySelectorAll(".payment-mode");
+
+        if (paymentButtons.length > 0) {
+            paymentButtons[0].classList.add("selected");
+            selectedPaymentMode = paymentButtons[0].getAttribute("data-payment-type");
+
+            paymentButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    paymentButtons.forEach((btn) => btn.classList.remove("selected"));
+                    button.classList.add("selected");
+                    selectedPaymentMode = button.getAttribute("data-payment-type");
+                });
+            });
+        }
+    });
+
+    function setPaymentType() {
+        const paymentButtons = document.querySelectorAll(".payment-mode");
+        if (paymentButtons.length > 0) {
+            paymentButtons.forEach((button) => {
+                button.classList.remove("selected");
+            });
+            paymentButtons[0].classList.add("selected");
+            selectedPaymentMode = paymentButtons[0].getAttribute("data-payment-type");
+        }
+    }
+
+    const fetchCustomerData = async () => {
+        const phone = document.getElementById("customer_phone");
+        const error_msg = document.getElementById("error_msg");
+        const loader = document.getElementById("content");
+        const customer_contact = phone.value;
+        document.getElementById("customer_name").disabled = false;
+        document.getElementById("customer_email").disabled = false;
+        document.getElementById("customer_pincode").disabled = false;
+        document.getElementById("customer_city").disabled = false;
+        document.getElementById("customer_address").disabled = false;
+        document.getElementById("stateForm").disabled = false;
+        loader.style.display = "flex"
+        try {
+            let data = await fetch(`<%= url_pathname %>admin/pos_customer_details?customer_contact=${customer_contact}`);
+            if (!data.ok) {
+                throw new Error(`HTTP Error: ${data.status}`);
+            }
+            data = await data.json();
+            if (data.success) {
+                document.getElementById("customer_name").value = data.data.customer_name;
+                document.getElementById("customer_email").value = data.data.customer_email;
+                document.getElementById("customer_address").value = data.data.customer_address;
+                document.getElementById("customer_pincode").value = data.data.customer_pincode;
+                document.getElementById("customer_city").value = data.data.customer_city;
+                document.getElementById("stateForm").value = data.data.customer_state;
+            }
+        } catch (error) {
+            if (error.status == 500) {
+                error_msg.innerText = "Error fetching customer data";
+                error_msg.style.display = "inline";
+            }
+        }
+        finally {
+            setTimeout(() => {
+                loader.style.display = "none"
+            }, 1000)
+            setTimeout(() => {
+                error_msg.innerText = "";
+                error_msg.style.display = "none";
+            }, 2000)
+        }
+    }
+    document.getElementById("search-btn").addEventListener("click", fetchCustomerData)
+
+    document.getElementById("customer_phone").addEventListener("input", () => {
+
+        const value = document.getElementById("customer_phone");
+        const search_btn = document.getElementById("search-btn")
+        if (value.value.length > 9) {
+            search_btn.style.opacity = 1;
+            search_btn.style.cursor = "pointer";
+            search_btn.disabled = false;
+            fetchCustomerData()
+        }
+    })
+
+
+    document.getElementById("contact-form").addEventListener("submit", async (e) => {
+        e.preventDefault()
+        const customer_contact = document.getElementById("customer_phone").value.trim();
+        const customer_name = document.getElementById("customer_name").value.trim();
+        const customer_email = document.getElementById("customer_email").value.trim();
+        const customer_address = document.getElementById("customer_address").value.trim();
+        const customer_pincode = document.getElementById("customer_pincode").value.trim();
+        const customer_city = document.getElementById("customer_city").value.trim();
+        const customer_state = document.getElementById("stateForm").value.trim();
+        const transaction_id = ref_id ? ref_id : null;
+        const admin_remarks=admin_remark ? admin_remark : null;
+        const bank = payment_channel ? payment_channel : null;
+        const formBody = { customer_contact, customer_name, customer_email, customer_address, customer_pincode, customer_city, customer_state, payment_type: paymentType, transaction_id, payment_channel: bank,admin_remark:admin_remarks, products: cart }
+        try {
+            let response = await fetch('<%= url_pathname %>admin/pos_place_order', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formBody)
+            })
+            if (!response.ok) {
+                throw new Error("server error")
+            }
+            let data = await response.json();
+            paymentType='cash';
+            payment_channel='';
+            ref_id=''
+            if (data.success) {
+                const paymentContainer = document.getElementById("paymentButtons");
+                paymentContainer.innerHTML = `
+                        <div class="grid grid-cols-1 gap-4 mt-3" id="paymentButtons">
+            <div>
+              <button class="bg-white-400 text-dark py-2 px-2 rounded-lg hover:bg-blue-600 payment-mode w-100"
+                  data-payment-type="cash">
+                  <i class="fa-solid fa-money-bill-wave mr-2"></i>Cash
+              </button>
+            </div>
+          
+            <div>
+              <button class="bg-white-400 text-dark py-2 px-2 rounded-lg hover:bg-blue-600 payment-mode w-100"
+                  data-payment-type="cheque">
+                  <i class="fa-solid fa-credit-card mr-2"></i>Cheque
+              </button>
+            </div>
+          
+            <div>
+              <button class="bg-white-400 text-dark py-2 px-2 rounded-lg hover:bg-blue-600 payment-mode w-100"
+                  data-payment-type="neft">
+                  <i class="fa-solid fa-credit-card mr-2"></i>NEFT
+              </button>
+            </div>
+          
+            <div>
+              <button class="bg-white-400 text-dark py-2 px-2 rounded-lg hover:bg-blue-600 payment-mode w-100"
+                  data-payment-type="online">
+                  <i class="fa-solid fa-credit-card mr-2"></i>Online
+              </button>
+            </div>
+          </div>`
+                fetchPaymentMethods()
+
+                document.querySelector(".form-wrapper").style.display = "none";
+                document.querySelector(".overlay").style.display = "none";
+                printRec(data.order_def_id
+                )
+                cart = [];
+                updateCart();
+                document.getElementById("customer_phone").value = "";
+                document.getElementById("customer_name").value = "";
+                document.getElementById("customer_email").value = "";
+                document.getElementById("customer_address").value = "";
+                document.getElementById("customer_pincode").value = "";
+                document.getElementById("customer_city").value = "";
+                document.getElementById("stateForm").value = "Na";
+                document.getElementById("customer_phone").value = "";
+                document.getElementById("customer_name").disabled = true;
+                document.getElementById("customer_email").disabled = true;
+                document.getElementById("customer_address").disabled = true;
+                document.getElementById("customer_pincode").disabled = true;
+                document.getElementById("customer_city").disabled = true;
+                document.getElementById("stateForm").disabled = true;
+                setPaymentType();
+                showPopup('Success', data.message, 'Success');
+            }
+        } catch (error) {
+            console.log(error);
+            showPopup('Failure', error.message, 'failure');
+        }
+
+    })
+
+    let payment_channel = "";
+    let ref_id = "";
+    let paymentType;
+    let admin_remark;
+
+   const banks = [
+  "Allahabad Bank",
+  "Andhra Bank",
+  "Axis Bank",
+  "Bank of Baroda",
+  "Bank Of India",
+  "Bank of Maharashtra",
+  "Canara Bank",
+  "Central Bank of India",
+  "City Union Bank",
+  "Corporation Bank",
+  "Deutsche Bank",
+  "Development Credit Bank",
+  "Dhanlaxmi Bank",
+  "Federal Bank",
+  "HDFC",
+  "ICICI Bank",
+  "IDBI Bank",
+  "Indian Bank",
+  "Indian Overseas Bank",
+  "IndusInd Bank",
+  "ING Vysya Bank",
+  "Jammu and Kashmir Bank",
+  "Karnataka Bank Ltd",
+  "Karur Vysya Bank",
+  "Kotak Mahindra",
+  "Laxmi Vilas Bank",
+  "Oriental Bank of Commerce",
+  "Punjab & Sind Bank",
+  "Punjab National Bank",
+  "South Indian Bank",
+  "State Bank of Bikaner & Jaipur",
+  "State Bank of Hyderabad",
+  "State Bank of India",
+  "State Bank of Mysore",
+  "State Bank of Patiala",
+  "State Bank of Travancore",
+  "Syndicate Bank",
+  "Tamilnad Mercantile Bank Ltd.",
+  "UCO Bank",
+  "Union Bank of India",
+  "United Bank of India",
+  "Vijaya Bank",
+  "Yes Bank Ltd",
+  "Other"
+];
+
+
+const options = banks.map(bank => `<option value="${bank}">${bank}</option>`).join("");
+
+const fieldHTML = `
+  <div class="extra-fields mt-2">
+    <label class="block mb-1">Select Bank:</label>
+    <select class="w-full p-2 border rounded mb-2 bank">
+      <option value="">Choose Bank</option>
+      ${options}
+    </select>
+    <label class="block mb-1 payment-reference-type">Reference Number:</label>
+    <input type="text" class="w-full p-2 border rounded ref_id" placeholder="Enter transaction/reference no.">
+    <label class="block mb-1">Remark:</label>
+    <input type="text" class="w-full p-2 border rounded admin_remark" placeholder="Enter remark.">
+  </div>
+`;
+
+
+
+
+    const UPIfieldHTML = `
+    <div class="extra-fields mt-2">
+      <label class="block mb-1">Select Bank:</label>
+      <select class="w-full p-2 border rounded mb-2 bankUpi">
+        <option value="">Choose UPI</option>
+        <option value="Google Pay">Google Pay</option>
+        <option value="Paytm">Paytm</option>
+        <option value="PhonePe">PhonePe</option>
+        <option value="Cred">Cred</option>
+        <option value="MobiKwik">MobiKwik</option>
+        <option value="Amazon Pay">Amazon Pay</option>
+        <option value="Cred">Cred</option>
+        <option value="Freecharge">Freecharge</option>
+        <option value="Others">Others</option>
+      </select>
+      <label class="block mb-1">Reference Number:</label>
+<input type="text" class="w-full p-2 border rounded ref_id" placeholder="Enter transaction/reference no.">
+      <label class="block mb-1">Remark:</label>
+      <input type="text" class="w-full p-2 border rounded admin_remark" placeholder="Enter remark.">
+    </div>
+  `;
+    const checkout_button = document.getElementById("checkout_button");
+
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchPaymentMethods();
+        paymentType='cash'
+    })
+
+    const fetchPaymentMethods = () => {
+        document.querySelectorAll(".payment-mode").forEach(button => {
+            button.addEventListener("click", function () {
+                paymentType = this.getAttribute("data-payment-type");
+                const wrapperDiv = this.closest("div");
+                const existingFields = wrapperDiv.querySelector(".extra-fields");
+
+                // Reset styles for all buttons
+                document.querySelectorAll(".payment-mode").forEach(btn => {
+                    btn.classList.remove("bg-blue-600", "text-white");
+                    btn.classList.add("bg-white-400", "text-dark");
+                });
+
+                // Remove existing extra fields
+                document.querySelectorAll(".extra-fields").forEach(el => el.remove());
+                
+                // Handle cash case
+                if (paymentType === "cash") {
+                    checkout_button.style.opacity = "1";
+                    checkout_button.disabled = false;
+                    payment_channel = '';
+                    ref_id = '';
+                    admin_remark = ""
+                    return;
+                }
+                
+                // Handle toggle case (clicking same button again)
+                if (existingFields) {
+                    checkout_button.style.opacity = "0.5";
+                    checkout_button.disabled = true;
+                    return;
+                }
+
+                // Insert appropriate fields
+                const insertHTML = (paymentType === "online") ? UPIfieldHTML : fieldHTML;
+
+                wrapperDiv.insertAdjacentHTML("beforeend", insertHTML);
+
+                // Highlight current button
+                this.classList.remove("bg-white-400", "text-dark");
+                this.classList.add("bg-blue-600", "text-white");
+
+                // Disable button until input is detected
+                checkout_button.style.opacity = "0.5";
+                checkout_button.disabled = true;
+
+                setTimeout(() => {
+                    const refInput = wrapperDiv.querySelector(".ref_id");
+                    const remarkInput = wrapperDiv.querySelector(".admin_remark");
+
+                    if (refInput) {
+                        refInput.addEventListener("input", () => {
+                            ref_id = refInput.value.trim();
+                            if (ref_id && payment_channel) {
+                                checkout_button.style.opacity = "1";
+                                checkout_button.disabled = false;
+                            } else {
+                                checkout_button.style.opacity = "0.5";
+                                checkout_button.disabled = true;
+                            }
+                        });
+                    }
+
+                    if(remarkInput){
+                        remarkInput.addEventListener("input", () => {
+                            admin_remark = remarkInput.value.trim();
+                        });
+                    }
+
+                    if (paymentType === 'online') {
+                        const bankUpi = document.querySelector(".bankUpi");
+
+                        bankUpi.addEventListener("change", (e) => {
+                            payment_channel = e.target.value;
+                            console.log("paaa", paymentType);
+
+                        })
+                    }
+                    else if (paymentType === "neft" || paymentType === "cheque") {
+                        const bankUpi = document.querySelector(".bank");
+
+                        bankUpi.addEventListener("change", (e) => {
+                            payment_channel = e.target.value;
+                            console.log("paaa", paymentType);
+
+                        })
+                    }
+
+
+                    const payment_reference_type = document.querySelector(".payment-reference-type")
+                    if (paymentType === "cheque") {
+                        payment_reference_type.innerText = "Cheque Number";
+                        payment_reference_type.placeholder = "Enter cheque number";
+                    }
+                }, 0);
+            });
+        });
+    }
+
+</script>

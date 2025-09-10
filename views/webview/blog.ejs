@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" style="
+-ms-overflow-style: none;
+ scrollbar-width: none; 
+ ">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= siteTitle %> -Blog</title>
+  <meta name="robots" content="noindex, follow">
+  <meta property="og:title" content="<%- blog.blog_header%>" />
+  <meta property="og:type" content="blog">
+  <meta property="og:url" content="<%= (url_pathname) %>blog/<%- blog.id %>">
+  <meta property="og:image" content="<%= (url_pathname) %><%= blog.blog_image %>">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:image:width" content="600">
+  <meta property="og:image:height" content="800">
+	<link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon">
+  <!-- Add this inside the <head> tag -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+    <!-- slider stylesheet -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="../stylesheets/anh//bootstrap.css" />
+    <link href="../stylesheets/anh/style.css" rel="stylesheet" />
+    <link href="../stylesheets/anh/responsive.css" rel="stylesheet" />
+  <style>
+    *,
+    * ::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      box-sizing: border-box;
+      font-family: Roboto, sans-serif;
+      color: #333333;
+      letter-spacing: 0.01rem;
+      background-color: white;
+
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .main {
+      width: 100%;
+      min-height: 100vh;
+      padding-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 80rem;
+      height: 100%;
+      overflow: hidden;
+      margin: 0 auto;
+      display: flex;
+      flex-flow: column;
+      align-items: center;
+      padding: 3rem 0;
+    }
+
+    .container .deco {
+      height: 3rem;
+      width: 23rem;
+      filter: brightness(120%);
+    }
+
+    .flex-container {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 3rem;
+      width: 100%;
+    }
+
+    .cards-container {
+      padding: 2rem;
+    }
+
+    .card-box {
+      display: flex;
+      flex-flow: column;
+      width: 25.3rem;
+      background-color: white;
+      font-size: 0.92rem;
+      box-shadow: 4px 3px 33px -6px rgba(0,0,0,0.75);
+      padding: 1rem;
+    }
+
+    .card-img {
+      /* height: 23.3rem;
+      width: 23.3rem !important;
+      object-fit: cover;
+      margin-top: 1rem; */
+      
+      /* width: 20rem; */
+      width: 23.3rem !important;
+      aspect-ratio: 1/1 !important;
+    }
+
+    .card-data,
+    .card-title,
+    .card-description {
+      padding: 0 0.5rem;
+      font-size: small;
+    }
+
+    .share-blog h6 {
+      color: #333333 !important;
+
+    }
+
+    .share-blog {
+      padding: 0 1.5rem;
+    }
+
+    .card-data {
+      padding-top: 2rem;
+      padding-bottom: 1.3rem;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    .card-data p {
+      display: inline-block;
+    }
+
+    .text-right {
+      margin-left: 9.4rem;
+      margin-right: 1rem;
+    }
+
+    .autor {
+      font-weight: bold;
+    }
+
+    .card-title {
+      display: block;
+      margin: 0;
+      margin-top: 1rem;
+      margin-bottom: 1.3rem;
+      font-size: 1.5em;
+      font-weight: 500;
+      color: black !important;
+      text-decoration: none;
+    }
+
+    /* .card-title:hover {
+      color: #84A935;
+    } */
+
+    .card-description {
+      line-height: 1.7rem;
+      padding-bottom: 2rem;
+    }
+
+    .share-icons {
+      /* font-size: 1.5rem; */
+      margin: 0.5rem 0 0.5rem 0;
+    }
+
+    .share-icons img {
+      height: 1.7rem;
+      width: 1.7rem;
+      margin-right: 0.5rem;
+    }
+
+    @media all and (max-width: 1200px) {
+      /* .card-box {
+        width: 30rem;
+      } */
+
+      .container {
+        padding: 1%;
+      }
+
+      .card-data {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .text-right {
+        margin: 0;
+      }
+
+      /* .card-img {
+        height: 20rem;
+      } */
+    }
+
+    @media all and (max-width: 767px) {
+      .container {
+        margin-bottom: 4rem;
+
+      }
+
+      /* .main {
+        margin-top: 67px !important;
+      } */
+
+      /* .card-img {
+        height: 20rem;
+      } */
+
+      .data-text {
+        font-size: 0.85rem;
+      }
+
+      .card-title {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width:400px){
+      .card-box{
+        width: 20rem !important;
+      }
+      .card-img{
+        height: 18rem !important;
+        width: 18rem !important;
+      }
+    }
+
+    
+  </style>
+</head>
+<body>
+  <%- include('header') %>
+    <section class="main">
+
+      <div class="container cards-container">
+
+          <h1 style="text-align: center;">Blog-
+            <%= blog.blog_header %>
+          </h1>
+          <img class="deco"
+            src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fpluspng.com%2Fimg-png%2Fdivider-png-hd-divider-png-1589-304-1589.png&f=1&nofb=1">
+          <div class="flex-container">
+            <div class="card-box">
+              <% if (blog.blog_image && blog.blog_image.match(/\.(mp4|webm|ogg)$/)) { %>
+                <video src="../<%= blog.blog_image %>" class="card-img " controls></video>
+            <% } else if (blog.blog_image) { %>
+                <img src="../<%= blog.blog_image %>" class="card-img" alt="Blog Image">
+            <% } else { %>
+                <img src="../<%= blog.blog_image %>" class="card-img" alt="No media"> 
+            <% } %>
+              <div class="card-text">
+                <p class="card-title">
+                  <%= blog.blog_header %> <span>
+                    <a class="a2a_dd" 
+                       href="https://www.addtoany.com/share"
+                       data-a2a-url="javascript:void(0);" 
+                       onclick="this.setAttribute('data-a2a-url', window.location.origin + window.location.pathname)">
+                      <img src="/images/newshareicon.jpg" alt="Share" width="27" height="27" />
+                    </a>
+                  </span>        
+                </p> 
+                <p class="card-description">
+                  <%= blog.blog_content %>
+                </p>
+              </div>
+            </div>
+          </div>
+      </div>
+    </section>
+    <%- include("./newScript.ejs") %>
+</body>
+
+</html>

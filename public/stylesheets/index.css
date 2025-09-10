@@ -1,0 +1,309 @@
+.background-button {
+    font-size: large;
+    padding: 10px;
+}
+
+.bg-image {
+    margin-top: 107px;
+    height: calc(100vh - 180px);
+    overflow: hidden;
+}
+
+.swiper-prev,
+.swiper-next {
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    background: #F1F1F1;
+    color: #222222;
+    padding: 0;
+    text-align: center;
+    border-radius: 10px;
+    --bs-btn-border-color: transparent;
+    --bs-btn-active-bg: #ec9b22;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-hover-bg: var(--bs-primary);
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-disabled-color: #ccc;
+    --bs-btn-disabled-bg: #eaeaea;
+    --bs-btn-disabled-border-color: #eaeaea
+}
+
+.swiper-prev:hover,
+.swiper-next:hover {
+    background: var(--bs-primary);
+}
+
+.category-carousel .category-item {
+    background: #FFFFFF;
+    border: 1px solid #FBFBFB;
+    box-shadow: 0px 5px 22px rgba(0, 0, 0, 0.04);
+    border-radius: 16px;
+    text-align: center;
+    padding: 60px 20px;
+    margin: 20px 0;
+    transition: box-shadow 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.category-carousel .category-item:hover {
+    transform: translate3d(0, -10px, 0);
+    box-shadow: 0px 21px 44px rgba(0, 0, 0, 0.08);
+}
+
+.category-carousel .category-item .category-title {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 27px;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+    color: #222222;
+    margin-top: 20px;
+}
+
+.ls-1 {
+    letter-spacing: -0.04em;
+}
+
+
+@media (max-width:600px) {
+
+
+    .background-button {
+        justify-content: center;
+
+    }
+
+    div.d-flex a.background-button a {
+        gap: 3px;
+    }
+
+    div.d-flex a.background-button a {
+        font-size: me !important;
+    }
+
+    .bg-image {
+        background-image: url('/images/Website-bg-small.jpg') !important;
+        height: calc(100vh - 80px) !important;
+    }
+
+    .background-data {
+        position: relative;
+        top: -85px;
+        height: 100%;
+    }
+
+}
+
+
+@media (max-width:767px) {
+    .bg-image {
+        background-image: url('/images/Website-bg-small.jpg') !important;
+        margin-top: 65pxpx !important;
+        height: calc(100vh - 80px) !important;
+    }
+
+    .bg-content {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .background-header {
+        margin-top: 1rem;
+
+        font-size: 2rem !important;
+        text-align: center;
+    }
+
+    .background-header2 {
+        font-size: 2rem !important;
+        margin-top: 1rem;
+        text-align: center;
+    }
+}
+
+
+@media (min-width: 760px) and (max-width: 991px) {
+    .background-button {
+        padding: 5px !important;
+        font-size: medium !important;
+    }
+
+    .bg-content {
+        margin-top: -2rem !important;
+    }
+
+    .bg-image {
+        margin-top: 248px;
+        height: 500px !important;
+    }
+}
+
+@media (min-width:1400px) {
+    .background-data {
+        margin-top: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    .bg-content .background-header {
+        font-size: 60px;
+    }
+
+    .card-body h5 {
+        font-size: 25px;
+    }
+
+    .bg-content a {
+        font-size: 30px;
+    }
+}
+
+.background-button {
+    font-size: large;
+    padding: 10px
+}
+
+.bg-image {
+    margin-top: 107px;
+    height: calc(100vh - 180px);
+    overflow: hidden
+}
+
+.swiper-next,
+.swiper-prev {
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    background: #f1f1f1;
+    color: #222;
+    padding: 0;
+    text-align: center;
+    border-radius: 10px;
+    --bs-btn-border-color: transparent;
+    --bs-btn-active-bg: #ec9b22;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-hover-bg: var(--bs-primary);
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-disabled-color: #ccc;
+    --bs-btn-disabled-bg: #eaeaea;
+    --bs-btn-disabled-border-color: #eaeaea
+}
+
+.swiper-next:hover,
+.swiper-prev:hover {
+    background: var(--bs-primary)
+}
+
+.category-carousel .category-item {
+    background: #fff;
+    border: 1px solid #fbfbfb;
+    box-shadow: 0 5px 22px rgba(0, 0, 0, .04);
+    border-radius: 16px;
+    text-align: center;
+    padding: 60px 20px;
+    margin: 20px 0;
+    transition: box-shadow .3s ease-out, transform .3s ease-out
+}
+
+.category-carousel .category-item:hover {
+    transform: translate3d(0, -10px, 0);
+    box-shadow: 0 21px 44px rgba(0, 0, 0, .08)
+}
+
+.category-carousel .category-item .category-title {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 27px;
+    letter-spacing: .02em;
+    text-transform: capitalize;
+    color: #222;
+    margin-top: 20px
+}
+
+.ls-1 {
+    letter-spacing: -.04em
+}
+
+@media (max-width:600px) {
+    .background-button {
+        justify-content: center
+    }
+
+    div.d-flex a.background-button a {
+        gap: 3px;
+        font-size: me !important
+    }
+
+    .bg-image {
+        background-image: url('/images/Website-bg-small.jpg') !important;
+        height: calc(100vh - 80px) !important
+    }
+
+    .background-data {
+        position: relative;
+        top: -85px;
+        height: 100%
+    }
+}
+
+@media (max-width:767px) {
+    .bg-image {
+        background-image: url('/images/Website-bg-small.jpg') !important;
+        margin-top: 67px !important;
+        height: calc(100vh - 80px) !important
+    }
+
+    .background-header,
+    .background-header2 {
+        font-size: 2rem !important;
+        margin-top: 1rem;
+        text-align: center
+    }
+
+    .bg-content {
+        display: flex;
+        flex-direction: column;
+        align-items: start
+    }
+}
+
+@media (min-width:760px) and (max-width:991px) {
+    .background-button {
+        padding: 5px !important;
+        font-size: medium !important
+    }
+
+    .bg-content {
+        margin-top: -2rem !important
+    }
+
+    .bg-image {
+        margin-top: 248px;
+        height: 500px !important
+    }
+}
+
+@media (min-width:1400px) {
+    .background-data {
+        margin-top: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around
+    }
+
+    .bg-content .background-header {
+        font-size: 60px
+    }
+
+    .card-body h5 {
+        font-size: 25px
+    }
+
+    .bg-content a {
+        font-size: 30px
+    }
+}

@@ -1,0 +1,108 @@
+<script>
+    const url = window.location.pathname;
+const parts = url.split('/');
+const id = parts[parts.length - 1];
+
+const menuBar = document.querySelector('#content nav .bx.bx-menu');
+const sidebar = document.getElementById('sidebar');
+if (window.innerWidth < 768) {
+    sidebar.classList.add('hide');
+} 
+menuBar.addEventListener('click', function () {
+    sidebar.classList.toggle('hide');
+})
+
+
+let categoryData = [];
+
+let categoryPage = 1;
+const rowsPerCategoryPage = 5;
+function fetchCategoryData() {
+    fetch(`<%= (url_pathname) %>admin/get_customer_service`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.data) {
+                console.log("data",data);
+                
+                categoryData = data.data;
+                displayCategoryPage(categoryPage);
+                // generatepdf(data.data)
+                setupCategoryPagination(categoryData.length);
+            } else {
+                console.error("No category data received.");
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching category data:', error);
+        });
+}
+
+function displayCategoryPage(page) {
+    const tableBody = document.querySelector('#individualtable tbody');
+    tableBody.innerHTML = '';
+
+    const start = (page - 1) * rowsPerCategoryPage;
+    const end = start + rowsPerCategoryPage;
+    const paginatedCategoryData = categoryData.slice(start, end);
+if(paginatedCategoryData.length<1){
+    tableBody.innerHTML = '<tr><td colspan="13">No data available</td></tr>';
+    return;
+}
+    let counter = start + 1;
+    paginatedCategoryData.forEach(category => {
+        const insertedDate = new Date(category.inserted_date);
+        const formattedDateTime = `${insertedDate.getDate().toString().padStart(2, '0')}-${(insertedDate.getMonth() + 1).toString().padStart(2, '0')}-${insertedDate.getFullYear()} ${insertedDate.getHours().toString().padStart(2, '0')}:${insertedDate.getMinutes().toString().padStart(2, '0')}:${insertedDate.getSeconds().toString().padStart(2, '0')}`;
+        console.log(insertedDate);
+        
+        const rowHTML = `
+            <tr>
+                <td>${counter}</td>
+                <td>${category.customer_name}</td>
+              
+                <td>${category.customer_contact}</td>
+                <td>${category.customer_email}</td>
+                <td>${category.customer_query}</td>
+                <td>${formattedDateTime}</td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML('beforeend', rowHTML);
+        counter++; 
+    });
+}
+
+function setupCategoryPagination(totalItems) {
+    const paginationDiv = document.querySelector('#pagination');
+    paginationDiv.innerHTML = '';
+
+    const totalPages = Math.ceil(totalItems / rowsPerCategoryPage);
+
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.className = 'pagination-btn';
+        if (i === categoryPage) {
+            button.classList.add('active');
+        }
+
+        button.addEventListener('click', () => {
+            categoryPage = i;
+            displayCategoryPage(categoryPage);
+
+            document.querySelectorAll('.pagination-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        });
+
+        paginationDiv.appendChild(button);
+    }
+}
+
+fetchCategoryData();
+
+
+
+</script>

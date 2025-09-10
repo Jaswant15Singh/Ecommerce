@@ -1,0 +1,156 @@
+<script>
+    const url = window.location.pathname;
+const parts = url.split('/');
+const id = parts[parts.length - 1];
+
+const menuBar = document.querySelector('#content nav .bx.bx-menu');
+const sidebar = document.getElementById('sidebar');
+if (window.innerWidth < 768) {
+    sidebar.classList.add('hide');
+} 
+menuBar.addEventListener('click', function () {
+    sidebar.classList.toggle('hide');
+})
+
+
+const updateProduct = (id) => {
+    const price_overlays = document.querySelector(".price_overlays");
+    const deleteConfirm = document.getElementById("deleteConfirm");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    price_overlays.style.display = "block";
+    deleteConfirm.style.display = "block";
+
+    cancelBtn.addEventListener("click", () => {
+      price_overlays.style.display = "none";
+      deleteConfirm.style.display = "none";
+    })
+
+    confirmBtn.addEventListener("click", (e) => {
+      fetch(`<%= url_pathname %>admin/restore_product/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json"
+        }
+      })
+        .then((res) => { return res.json() })
+        .then((data) => {
+          price_overlays.style.display = "none";
+          deleteConfirm.style.display = "none";
+          if (data.success) {
+
+            showPopup("Success", data.message, "Success");
+            setTimeout(() => {
+              window.location.reload()
+            }, 1000)
+          }
+          else {
+            showPopup("Error", data.message, "Failed");
+
+            setTimeout(() => {
+              window.location.reload()
+
+            }, 1000)
+            showPopup("Error", data.message, "Failed");
+          }
+
+        })
+        .catch((e) => {
+          console.log(e);
+
+        })
+
+    })
+  }
+
+let categoryData = [];
+
+let categoryPage = 1;
+const rowsPerCategoryPage = 5;
+function fetchCategoryData() {
+    fetch(`<%= (url_pathname) %>admin/get_deleted_product`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.data) {
+                
+                categoryData = data.data;
+                displayCategoryPage(categoryPage);
+                // generatepdf(data.data)
+                setupCategoryPagination(categoryData.length);
+            } else {
+                console.error("No category data received.");
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching category data:', error);
+        });
+}
+
+function displayCategoryPage(page) {
+    const tableBody = document.querySelector('#deletedproducts tbody');
+    tableBody.innerHTML = '';
+
+    const start = (page - 1) * rowsPerCategoryPage;
+    const end = start + rowsPerCategoryPage;
+    const paginatedCategoryData = categoryData.slice(start, end);
+    if (paginatedCategoryData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="13">No data available</td></tr>';
+                return;
+            }
+    let counter = start + 1;
+    paginatedCategoryData.forEach(product => {
+        const insertedDate = new Date(product.update_date);
+        const formattedDateTime = `${insertedDate.getDate().toString().padStart(2, '0')}-${(insertedDate.getMonth() + 1).toString().padStart(2, '0')}-${insertedDate.getFullYear()} ${insertedDate.getHours().toString().padStart(2, '0')}:${insertedDate.getMinutes().toString().padStart(2, '0')}:${insertedDate.getSeconds().toString().padStart(2, '0')}`;
+        
+        const rowHTML = `
+            <tr>
+                <td>${counter}</td>
+                <td>${product.product_name}</td>
+              
+                <td><img src="<%= url_pathname %>${product.product_image}"/> </td>
+
+                <td>${formattedDateTime}</td>
+                <td><button class="btn btn-primary" onclick="updateProduct('${product.product_id}')">Update</button></td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML('beforeend', rowHTML);
+        counter++; 
+    });
+}
+
+function setupCategoryPagination(totalItems) {
+    const paginationDiv = document.querySelector('#pagination');
+    paginationDiv.innerHTML = '';
+
+    const totalPages = Math.ceil(totalItems / rowsPerCategoryPage);
+
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.className = 'pagination-btn';
+        if (i === categoryPage) {
+            button.classList.add('active');
+        }
+
+        button.addEventListener('click', () => {
+            categoryPage = i;
+            displayCategoryPage(categoryPage);
+
+            document.querySelectorAll('.pagination-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        });
+
+        paginationDiv.appendChild(button);
+    }
+}
+
+fetchCategoryData();
+
+
+
+</script>

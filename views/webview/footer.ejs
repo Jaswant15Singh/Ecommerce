@@ -1,0 +1,73 @@
+<section class="info_section  layout_padding2-top">
+    <div class="social_container">
+      <div class="social_box">
+        <a href="<%= facebook_link %>" target="_blank">
+          <i class="fa fa-facebook"  aria-hidden="true"></i>
+        </a>
+      
+        <a href="<%= instagram_link %>" target="_blank">
+          <i class="fa fa-instagram" aria-hidden="true"></i>
+        </a>
+        <a href="<%= youtube_link %>" target="_blank">
+          <i class="fa fa-youtube" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+    <div class="info_container ">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 col-lg-4">
+            <h6>
+              ABOUT US
+            </h6>
+            <p>
+              <%= about_us %>
+            </p>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <h6>
+              NEED HELP
+            </h6>
+            <p>
+              <%= need_help %>             
+            </p>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <h6>
+              CONTACT US
+            </h6>
+            <div class="info_link-box" id="footer-address">
+              <a href="#footer-address">
+                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                <span><%= address %></span>
+              </a>
+              <a href="tel:+91 <%= whatsapp_number %>">
+                <i class="fa fa-phone" aria-hidden="true"></i>
+                <span>+91 <%= whatsapp_number %></span>
+              </a>
+              <a href="tel:+91 <%= whatsapp_number_two %>">
+                <i class="fa fa-phone" aria-hidden="true"></i>
+                <span>+91 <%= whatsapp_number_two %></span>
+              </a>
+              <a href="mailto:<%= email %>">
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+                <span><%= email %></span>
+              </a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- footer section -->
+    <footer class=" footer_section">
+      <div class="container">
+        <p>
+          &copy; <span id="displayYear"></span> All Rights Reserved By CATV Digital
+        </p>
+      </div>
+    </footer>
+    <!-- footer section -->
+
+  </section>

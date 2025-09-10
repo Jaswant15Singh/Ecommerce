@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #empty-message {
+            margin-top: 17rem;
+            text-align: center;
+            line-height: 50px;
+        }
+        
+        @media (max-width:768px){
+            #empty-message{
+                font-size: medium;
+                margin-top: 2rem !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%-include('header')%>
+        <%- include('modal_pop') %>
+            <h1 id="empty-message" > No Products for  <span
+                    style="color:#F0331A !important;">particular category</span>! Explore
+                our products and find something you'll love! <br><span> <a style="color:#F0331A !important;" href="/categories"
+                        style="text-decoration: none;">View Other Categories</a></span></h1>
+
+            <script>
+            </script>
+            <script src="/javascripts/jquery-1.11.0.min.js"></script>       
+            <script src="../javascripts/plugins.js"></script>
+            <%-include("./addToCart.ejs")%>
+
+</body>
+
+</html>

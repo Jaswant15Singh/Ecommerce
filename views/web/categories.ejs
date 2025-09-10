@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" style="
+-ms-overflow-style: none;
+ scrollbar-width: none; 
+ ">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="icon" type="image/png" href="/images/Rasyyaan.png">
+    <meta name="description" content="Shop fresh groceries online from Pahadi Rasyan!Pahadi Rasyan helps you get the best quality fruits, grains, pulses, rice and spices delivered to your doorstep." />
+    <meta name="keywords" content="Pahadi Rasyan,fresh,groceries, fruits ,grains,pulses,rice,spices,online grocery shopping.">
+    <meta property="og:title" content="All categories"/>
+    <link rel="canonical" href="<%= (url_pathname) %>/categories">
+    <meta name="keywords" content="Pahadi Rasyan,all categories, healthy ,fresh,natural products,catefories,pure, grocery" />
+    <meta name="author" content="Pahadi Rasyan" />
+    <meta property="og:site_name" content="Pahadi Rasyan">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    <meta property="og:url" content="<%= (url_pathname) %>/categories">
+    <meta property="og:image" content="<%= (url_pathname) %>/images/RasyyannLogo.png">
+    <meta property="og:locale" content="en_IN, hi_IN">
+    <style>
+        .category-carousel .category-item {
+  background: #FFFFFF;
+  border: 1px solid #FBFBFB;
+  box-shadow: 0px 5px 22px rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  text-align: center;
+  padding: 60px 20px;
+  margin: 20px 0;
+  transition: box-shadow 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.category-carousel .category-item:hover {
+  transform: translate3d(0, -10px, 0);
+  box-shadow: 0px 21px 44px rgba(0, 0, 0, 0.08);
+}
+
+.category-carousel .category-item .category-title {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 27px;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  color: #222222;
+  margin-top: 20px;
+}
+.category-item {
+  position: relative;
+  padding: 16px;
+  background: #FFFFFF;
+  border-radius: 16px;
+  margin-bottom: 50px;
+  min-height: 200px;
+  box-shadow: 0px 0px 22px rgba(0, 0, 0, 0.05);
+
+  /* transition: box-shadow 0.3s ease-out, margin 0.3s ease-out; */
+}
+
+.category-item:hover {
+  box-shadow: 0px 0px 44px rgba(0, 0, 0, 0.1);
+
+}
+
+@media (max-width:767px){
+    .category-item{
+        background: none !important;
+        box-shadow: none !important;
+        padding: 0px !important;
+        padding-top: 16px !important;
+    }
+    .category-image{
+        height: 8rem !important;
+        width: 8rem !important;
+    }
+}
+    </style>
+</head>
+
+<body>
+    <%-include('header')%>
+        <section class="pb-5 overflow-hidden responsive-page py-3">
+            <div class="container-lg">
+                
+                <div class="row">
+
+
+                                <% if (category && category.length> 0) { %>
+                                    <% category.forEach(e=> { %>
+                                        <div class="col-6 col-sm-2 col-md-3 col-lg-3">
+                                            <div class="category-item m-2">
+                                                <a  href="javascript:void(0)"  class="nav-link swiper-slide text-center"onclick="fetchCategoryProducts(<%= e.id %>, this)">
+                                                    <img src="<%= e.category_image %>" class="category-image"
+                                                        alt="Category Thumbnail" style="height:10rem; width:10rem;object-fit: cover;border-radius: 0.7rem;" loading="lazy">
+                                                    <h4 class="fs-6 mt-3 fw-normal category-title">
+                                                        <%= e.category_name %>
+                                                    </h4>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <% }); %>
+                                            <% } else { %>
+                                                <p>No products available.</p>
+                                                <% } %>
+                </div>
+            </div>
+        </section>     
+        <%-include("./addToCart.ejs")%>
+   
+</body>
+</html>

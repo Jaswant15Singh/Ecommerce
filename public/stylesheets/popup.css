@@ -1,0 +1,206 @@
+.model,.modals {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99999 !important;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .model.hidden,.modals.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+  }
+  
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+    width: 100%;
+    max-width: 500px;
+    padding-left: 40px !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+  .modal-contents{
+    background: #fff;
+    padding: 20px;
+    padding-left: 40px !important;
+position: relative;
+    border-radius: 8px;
+    text-align: left;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .product-details {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 10px;
+    padding: 1rem 0;
+  }
+  
+  .product-details img {
+    /* max-width: 150px; */
+    width: 8rem;
+    height: 8rem;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  .product-details p{
+    font-size: medium !important;
+    margin-bottom: 0;
+  }
+  
+  .modal-actions button {
+    margin: 10px;
+  }
+  .close-button{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding-bottom: 2px;
+    cursor: pointer;
+    color: black;
+    /* background-color: var(--bs-primary); */
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    text-align: center;
+    margin-bottom: 5px;
+    display: flex;
+    font-size: 25px;
+
+    justify-content: center;
+    align-items: center;
+  }
+  .close-buttons{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding-bottom: 2px;
+    cursor: pointer;
+    /* background-color: var(--bs-primary); */
+    color: black;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+@media (min-width:768px) and (max-width:991px){
+  .modal-content,.modal-contents{
+    top: -25%;
+  }
+}
+@media (max-width: 767px) {
+
+  .modal-contents{
+    /* width: 90vw !important; */
+    padding: 20px !important;
+
+  }
+  .model{
+height: 130% !important;
+  }
+  .modal-content {
+    width: 90vw; 
+    /* max-width: 300px; */
+    /* padding: 15px;  */
+    padding: 20px !important;
+  }
+
+  .product-details {
+    /* flex-direction: column;  */
+    /* align-items: center;  */
+    gap: 2rem; /* Reduce gap between items */
+  }
+
+  .product-details img {
+    max-width: 8rem !important; 
+    height: 8rem !important;
+  }
+
+  .modal-actions button {
+    font-size: 0.9rem; /* Slightly smaller font size */
+    padding: 8px 12px; /* Adjust button padding */
+  }
+
+  .modail-inner-contents p{
+    font-size: small !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .model{
+    top: -15% !important;
+  }
+  .modal-content,.modal-contents {
+    width: 95% !important; /* Use almost full width for very small screens */
+    /* padding: 10px !important;  */
+  }
+
+  .product-details img {
+    max-width: 4rem; 
+    height: 4rem;
+  }
+
+  .modal-actions button {
+    font-size: 0.8rem; /* Smaller font size for compact view */
+    padding: 6px 10px; /* Adjust padding further */
+  }
+
+  .close-button {
+    width: 25px; 
+    height: 25px;
+    font-size:20px;
+  }
+  .close-buttons {
+    width: 25px; 
+    height: 25px;
+    font-size:20px;
+  }
+}
+
+.categoriess-container ,.flavour-categories-div{
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.categorys-item,.filtered-item {
+  padding: 3px 10px;
+  font-size: small;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #EFDFDF;
+  transition: background-color 0.2s ease;
+}
+
+/* .categorys-item:hover,.filtered-item:hover {
+  background-color: #e0e0e0;
+} */
+
+.selected {
+  background-color: #f16179;
+  color: #fff;
+  border-color: #f16179;
+}
+

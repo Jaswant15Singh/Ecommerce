@@ -1,0 +1,596 @@
+<script>
+
+
+    document.getElementById('downloadExcelButton').addEventListener('click', function () {
+        // Make a GET request to the generate-excel endpoint
+        fetch('<%= url_pathname %>admin/generate-excel-order')
+            .then(response => {
+                if (response.ok) {
+                    // console.log(response);
+
+                    return response.blob(); // Get the response as a Blob
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(blob => {
+                // Create a link element to trigger the download
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'data.xlsx'; // Set the filename for the downloaded file
+                document.body.appendChild(a);
+                a.click(); // Programmatically click the link to trigger the download
+                a.remove(); // Remove the link from the document
+                window.URL.revokeObjectURL(url); // Release the object URL
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    });
+    document.getElementById('downloadExcelIndividualButton').addEventListener('click', function () {
+        // Make a GET request to the generate-excel endpoint
+        fetch('<%= url_pathname %>admin/generate-excel-all')
+            .then(response => {
+                if (response.ok) {
+                    // console.log(response);
+
+                    return response.blob(); // Get the response as a Blob
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(blob => {
+                // Create a link element to trigger the download
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'data.xlsx'; // Set the filename for the downloaded file
+                document.body.appendChild(a);
+                a.click(); // Programmatically click the link to trigger the download
+                a.remove(); // Remove the link from the document
+                window.URL.revokeObjectURL(url); // Release the object URL
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    });
+
+    function generatePdf(data, action) {
+        const { id } = data;
+        const url = `<%= url_pathname %>admin/emailsending/${id}`;
+
+        // if (action === 'DOWNLOAD') {
+
+        fetch(url)
+            .then(response => response.blob())
+            .then((blob) => {
+             console.log(blob);
+        
+            const fileURL = window.URL.createObjectURL(blob);
+            if(action !== 'DOWNLOAD'){
+                window.open(fileURL);
+            }
+           else{
+            const a = document.createElement('a');
+            a.href = fileURL;
+            a.download = 'invoice.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+           }
+    })
+    .catch(error => console.error("Error fetching invoice:", error));
+        // }
+        // else {
+        //     fetch(url)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.downloadUrl) {
+        //                 window.open(data.downloadUrl, '_blank');
+        //             } else {
+        //                 console.error("Error: Download URL not received.");
+        //             }
+        //         })
+        //         .catch(error => console.error("Error fetching invoice:", error));
+
+        // }
+    }
+    // const generatePDF = (category, products, action) => {
+    //     const { jsPDF } = window.jspdf;
+    //     const doc = new jsPDF();
+    //     const topMargin = 20;
+    //     const gapBelowLine = 10;
+
+    //     doc.setFontSize(20);
+    //     doc.setFont("helvetica", "bold");
+    //     const title = `Receipt for Order: TH10000${category.id}`;
+    //     const titleWidth = doc.getStringUnitWidth(title) * doc.getFontSize() / doc.internal.scaleFactor;
+    //     const titleX = (doc.internal.pageSize.width - titleWidth) / 2;
+    //     doc.text(title, titleX, topMargin);
+
+    //     doc.setDrawColor(0, 0, 0);
+    //     doc.line(10, topMargin + 5, 200, topMargin + 5);
+
+    //     doc.setFontSize(16);
+    //     doc.setFont("helvetica", "bold");
+    //     doc.text("Customer Details", 15, topMargin + 5 + gapBelowLine);
+    //     doc.setFontSize(12);
+    //     doc.setFont("helvetica", "normal");
+    //     let y = topMargin + 5 + gapBelowLine + 10;
+
+    //     const details = [
+    //         { label: "Customer Name:", value: category.customer_name },
+    //         { label: "Customer Contact:", value: category.customer_contact },
+    //         { label: "Email:", value: category.customer_email },
+    //         { label: "Address:", value: category.customer_address },
+    //         { label: "Pin-Code:", value: category.customer_pincode },
+    //         { label: "Order Date:", value: new Date(category.inserted_date).toLocaleString() }
+    //     ];
+
+    //     details.forEach((detail) => {
+    //         doc.text(`${detail.label} ${detail.value}`, 15, y);
+    //         y += 10;
+    //     });
+
+    //     y += 10;
+
+    //     doc.setFontSize(16);
+    //     doc.setFont("helvetica", "bold");
+    //     doc.text("Receipt Details", 15, y);
+    //     y += 5;
+
+    //     doc.setFont("helvetica", "bold");
+    //     doc.setFillColor(220, 220, 220);
+    //     doc.rect(10, y, 190, 10, "F");
+    //     doc.setTextColor(0, 0, 0);
+    //     doc.setFontSize(12);
+
+    //     doc.text("Product Name", 15, y + 7);
+    //     doc.text("Quantity", 70, y + 7);
+    //     doc.text("Item Price", 110, y + 7);
+    //     doc.text("Total Price", 150, y + 7);
+    //     y += 10;
+
+    //     doc.setDrawColor(0, 0, 0);
+    //     doc.line(10, y, 200, y);
+    //     y += 5;
+
+    //     doc.setFont("helvetica", "normal");
+    //     products.forEach((product) => {
+    //         const productName = doc.splitTextToSize(product.product_name, 50);
+    //         const quantity = product.quantity.toString();
+    //         const itemPrice = `${parseFloat(product.item_price).toFixed(2)}`;
+    //         const totalPrice = `${parseFloat(product.item_total_price).toFixed(2)}`;
+
+    //         const rowHeight = Math.max(productName.length * 10, 10);
+    //         doc.setFillColor(255);
+    //         doc.rect(10, y - 5, 190, rowHeight, "F");
+
+    //         doc.text(productName, 15, y, { maxWidth: 50 });
+    //         doc.text(quantity, 70, y);
+    //         doc.text(itemPrice, 110, y);
+    //         doc.text(totalPrice, 150, y);
+
+    //         y += rowHeight;
+    //     });
+
+    //     doc.setDrawColor(0, 0, 0);
+    //     doc.line(10, y, 200, y);
+    //     y += 5;
+
+    //     doc.setFont("helvetica", "bold");
+    //     doc.text("Total Amount:", 140, y);
+    //     doc.text(`Rs.${parseFloat(category.total_price).toFixed(2)}`, 175, y);
+    //     y += 10;
+
+    //     doc.setFontSize(10);
+    //     doc.setFont("helvetica", "italic");
+    //     doc.text("Thank you for your purchase!", 10, y + 10);
+
+    //     if (action === "VIEW") {
+    //         doc.output('dataurlnewwindow');
+    //     }
+    //     else {
+    //         doc.save(`receipt_TH10000${category.id}.pdf`);
+
+    //     }
+    // };
+
+
+
+
+
+    const menuBar = document.querySelector('#content nav .bx.bx-menu');
+    // const main=document.querySelector(".main");
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth < 769) {
+        sidebar.classList.add('hide');
+    }
+    menuBar.addEventListener('click', function () {
+        sidebar.classList.toggle('hide');
+        // main.classList.toggle("main-left")
+    })
+
+
+
+    // Call fetchCategoryData to initialize the table and pagination
+    // fetchCategoryData();
+
+    let categoryData = [];
+    let filteredCategoryData = [];
+    let categoryPage = 1;
+    const rowsPerCategoryPage = 5;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // const searchInput = document.getElementById("searchInput");
+        const paginationContainer = document.getElementById("pagination");
+        const filterButton = document.getElementById("filterButton");
+        const startDateInput = document.getElementById("startDate");
+        const endDateInput = document.getElementById("endDate");
+        // const searchButton = document.getElementById("searchButton");
+        const paymentStatusDropdown = document.getElementById("paymentStatusDropdown");
+        const deliveryStatusDropdown = document.getElementById("deliveryStatusDropdown");
+
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const maxDate = `${year}-${month}-${day}`;
+        const formattedDate = `${year}-${month}-${day}`;
+        // startDateInput.value = formattedDate;
+        // endDateInput.value = formattedDate;
+        startDateInput.setAttribute("max", maxDate);
+        endDateInput.setAttribute("max", maxDate);
+
+
+        // searchInput.addEventListener("input", function () {
+        //     const searchQuery = searchInput.value.trim();
+        //     categoryPage = 1;
+        //     if (searchQuery.length > 0) {
+        //         searchCategories(searchQuery);
+        //     } else {
+        //         fetchCategoryData(); 
+        //     }
+        // });
+
+        // Event listener for filter button
+        // filterButton.addEventListener("click", function () {
+        //     const startDate = document.getElementById("startDate").value;
+        //     const endDate = document.getElementById("endDate").value;
+
+        //     if (startDate && endDate) {
+        //         filterOrdersByDate(startDate, endDate);
+        //     } else {
+
+        //     }
+        // });
+        filterButton.addEventListener("click", function () {
+
+            const startDateInputValue = startDateInput.value.trim();
+            const endDateInputValue = endDateInput.value.trim();
+
+            const paymentStatus = paymentStatusDropdown.value;
+            const deliveryStatus = deliveryStatusDropdown.value;
+
+            const startDate = new Date(startDateInputValue);
+            const endDate = new Date(endDateInputValue);
+            if (startDateInputValue && endDateInputValue && (!paymentStatus && !deliveryStatus)) {
+
+                if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                    showPopup("OOPS", "Please select valid start and end dates.", "FAILURE");
+                    return;
+                }
+                if(!startDate || !endDate){
+                    showPopup("OOPS", "Please select valid start and end dates.", "FAILURE");
+                    return;
+                }
+                if (startDate > endDate) {
+                    showPopup("OOPS", "Start date cannot be later than end date.", "FAILURE");
+                    return;
+                }
+
+                filteredCategoryData = categoryData.filter(category => {
+                    let categoryDate = new Date(category.inserted_date).toISOString().split('T')[0];
+                    let formattedStartDate = startDate.toISOString().split('T')[0];
+                    let formattedEndDate = endDate.toISOString().split('T')[0];
+
+                    return categoryDate >= formattedStartDate && categoryDate <= formattedEndDate;
+                });
+
+
+                if (filteredCategoryData.length === 0) {
+                    showPopup("No Data", "No Orders found for the selected time period.", "INFO");
+                    displayCategoryPage(categoryPage);
+                    setupCategoryPagination(filteredCategoryData.length)
+
+                } else {
+                    categoryPage = 1;
+                    displayCategoryPage(categoryPage);
+                    setupCategoryPagination(filteredCategoryData.length);
+                }
+            }
+            else if (startDateInputValue && endDateInputValue && (paymentStatus || deliveryStatus)) {
+                filteredCategoryData = categoryData.filter(category => {
+                    let categoryDate = new Date(category.inserted_date).toISOString().split('T')[0];
+                    let formattedStartDate = startDate.toISOString().split('T')[0];
+                    let formattedEndDate = endDate.toISOString().split('T')[0];
+                    const matchesPaymentStatus = paymentStatus ? category.order_status === paymentStatus && categoryDate >= formattedStartDate && categoryDate <= formattedEndDate : true;
+                    const matchesDeliveryStatus = deliveryStatus ? category.deleivery_status === deliveryStatus && categoryDate >= formattedStartDate && categoryDate <= formattedEndDate : true;
+                    return matchesPaymentStatus && matchesDeliveryStatus;
+                });
+
+                categoryPage = 1;
+                displayCategoryPage(categoryPage);
+                setupCategoryPagination(filteredCategoryData.length);
+            }
+            else if ((paymentStatus || deliveryStatus) && (!startDateInputValue && !endDateInputValue)) {
+            
+                  filteredCategoryData = categoryData.filter(category => {
+                const matchesPaymentStatus = paymentStatus ? category.order_status === paymentStatus : true;
+                const matchesDeliveryStatus = deliveryStatus ? category.deleivery_status === deliveryStatus : true;
+                return matchesPaymentStatus && matchesDeliveryStatus;
+            });
+
+
+                categoryPage = 1;
+                displayCategoryPage(categoryPage);
+                setupCategoryPagination(filteredCategoryData.length);
+            }
+        });
+
+
+        // searchButton.addEventListener("click", function () {
+        //     const paymentStatus = paymentStatusDropdown.value;
+        //     const deliveryStatus = deliveryStatusDropdown.value;
+
+        //     filterCategoriesByStatus(paymentStatus, deliveryStatus);
+        // });
+
+        // function filterCategoriesByStatus(paymentStatus, deliveryStatus) {
+        //     filteredCategoryData = categoryData.filter(category => {
+        //         const matchesPaymentStatus = paymentStatus ? category.order_status === paymentStatus : true;
+        //         const matchesDeliveryStatus = deliveryStatus ? category.deleivery_status === deliveryStatus : true;
+        //         return matchesPaymentStatus && matchesDeliveryStatus;
+        //     });
+
+        //     categoryPage = 1;
+        //     displayCategoryPage(categoryPage);
+        //     setupCategoryPagination(filteredCategoryData.length);
+        // }
+
+        fetchCategoryData();
+
+        function fetchCategoryData() {
+            // console.log("Fetching category data...");
+
+            fetch('<%= url_pathname %>admin/get/orders/Admin')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.data) {
+                        categoryData = data.data;
+                        filteredCategoryData = categoryData;
+                        displayCategoryPage(categoryPage);
+                        setupCategoryPagination(filteredCategoryData.length);
+                    } else {
+                        console.error("No category data received.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching category data:', error);
+                });
+        }
+
+        function filterOrdersByDate(startDate, endDate) {
+            fetch(`<%= url_pathname %>admin/get/calendar_orders/Admin`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    start_date: startDate,
+                    end_date: endDate
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch filtered orders');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.data) {
+                        filteredCategoryData = data.data;
+                        categoryPage = 1; // Reset to the first page
+                        displayCategoryPage(categoryPage);
+                        setupCategoryPagination(filteredCategoryData.length);
+                    } else {
+                        filteredCategoryData = []; // No results found
+                        displayCategoryPage(categoryPage);
+                        setupCategoryPagination(filteredCategoryData.length);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching filtered orders:", error);
+                });
+        }
+
+        function searchCategories(searchQuery) {
+            if (searchQuery.length === 0) {
+                // If search query is empty, fetch all categories
+                fetchCategoryData();
+                return; // Exit the function
+            }
+
+            // Fetch search results if the query is not empty
+            fetch(`/search-order?search=${encodeURIComponent(searchQuery)}`) // Adjust the API URL for search
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch search results');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.length > 0) {
+                        filteredCategoryData = data; // Set filtered data to search results
+                        categoryPage = 1; // Reset to the first page
+                        displayCategoryPage(categoryPage);
+                        setupCategoryPagination(filteredCategoryData.length);
+                    } else {
+                        // No results found, but reset the filtered data to an empty array
+                        filteredCategoryData = []; // No results found
+                        displayCategoryPage(categoryPage);
+                        setupCategoryPagination(filteredCategoryData.length);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching search results:", error);
+                });
+        }
+        function displayCategoryPage(page) {
+            // console.log(page);
+
+            const tableBody = document.querySelector('#ordertable tbody');
+            tableBody.innerHTML = '';
+
+            const start = (page - 1) * rowsPerCategoryPage;
+            const end = start + rowsPerCategoryPage;
+            const paginatedCategoryData = filteredCategoryData.slice(start, end);
+            // console.log("aaa",filteredCategoryData);
+
+            if (paginatedCategoryData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="13">No data available</td></tr>';
+                return;
+            }
+
+            paginatedCategoryData.forEach((category, index) => {
+                const counter = start + index + 1;
+
+                // Inserted date formatting
+                const insertedDate = new Date(category.inserted_date.replace(' ', 'T'));
+                const formattedDateTime = `${insertedDate.getDate().toString().padStart(2, '0')}-${(insertedDate.getMonth() + 1).toString().padStart(2, '0')}-${insertedDate.getFullYear()} ${insertedDate.getHours().toString().padStart(2, '0')}:${insertedDate.getMinutes().toString().padStart(2, '0')}:${insertedDate.getSeconds().toString().padStart(2, '0')}`;
+
+                // Delivered date formatting
+                let formattedDeliveryDateTime = 'Not Delivered Yet';
+
+                if (category.delivery_date) {
+
+                    const deliveredDate = new Date(category.delivery_date.replace(' ', 'T'));
+                    formattedDeliveryDateTime = `${deliveredDate.getDate().toString().padStart(2, '0')}-${(deliveredDate.getMonth() + 1).toString().padStart(2, '0')}-${deliveredDate.getFullYear()} ${deliveredDate.getHours().toString().padStart(2, '0')}:${deliveredDate.getMinutes().toString().padStart(2, '0')}:${deliveredDate.getSeconds().toString().padStart(2, '0')}`;
+                }
+                const transaction=!category.transaction_id?`<td>NA</td>`:`<td>${category.transaction_id}</td>`
+                const bank=!category.payment_channel?`<td>NA</td>`:`<td>${category.payment_channel}</td>`
+
+                const rowHTML = `
+                <tr class="${category.order_status==='SUCCESS'?'hover-red' : 'hover-blue'}">
+                    <td>${counter}</td>
+                    <td>${category.id}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" target="_blank" href="/admin/ind_orders/${category.id}">View</a></li>
+                                ${category.order_status === "SUCCESS" ? `
+                                    <li><a class="dropdown-item" href="#" onclick='generatePdf(${JSON.stringify(category)},"DOWNLOAD")'>Download PDF</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick='generatePdf(${JSON.stringify(category)},"VIEW")'>View PDF</a></li>
+                                ` : ""}
+                            </ul>
+                        </div>
+                    </td>
+                    <td>${category.customer_name}</td> 
+                    <td>${category.customer_email}</td>
+                    <td>${category.customer_contact}</td>
+                    <td class="address">${category.customer_address}</td>
+                    <td>${category.customer_pincode}</td>
+                    <td>${category.total_price}</td>
+                    <td>${category.order_status}</td>
+                    <td>${category.deleivery_status}</td>
+                    <td>${formattedDateTime}</td>
+                    <td>${formattedDeliveryDateTime}</td>
+                    <td>${category.payment_mode}</td>
+                    ${transaction}
+                    ${bank}
+
+                </tr>
+            `;
+                tableBody.insertAdjacentHTML('beforeend', rowHTML);
+            });
+        }
+
+
+
+
+        function setupCategoryPagination(totalItems) {
+            const paginationDiv = document.querySelector('#pagination');
+            paginationDiv.innerHTML = '';
+
+            const totalPages = Math.ceil(totalItems / rowsPerCategoryPage);
+            const maxButtons = 5; // Maximum number of page buttons to display
+            const halfMaxButtons = Math.floor(maxButtons / 2);
+
+            // Ensure current page is within bounds
+            if (categoryPage > totalPages) {
+                categoryPage = totalPages;
+            }
+
+            // Create "Previous" button
+            if (categoryPage > 1) {
+                const prevButton = document.createElement('button');
+                prevButton.textContent = 'Previous';
+                // prevButton.className = 'btn btn-primary mx-1';
+                prevButton.addEventListener('click', () => {
+                    categoryPage--;
+                    displayCategoryPage(categoryPage);
+                    setupCategoryPagination(totalItems);
+                });
+                paginationDiv.appendChild(prevButton);
+            }
+
+            // Calculate page number range
+            let startPage = Math.max(1, categoryPage - halfMaxButtons);
+            let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+            if (endPage - startPage < maxButtons - 1) {
+                startPage = Math.max(1, endPage - maxButtons + 1);
+            }
+
+            // Create page number buttons
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.className = `${i === categoryPage ? 'active' : ''}`;
+                // pageButton.className = `btn btn-secondary mx-1 ${i === categoryPage ? 'active' : ''}`;
+                pageButton.addEventListener('click', () => {
+                    categoryPage = i;
+                    displayCategoryPage(categoryPage);
+                    setupCategoryPagination(totalItems);
+                });
+                paginationDiv.appendChild(pageButton);
+            }
+
+            // Create "Next" button
+            if (categoryPage < totalPages) {
+                const nextButton = document.createElement('button');
+                nextButton.textContent = 'Next';
+                // nextButton.className = 'btn btn-primary mx-1';
+                nextButton.addEventListener('click', () => {
+                    categoryPage++;
+                    displayCategoryPage(categoryPage);
+                    setupCategoryPagination(totalItems);
+                });
+                paginationDiv.appendChild(nextButton);
+            }
+        }
+    });
+
+
+    // document.getElementById("generate-pdf").addEventListener("click", generatePDF);
+
+</script>

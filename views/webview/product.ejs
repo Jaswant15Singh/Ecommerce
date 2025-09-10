@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+	<link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon">
+
+<!-- Add this inside the <head> tag -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <title>
+    <%= siteTitle %>-All Products
+  </title>
+
+  <!-- slider stylesheet -->
+
+  
+  <style>
+    .products-search-container {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      flex-wrap: wrap;
+    }
+  
+    .products-search-container select,
+    .products-search-container input,
+    .products-search-container span {
+      flex: 1;
+      min-width: 150px;
+    }
+  
+    /* @media screen and (max-width: 600px) {
+      .products-search-container {
+        flex-direction: column;
+      }
+    } */
+  </style>
+</head>
+
+<body>
+  <%- include("./header") %>
+ 
+  <!-- end hero area -->
+
+  <!-- shop section -->
+  <div class="shop_section heading_container heading_center" style="padding-top: 3rem;">
+    <h2>
+       All Products
+    </h2>
+   
+    <div  class="products-search-container"> 
+      <select  name="" id="products-all-categories" class="form-control">
+        <option value="" >All Categories</option>
+      </select>
+      <select name="" id="products-all-brands" class="form-control">
+        <option value="" >All Brands</option>
+      </select>
+      <span><input type="search" id="search-products" class="form-control" placeholder="Search Products...">
+      </span>
+    </div>
+  </div>
+  <section class="shop_section layout_padding web-products">
+    <div class="container">
+ 
+        <div id="filtered-web-products">
+          <div class="row">
+
+        <% products.forEach((e) => { %>
+          <div class="col-sm-6 col-md-6 col-lg-3">
+            <div class="box product-items" style="cursor: pointer;" image-product-name="<%= e.id %>"> 
+              <div class="eye_icon" onclick="toggleProductDetail(this, '<%= e.id %>',event)">
+                <p><i class="fa-solid fa-eye"></i></p> 
+              </div>
+                <div class="img-box" >
+                  <div class="image-container">
+                    <img src="<%= e.product_image %>" alt="<%= e.product_name %>"  class="image_one" loading="lazy">
+                    <% if (e.product_image_two){%>
+                      <img src="<%= e.product_image_two %>" alt="<%= e.product_name %>"  class="image_two" loading="lazy">
+    
+                    <%} 
+                    else {%>
+                      <img src="<%= e.product_image %>" alt="<%= e.product_name %>"   class="image_two" loading="lazy">
+                    <% } %>
+                  </div>            
+                    </div>
+                    <div class="detail-box detail-boxs">
+                      <h6 style="width: 100%;overflow-wrap: anywhere;text-align: center; overflow: hidden;
+                      text-overflow: ellipsis;
+                      display: -webkit-box;
+                      -webkit-line-clamp: 2;
+                      -webkit-box-orient: vertical;
+                      transition: max-height 0.5s ease-in-out;">
+                        <%= e.product_name %> 
+                      </h6>
+                    </div>
+                    <div style="display: flex;justify-content: space-around;align-items: center;">
+                      <span><%= e.label_name %></span>
+                      <h6 style="text-align: center;margin: 0;padding: 0;" >                  
+                        <span style="position: absolute;top: 5px;left: 5px;padding: 5px;background-color: #3e62e1;color: white;transform: skewX(-10deg); display: inline-block;border-radius: 5px;">&#8377;<%= e.mrp - e.discount_price %> off</span>
+                        <del>&#8377;<%= e.mrp %></del>
+                        <span class="product-price-text" style="font-weight: bold !important;color: #db4f66;">&#8377;<%= e.discount_price %></span>
+                      </h6>
+                    </div>
+                <% if (e.in_stock_status) { %>
+                  <div class="button-area  pt-0">
+                    
+                    <div class="row g-1 mt-2">
+                   
+                      <div 
+                      class="d-none" 
+                      style="align-items: center;"
+                    >
+                        <button 
+                          type="button" 
+                          class="no-styles sub" 
+                         
+                          onclick="changeQuantity('<%= e.id %>', -1)"
+                        >
+                          <span style="width: 7px;">-</span>
+                        </button>
+                        <input 
+                          type="number" 
+                          name="quantity"
+                          class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                          value="1" 
+                          min="1"
+                          max="<%= e.in_stock %>" 
+                          data-stock="<%= e.in_stock %>" 
+                          data-product-id="<%= e.id %>" 
+                          inputmode="numeric" 
+                          oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        >
+                        <button 
+                          type="button" 
+                          class="no-styles add" 
+                          onclick="changeQuantity('<%= e.id %>', 1)"
+                        >
+                          <span style="width: 7px;">+</span>
+                        </button>
+                      </div>
+                    
+                      <div 
+                        class="col-lg-12 col-md-12 col-sm-12" 
+                        style="display: flex; align-items: center;"
+                      >
+                        <button 
+                          data-product-id="<%= e.id %>"
+                          class="button-box btn-cart"
+                          data-typeattribute="<%= e.type %>"
+                          style="width: 100%;"
+                        >
+                           Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                    
+                    
+                  </div>
+                <% } else { %>
+                  <div class="button-area  pt-0">
+                    <div class="row g-1 mt-2">
+                      <div class="col-12">
+                        <button class="button-box " style="opacity: 0.6;width: 100%;background-color: red !important;">
+                           Out Of Stock
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+  
+                <% } %>
+                <div class="overlay" style="display: none;"></div> 
+  
+                <div class="product-container" style="display: none; text-align: center;">
+                  <div 
+                    class="product-card row" 
+                    >
+                    <p 
+                      class="close-note close-btn" 
+                      style="position: absolute; top: 15px !important; right: 15px !important; font-weight: lighter; cursor: pointer; border-radius: 50%; height: 0rem; width: 0rem; display: flex; justify-content: center; align-items: center;"
+                      onclick="closeProductDetail(this,event)"
+                    >
+                    &#10006;
+                    </p>
+                
+                    <div class="product-image  col-lg-6 md-12 sm-12" style="height: 250px;"> 
+                      <% if (e.product_image_three){%>
+                        <img 
+                        src="<%= e.product_image_three %>"
+                        alt="<%= e.product_name %>" 
+                        style="width: 100%; height: 100%; border-radius: 8px; "
+                        loading="lazy"
+                    />    
+                      <%} 
+                      else {%>
+                        <img 
+                        src="<%= e.product_image %>"
+                        alt="<%= e.product_name %>" 
+                        style="width: 100%; height: 100%; border-radius: 8px; "
+                        loading="lazy"
+                    />                   
+                     <% } %>
+                  </div>
+                
+                    <div class="product-content col-lg-6 md-12 sm-12" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+                      <h2 class="product-name" style="font-size: 1.5rem; margin-bottom: 8px;">
+                        <%= e.product_name %>
+                      </h2>
+                      <p class="product-description" style="margin-bottom: 8px; color: black;">
+                        <%= e.product_description %>
+                      </p>
+                      <!-- <p class="product-price" style="margin-bottom: 8px; font-weight: bold; color: #333;">
+                        Price: <span class="fw-normal">₹<%= e.product_price %></span>
+                      </p> -->
+                      <% if (e.health_benefits) { %>
+                        <div class="fw-normal">
+                            <span style="color: black;">Health Benefits:</span>
+                            <ul>
+                                <% e.health_benefits.split('|').forEach(benefit => { %>
+                                    <li style="font-weight: 400;color: #656060;"><%= benefit %></li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    <% } %>
+                                          
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        <% }) %>
+        
+      </div>
+
+      </div>
+
+    </div>
+  </section>
+  <section class="shop_section layout_padding mobile-products">
+    <div class="container">
+      <div id="filtered-mobile-products">
+
+      <div class="row">
+        <% products.forEach((e) => { %> 
+          <div class="col-sm-6 col-md-6 col-lg-3 ">
+            <div class="box product-items mobile-prods" image-product-name="<%= e.id %>">
+              <div class="eye_icon" onclick="toggleProductDetail(this, '<%= e.id %>',event)">
+                <p><i class="fa-solid fa-eye"></i></p> 
+              </div>
+              <div class="img-box img-boxs" style="width: 60%;padding: 0 10px;height: 150px;">
+              <div class="image-container">
+                <img src="<%= e.product_image %>" alt="<%= e.product_name %>" loading="lazy" >
+               
+              </div>
+        
+              </div>
+              <div class="detail-box" style="width: 40%;">
+                <h6>
+                  <%= e.product_name %>
+                </h6>
+                <p style="font-size: small;"><%= e.label_name %></p>
+
+                <!-- <h6 style="font-weight: 400;" onclick="toggleProductDetail(this, '<%= e.id %>')">Read More...</h6> -->
+                <h6>
+                      <span style="position: absolute;top: 0px;left: 0;padding: 5px;background-color: #3e62e1;color: white;">&#8377;<%= e.mrp - e.discount_price %> off</span>
+                      <del>&#8377;<%= e.mrp %></del>
+                      <span class="product-price-text" >&#8377;<%= e.discount_price %></span>
+                </h6>
+                <% if (e.in_stock_status) { %>
+                  <div class="button-area  pt-0">
+                    
+                    <div class="row g-1 mt-2">
+                   
+                      <div 
+                      class="d-none" 
+                      style="align-items: center;"
+                    >
+                        <button 
+                          type="button" 
+                          class="no-styles sub" 
+                         
+                          onclick="changeQuantity('<%= e.id %>', -1)"
+                        >
+                          <span style="width: 7px;">-</span>
+                        </button>
+                        <input 
+                          type="number" 
+                          name="quantity"
+                          class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                          value="1" 
+                          min="1"
+                          max="<%= e.in_stock %>" 
+                          data-stock="<%= e.in_stock %>" 
+                          data-product-id="<%= e.id %>" 
+                          inputmode="numeric" 
+                          oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        >
+                        <button 
+                          type="button" 
+                          class="no-styles add" 
+                          onclick="changeQuantity('<%= e.id %>', 1)"
+                        >
+                          <span style="width: 7px;">+</span>
+                        </button>
+                      </div>
+                    
+                      <div 
+                        class="col-lg-12 col-md-12 col-sm-12" 
+                        style="display: flex; align-items: center;"
+                      >
+                        <button 
+                          data-product-id="<%= e.id %>"
+                          class="button-box btn-cart"
+                          data-typeattribute="<%= e.type %>"
+                          style="width: 100%;"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                    
+                    
+                  </div>
+                <% } else { %>
+                  <div class="button-area  pt-0">
+                    <div class="row g-1 mt-2">
+                      <div class="col-12">
+                        <button class="button-box"  style="opacity: 0.6;width: 100%;background-color: red !important;color: black !important;font-weight: bolder !important;">
+  
+                          Out Of Stock
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+  
+                <% } %>
+              </div>          
+              <div class="overlay" style="display: none;"></div> 
+
+              <div class="product-container" style="display: none; text-align: center;">
+                <div 
+                  class="product-card row" 
+                  >
+                  <p 
+                    class="close-note close-btn" 
+                    style="position: absolute; top: 15px !important; right: 15px !important; font-weight: lighter; cursor: pointer; border-radius: 50%; height: 0rem; width: 0rem; display: flex; justify-content: center; align-items: center;"
+                    onclick="closeProductDetail(this,event)"
+                  >
+                  &#10006;
+                  </p>
+              
+                  <div class="product-image  col-lg-6 md-12 sm-12" style="height: 250px;"> 
+                    
+                    <% if (e.product_image_three){%>
+                      <img 
+                      src="<%= e.product_image_three %>"
+                      alt="<%= e.product_name %>" 
+                      style="width: 100%; height: 100%; border-radius: 8px; "
+                      loading="lazy"
+                  />    
+                    <%} 
+                    else {%>
+                      <img 
+                      src="<%= e.product_image %>"
+                      alt="<%= e.product_name %>" 
+                      style="width: 100%; height: 100%; border-radius: 8px; "
+                      loading="lazy"
+                  />                   
+                   <% } %>
+                </div>
+              
+                  <div class="product-content col-lg-6 md-12 sm-12" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+                    <h2 class="product-name" style="font-size: 1.5rem; margin-bottom: 8px;">
+                      <%= e.product_name %>
+                    </h2>
+                    <p class="product-description" style="margin-bottom: 8px; color: black;">
+                      <%= e.product_description %>
+                    </p>
+                    <!-- <p class="product-price" style="margin-bottom: 8px; font-weight: bold; color: #333;">
+                      Price: <span class="fw-normal">₹<%= e.product_price %></span>
+                    </p> -->
+                    <% if (e.health_benefits) { %>
+                      <div class="fw-normal">
+                          <span style="color: black;">Health Benefits:</span>
+                          <ul>
+                              <% e.health_benefits.split('|').forEach(benefit => { %>
+                                  <li style="font-weight: 400;color: #656060;"><%= benefit %></li>
+                              <% }); %>
+                          </ul>
+                      </div>
+                  <% } %>
+                                        
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+      </div>
+
+    </div>
+  </section>
+  <!-- end shop section -->
+
+  <!-- info section -->
+
+	<%-include("./footer.ejs")%>
+
+
+  <!-- end info section -->
+
+
+
+	<%-include("./newScript.ejs")%>
+  <script>
+
+    let allCategories=[];
+    let allBrands=[]
+    let sortedProducts=[];
+    let allProducts=[];
+    
+    const catId="<%= categoryId %>";
+    const brandId="<%= brandId %>";
+    let category_id;
+    let brand_id;
+    const searchedProduct=document.getElementById("search-products");
+  
+    const products_all_categories=document.getElementById("products-all-categories");
+    const products_all_brands=document.getElementById("products-all-brands");
+
+    document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const [categoriesRes, cartProductsRes,brandsRes] = await Promise.all([
+      fetch("<%= url_pathname %>categoriess"),
+      fetch("<%= url_pathname %>all_products"),
+      fetch("<%= url_pathname %>all_brands")
+
+    ]);
+    
+    const [categoriesData, cartProductsData,brandsData] = await Promise.all([
+      categoriesRes.json(),
+      cartProductsRes.json(),
+      brandsRes.json()
+    ]);
+
+    allCategories = [...categoriesData];
+    allBrands=[...brandsData.data]
+    sortedProducts=[...cartProductsData.data];
+    allProducts=[...cartProductsData.data];        
+    products_all_categories.innerHTML="";
+    products_all_brands.innerHTML="";
+    const defaultoption=document.createElement("option");
+    const defaultBrandoption=document.createElement("option");
+
+    defaultoption.text="All Categories";
+    defaultoption.value="all";
+    products_all_categories.appendChild(defaultoption);
+
+    defaultBrandoption.text="All Brands";
+    defaultBrandoption.value="all";
+    products_all_brands.appendChild(defaultBrandoption)
+
+    allCategories.forEach((e)=>{      
+      const option=document.createElement("option");
+      option.text=e.category_name;
+      option.value=e.id;
+      if(catId){
+      if (option.value === catId) {
+    option.selected = true; 
+    category_id=catId
+      }
+      }
+      products_all_categories.appendChild(option)
+    })
+
+    allBrands.forEach((e)=>{      
+      const option=document.createElement("option");
+      option.text=e.brand_name;
+      option.value=e.id;
+      if(brandId){
+      if (option.value === brandId) {
+    option.selected = true; 
+    brand_id=brandId
+      }
+      }
+      products_all_brands.appendChild(option)
+    })
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+});
+
+
+products_all_categories.addEventListener("change",(e)=>{
+  searchedProduct.value="" ;
+  const seledtedCategoryId=e.target.value;
+  if(seledtedCategoryId === "all"){
+    category_id=null;
+
+    if(brand_id){
+      renderDynamiicBrandProducts(brand_id)
+    }
+    else{
+    renderAllProducts()
+    }    
+  }
+  else{
+    category_id=e.target.value;    
+    if(brand_id){
+      renderBrandCategoryProducts(brand_id,category_id)
+    }
+    else{
+    renderDynamiicProducts(seledtedCategoryId)
+  }  }
+})
+
+products_all_brands.addEventListener("change",(e)=>{
+
+  searchedProduct.value=""
+  const seledtedBrandId=e.target.value;  
+  if(seledtedBrandId === "all"){
+    brand_id=null;
+    if(category_id){
+      renderDynamiicProducts(category_id)
+    }
+    else{
+      renderAllProducts()    
+
+    }
+  }
+  else{
+    brand_id=e.target.value;
+    
+    if(category_id){
+      renderBrandCategoryProducts(brand_id,category_id)
+    }
+    else{
+    renderDynamiicBrandProducts(seledtedBrandId)
+  }
+}
+})
+async function renderAllProducts(){
+  const res=await fetch("<%= url_pathname %>all_products");
+  const data=await res.json();
+  
+const filteredScreen = document.getElementById("filtered-web-products");
+filteredScreen.innerHTML = ""; 
+
+const row = document.createElement("div");
+row.className = "row"; 
+
+data.data.forEach((e) => {
+  
+  const healthBenefitsHTML = e.health_benefits
+    ? `<div class="fw-normal">
+         <span style="color: black;">Health Benefits:</span>
+         <ul>
+           ${e.health_benefits.split('|').map(benefit => `<li style="font-weight: 400;color: #656060;">${benefit}</li>`).join('')}
+         </ul>
+       </div>`
+    : "";
+
+  const isInStock = e.in_stock_status;
+  const discount = e.mrp - e.discount_price;
+
+  const col = document.createElement("div");
+   const colData=createWebProductCard(e,discount,isInStock,healthBenefitsHTML)
+  row.appendChild(colData);
+});
+
+const filteredMobileScreen = document.getElementById("filtered-mobile-products");
+filteredMobileScreen.innerHTML = "";
+const rowMobile = document.createElement("div");
+rowMobile.className = "row";  
+data.data.forEach((e) => {    
+  const healthBenefitsHTML = e.health_benefits
+    ? `<div class="fw-normal">
+         <span style="color: black;">Health Benefits:</span>
+         <ul>
+           ${e.health_benefits.split('|').map(benefit => `<li style="font-weight: 400;color: #656060;">${benefit}</li>`).join('')}
+         </ul>
+       </div>`
+    : "";
+
+  const isInStock = e.in_stock_status;
+  const discount = e.mrp - e.discount_price;
+
+  const col = document.createElement("div");
+  const colData=createProductCard(e,isInStock,discount)
+
+rowMobile.appendChild(colData);
+});
+filteredScreen.appendChild(row);
+
+
+filteredMobileScreen.appendChild(rowMobile);
+callTimeoutFunctioN()
+
+}
+
+async function renderDynamiicProducts(id){
+const res=await fetch(`<%= url_pathname %>products_by_category/${id}`);
+const data=await res.json();
+const filteredProducts=data.data;
+renderFilteredProducts(filteredProducts)
+}
+
+async function renderBrandCategoryProducts(brand_id,category_id){
+  
+const res=await fetch(`<%= url_pathname %>filterby_brands_and_category`,{
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json"
+  },
+  body:JSON.stringify({brand_id,category_id})
+});
+const data=await res.json();
+
+const filteredProducts=data.data;
+renderFilteredProducts(filteredProducts)
+}
+
+async function renderDynamiicBrandProducts(id){  
+const res=await fetch(`<%= url_pathname %>products_by_brand/${id}`);
+const data=await res.json();
+const filteredProducts=data.data;
+renderFilteredProducts(filteredProducts)
+}
+
+function renderFilteredProducts(filteredProducts ){
+  const filteredScreen = document.getElementById("filtered-web-products");
+filteredScreen.innerHTML = ""; 
+
+const row = document.createElement("div");
+row.className = "row"; 
+
+filteredProducts.forEach((e) => {
+  
+  const healthBenefitsHTML = e.health_benefits
+    ? `<div class="fw-normal">
+         <span style="color: black;">Health Benefits:</span>
+         <ul>
+           ${e.health_benefits.split('|').map(benefit => `<li style="font-weight: 400;color: #656060;">${benefit}</li>`).join('')}
+         </ul>
+       </div>`
+    : "";
+
+  const isInStock = e.in_stock_status;
+  const discount = e.mrp - e.discount_price;
+
+  const col = document.createElement("div");
+  
+  const colData=createWebProductCard(e,discount,isInStock,healthBenefitsHTML)
+  row.appendChild(colData);
+});
+
+
+
+filteredScreen.appendChild(row);
+const filteredMobileScreen = document.getElementById("filtered-mobile-products");
+filteredMobileScreen.innerHTML = "";
+const rowMobile = document.createElement("div");
+rowMobile.className = "row";  
+filteredProducts.forEach((e) => {
+    
+  const healthBenefitsHTML = e.health_benefits
+    ? `<div class="fw-normal">
+         <span style="color: black;">Health Benefits:</span>
+         <ul>
+           ${e.health_benefits.split('|').map(benefit => `<li style="font-weight: 400;color: #656060;">${benefit}</li>`).join('')}
+         </ul>
+       </div>`
+    : "";
+
+  const isInStock = e.in_stock_status;
+  const discount = e.mrp - e.discount_price;
+
+  const col = document.createElement("div");
+  const colData=createProductCard(e,isInStock,discount)
+
+rowMobile.appendChild(colData);
+  filteredMobileScreen.appendChild(rowMobile);
+
+});
+callTimeoutFunctioN()
+}
+const filtered_web_product=document.getElementById("filtered-web-products");
+const filtered_mobile_product=document.getElementById("filtered-mobile-products")
+const cat_id=window.location.pathname;
+
+searchedProduct.addEventListener("input", (e) => {
+  const query = searchedProduct.value.toLowerCase().trim();
+  let matched=[];
+  
+  
+  if(category_id && !brand_id){
+   matched = allProducts.filter((cat) =>{
+    return category_id?cat.product_name.toLowerCase().includes(query) && cat.category_id==category_id:cat.product_name.toLowerCase().includes(query)
+  }
+  );
+  }
+
+  else if(brand_id && !category_id){
+     matched = allProducts.filter((brand) =>{
+    return brand_id?brand.product_name.toLowerCase().includes(query) && brand.brand_id==brand_id:brand.product_name.toLowerCase().includes(query)
+  }
+  );
+  }
+
+  else if(brand_id && category_id){    
+     matched = allProducts.filter((data) =>{      
+    return (brand_id && category_id)?data.product_name.toLowerCase().includes(query) && (data.brand_id==brand_id && data.category_id==category_id):brand.product_name.toLowerCase().includes(query)
+  }
+
+  );
+  }
+
+  else  {    
+    matched=allProducts.filter((data) =>{  
+    return data.product_name.toLowerCase().includes(query)
+  })
+  }
+    
+  filtered_web_product.innerHTML="";
+  filtered_mobile_product.innerHTML=""
+const row = document.createElement("div");
+row.className = "row"; 
+
+matched.forEach((e) => {
+  
+  const healthBenefitsHTML = e.health_benefits
+    ? `<div class="fw-normal">
+         <span style="color: black;">Health Benefits:</span>
+         <ul>
+           ${e.health_benefits.split('|').map(benefit => `<li style="font-weight: 400;color: #656060;">${benefit}</li>`).join('')}
+         </ul>
+       </div>`
+    : "";
+
+  const isInStock = e.in_stock_status;
+  const discount = e.mrp - e.discount_price;
+
+  const col = document.createElement("div");
+  const colData=createWebProductCard(e,discount,isInStock,healthBenefitsHTML)
+  row.appendChild(colData);
+});
+filtered_web_product.appendChild(row);
+const rowMobile = document.createElement("div");
+rowMobile.className = "row"; 
+matched.forEach((e) => {    
+  const healthBenefitsHTML = e.health_benefits
+    ? `<div class="fw-normal">
+         <span style="color: black;">Health Benefits:</span>
+         <ul>
+           ${e.health_benefits.split('|').map(benefit => `<li style="font-weight: 400;color: #656060;">${benefit}</li>`).join('')}
+         </ul>
+       </div>`
+    : "";
+
+  const isInStock = e.in_stock_status;
+  const discount = e.mrp - e.discount_price;
+       
+  const col = document.createElement("div");
+  const colData=createProductCard(e,isInStock,discount)
+
+  rowMobile.appendChild(colData);
+});
+filtered_mobile_product.appendChild(rowMobile)
+callTimeoutFunctioN()
+})
+
+
+function createProductCard(e,isInStock,discount) {
+  const col = document.createElement("div");
+  col.className = "col-sm-6 col-md-6 col-lg-3";
+
+  col.innerHTML = `
+     <div class="box product-items mobile-prods" image-product-name="${e.id}">
+    <div class="eye_icon" onclick="toggleProductDetail(this, '${e.id}', event)">
+      <p><i class="fa-solid fa-eye"></i></p>
+    </div>
+    
+    <div class="img-box img-boxs" style="width: 60%; padding: 0 10px; height: 150px;">
+      <div class="image-container">
+        <img src="${e.product_image}" alt="${e.product_name}" loading="lazy">
+      </div>
+    </div>
+
+    <div class="detail-box" style="width: 40%;">
+      <h6>${e.product_name}</h6>
+      <p style="font-size: small;">${e.label_name}</p>
+      <h6>
+        <span style="position: absolute; top: 0px; left: 0; padding: 5px; background-color: #3e62e1; color: white;">
+          ₹${discount} off
+        </span>
+        <del>₹${e.mrp}</del>
+        <span class="product-price-text">₹${e.discount_price}</span>
+      </h6>
+
+      ${isInStock ? `
+        <div class="button-area pt-0">
+          <div class="row g-1 mt-2">
+            <div class="d-none" style="align-items: center;">
+              <button type="button" class="no-styles sub" onclick="changeQuantity('${e.id}', -1)">
+                <span style="width: 7px;">-</span>
+              </button>
+              <input type="number" name="quantity"
+                class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                value="1" min="1" max="${e.in_stock}" 
+                data-stock="${e.in_stock}" data-product-id="${e.id}"
+                inputmode="numeric" 
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+              <button type="button" class="no-styles add" onclick="changeQuantity('${e.id}', 1)">
+                <span style="width: 7px;">+</span>
+              </button>
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12" style="display: flex; align-items: center;">
+              <button data-product-id="${e.id}"
+                class="button-box btn-cart"
+                data-typeattribute="${e.type}"
+                style="width: 100%;">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>` : `
+        <div class="button-area pt-0">
+          <div class="row g-1 mt-2">
+            <div class="col-12">
+              <button class="button-box" style="opacity: 0.6; width: 100%; background-color: red !important; color: black !important; font-weight: bolder !important;">
+                Out Of Stock
+              </button>
+            </div>
+          </div>
+        </div>
+      `}
+    </div>
+
+    <div class="overlay" style="display: none;"></div>
+    
+    <div class="product-container" style="display: none; text-align: center;">
+      <div class="product-card row">
+        <p class="close-note close-btn"
+           style="position: absolute; top: 15px !important; right: 15px !important; font-weight: lighter; cursor: pointer; border-radius: 50%; height: 0rem; width: 0rem; display: flex; justify-content: center; align-items: center;"
+           onclick="closeProductDetail(this, event)">
+           &#10006;
+        </p>
+
+        <div class="product-image col-lg-6 md-12 sm-12" style="height: 250px;">
+          <img src="${e.product_image_three}" alt="${e.name}" style="width: 100%; height: 100%; border-radius: 8px;" loading="lazy">
+        </div>
+
+        <div class="product-content col-lg-6 md-12 sm-12" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+          <h2 class="product-name" style="font-size: 1.5rem; margin-bottom: 8px;">${e.product_name}</h2>
+          <p class="product-description" style="margin-bottom: 8px; color: black;">${e.product_description}</p>
+
+          ${e.health_benefits ? `
+            <div class="fw-normal">
+              <span style="color: black;">Health Benefits:</span>
+              <ul>
+                ${e.health_benefits.split('|').map(benefit => `<li style="font-weight: 400; color: #656060;">${benefit}</li>`).join('')}
+              </ul>
+            </div>` : ''}
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+
+  return col;
+}
+
+
+function createWebProductCard(e,discount,isInStock,healthBenefitsHTML){
+  const image_two=e.product_image_two?`<img src="${e.product_image_two}" alt="${e.product_name}" class="image_two" loading="lazy">`:`<img src="${e.product_image}" alt="${e.product_name}" class="image_two" loading="lazy">`;
+  const image_three=e.product_image_three?`<img src="${e.product_image_three}" alt="${e.product_name}" style="width: 100%; height: 100%; border-radius: 8px;" loading="lazy"/>`:`<img src="${e.product_image}" alt="${e.product_name}" style="width: 100%; height: 100%; border-radius: 8px;" loading="lazy"/>`
+  const col=document.createElement("div")
+  col.className = "col-sm-6 col-md-6 col-lg-3";
+  
+  col.innerHTML = `
+    <div class="box product-items" style="cursor: pointer;" image-product-name="${e.id}" >
+      <div class="eye_icon" onclick="toggleProductDetail(this, '${e.id}', event)">
+        <p><i class="fa-solid fa-eye"></i></p>
+      </div>
+      <div class="img-box">
+        <div class="image-container">
+          <img src="${e.product_image}" alt="${e.product_name}" class="image_one" loading="lazy">
+          ${image_two}
+          </div>
+      </div>
+      <div class="detail-box detail-boxs">
+        <h6 style="width: 100%;overflow-wrap: anywhere;text-align: center; overflow: hidden;
+          text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical; transition: max-height 0.5s ease-in-out;">
+          ${e.product_name}
+        </h6>
+      </div>
+      <div style="display: flex;justify-content: space-around;align-items: center;">
+        <span>${e.label_name}</span>
+        <h6 style="text-align: center;margin: 0;padding: 0;">
+          <span style="position: absolute;top: 5px;left: 5px;padding: 5px;background-color: #3e62e1;color: white;transform: skewX(-10deg); display: inline-block;border-radius: 5px;">₹${discount} off</span>
+          <del>₹${e.mrp}</del>
+          <span class="product-price-text" style="font-weight: bold !important;color: #db4f66;">₹${e.discount_price}</span>
+        </h6>
+      </div>
+
+      <div class="button-area pt-0">
+        <div class="row g-1 mt-2">
+          ${isInStock
+            ? `
+            <div class="d-none" style="align-items: center;">
+              <button type="button" class="no-styles sub" onclick="changeQuantity('${e.id}', -1)">
+                <span style="width: 7px;">-</span>
+              </button>
+              <input 
+                type="number" name="quantity" 
+                class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                value="1" min="1" max="${e.in_stock}" 
+                data-stock="${e.in_stock}" data-product-id="${e.id}" 
+                inputmode="numeric" 
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+              >
+              <button type="button" class="no-styles add" onclick="changeQuantity('${e.id}', 1)">
+                <span style="width: 7px;">+</span>
+              </button>
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12" style="display: flex; align-items: center;">
+              <button 
+                data-product-id="${e.id}"
+                class="button-box btn-cart"
+                data-typeattribute="${e.type}"
+                style="width: 100%;">
+                Add to Cart
+              </button>
+
+            </div>`
+            : `
+            <div class="col-12">
+              <button class="button-box" style="opacity: 0.6;width: 100%;background-color: red !important;">
+                Out Of Stock
+              </button>
+            </div>`}
+        </div>
+      </div>
+
+      <div class="overlay" style="display: none;"></div>
+      <div class="product-container" style="display: none; text-align: center;">
+        <div class="product-card row">
+          <p 
+            class="close-note close-btn" 
+            style="position: absolute; top: 15px !important; right: 15px !important; font-weight: lighter; cursor: pointer; border-radius: 50%; height: 0rem; width: 0rem; display: flex; justify-content: center; align-items: center;"
+            onclick="closeProductDetail(this,event)"
+          >&#10006;</p>
+          <div class="product-image col-lg-6 md-12 sm-12" style="height: 250px;">
+          ${image_three}
+          </div>
+          <div class="product-content col-lg-6 md-12 sm-12" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+            <h2 class="product-name" style="font-size: 1.5rem; margin-bottom: 8px;">
+              ${e.product_name}
+            </h2>
+            <p class="product-description" style="margin-bottom: 8px; color: black;">
+              ${e.product_description}
+            </p>
+            ${healthBenefitsHTML}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  return col;
+}
+
+
+function callTimeoutFunctioN(){
+  setTimeout(() => {
+
+  
+document.querySelectorAll(".btn-cart").forEach((button) => {
+  button.addEventListener("click", (event) => {
+  event.stopPropagation(); 
+
+  const productId = button.getAttribute('data-product-id');
+  const quantityInput = document.querySelector(".cartquantity");
+  
+  const enteredQuantity = parseInt(quantityInput.value) || 1;
+  const attribute_data = button.getAttribute("data-typeattribute");
+  const url = attribute_data === "PIECES" ? `<%= url_pathname %>pieces_products/${productId}` : `<%= url_pathname %>units_products/${productId}`
+  fetch(`${url}`)
+    .then((res) => res.json())
+    .then((data) => {
+
+      const existingProduct = carts.find((item) => item.productId === productId);
+
+      let totalQuantity = enteredQuantity;
+
+      if (existingProduct) {
+        totalQuantity += existingProduct.quantity;
+      }
+      let productName;
+      productName = data[0].product_name;
+      const productPrice = parseFloat(
+        document.querySelector(".product-price-text").innerText.replace("₹", "")
+      );
+
+      const baseUrl = window.location.origin;
+      const imageUrl = data[0].product_image.startsWith('http')
+        ? data[0].product_image
+        : `${baseUrl}/${data[0].product_image}`;
+      if (attribute_data === "PIECES") {
+        let allPiecesData = [];
+        let selectedLabelName;
+        let categories;
+        async function fetchCategoriesAndRender() {
+          try {
+            const res = await fetch(`<%= url_pathname %>get_products/${productId}`);
+            if (!res.ok) {
+              throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+            categories = await res.json();
+            categories = categories.data;
+            const uniqueByLabel = categories.reduce((acc, current) => {
+                  if (!acc.find(item => item.label_name === current.label_name)) {
+                    acc.push(current);
+                  }
+                  return acc;
+              }, []);
+            const categoriesContainer = document.getElementById("modal-categoriess");
+            categoriesContainer.innerHTML = "";
+            const unitsPrices = document.getElementById("modal-total-prices");
+
+            if (categories.length > 0) {
+              unitsPrices.innerText = `₹${categories[0].discount_price}`;
+            }
+
+            allPiecesData = [...categories];
+                uniqueByLabel.forEach((category, index) => {
+                  const categoryDiv = document.createElement("div");
+                  categoryDiv.className = "categorys-item";
+                  categoryDiv.textContent = category.label_name;
+                  if (index === 0) {
+                    categoryDiv.classList.add("selected");
+                    selectedLabelName = category.label_name;
+                    filteredFlavours()
+                  }
+                  categoryDiv.addEventListener("click", () => {
+                    document.querySelectorAll(".categorys-item").forEach((item) => {
+                      item.classList.remove("selected");
+                    });
+                    categoryDiv.classList.add("selected");
+                    selectedLabelName = category.label_name
+                    unitsPrices.innerText = `₹${category.discount_price}`;
+                    filteredFlavours()
+                  });
+                  categoriesContainer.appendChild(categoryDiv);
+                });
+
+
+                function filteredFlavours() {
+                  const modailInnerContents = document.getElementById("flavour-categoriess");
+                  modailInnerContents.innerHTML = "";
+                  no_flavour_batchId = "";
+                  const filteredFlavour = allPiecesData.filter((e) => {
+                    return e.label_name === selectedLabelName
+                  });
+
+                  modailInnerContents.classList.add("flavour-categories-div")
+
+                  if (filteredFlavour.length === 1) {
+                    selectedLabelName = filteredFlavour[0].label_name;
+                    unitsPrices.innerText = `₹${filteredFlavour[0].discount_price}`;
+                    no_flavour_batchId = filteredFlavour[0].id;
+                  }
+                  else {
+                    filteredFlavour.forEach((e, index) => {
+                      const filterDiv = document.createElement("div");
+                      filterDiv.classList.add("filtered-item")
+                      filterDiv.innerText = e.flavour_name;
+                      if (index === 0) {
+                        filterDiv.classList.add("selected");
+                        filterDiv.setAttribute("flavour", e.flavour_id)
+                      }
+
+                      filterDiv.addEventListener("click", () => {
+                        document.querySelectorAll(".filtered-item").forEach((item) => {
+                          item.classList.remove("selected");
+                        });
+                        filterDiv.classList.add("selected");
+                        filterDiv.setAttribute("flavour", e.flavour_id)
+                        selectedLabelName = e.label_name
+                        unitsPrices.innerText = `₹${e.discount_price}`;
+                      });
+                      if (e.flavour_name) {
+                        modailInnerContents.append(filterDiv)
+                      }
+                    })
+                  }
+                }
+
+          } catch (error) {
+            console.error("Error fetching categories:", error);
+          }
+        }
+        fetchCategoriesAndRender();
+
+        document.getElementById("modal-product-names").innerText = `${productName}`;
+        document.getElementById("modal-images").src = `${imageUrl}`;
+        cartModals.classList.remove("hidden");
+
+        document.getElementById("view-cart-btns").onclick = () => {
+          const selectedCategory = document.querySelector(".categorys-item.selected");
+          const selectedCategoryData = categories.find(
+            (cat) => cat.label_name === selectedCategory.textContent
+          );
+
+          const batch_id = selectedCategoryData.id;
+
+          let totalAdded = carts
+            .filter((item) => item.batchId === batch_id)
+            .reduce((acc, item) => acc + item.quantity * item.unitData.batch_quantity, 0);
+          totalAdded = parseFloat(totalAdded.toFixed(2))
+
+          let batch_quan = parseFloat(selectedCategoryData.batch_quantity);
+          fetch(`<%= url_pathname %>pieces_instock/${batch_id}`)
+            .then((res) => {
+              return res.json()
+            })
+            .then((data) => {
+              let valuesss = parseFloat(data.data.in_stock)
+
+              if ((totalAdded + batch_quan) > valuesss) {
+                showPopup(
+                  `Product exceeds the max limit`,
+                  "Cannot add more",
+                  "failure"
+                );
+                return;
+              }
+
+              const product = {
+                productName,
+                productId,
+                quantity: 1,
+                imageUrl,
+                unitData: selectedCategoryData,
+                batchId: batch_id,
+                type: attribute_data
+              };
+              const existingBatch = carts.find((item) => {
+
+                return item.productId === productId && item.unitData.label_name !== selectedCategoryData.label_name && item.batchId === batch_id
+              }
+              );
+              const existingProduct = carts.find((item) => {
+
+                return item.productId === productId && item.unitData.id === batch_id
+              });
+
+              if (existingProduct) {
+                existingProduct.quantity += 1;
+                existingProduct.unitData.label_name = selectedCategoryData.label_name;
+                existingProduct.unitData.batch_quantity = selectedCategoryData.batch_quantity;
+                existingProduct.unitData.discount_price = selectedCategoryData.discount_price;
+                existingProduct.unitData.mrp = selectedCategoryData.mrp;
+                existingProduct.productMrp = selectedCategoryData.mrp;
+                existingProduct.productPrice = selectedCategoryData.discount_price;
+
+              } else {
+                carts.push(product);
+              }
+
+              localStorage.setItem("carts", encryptData(carts));
+              updateCartCount();
+
+              cartModals.classList.add("hidden");
+              window.location.href = "/cart";
+
+            })
+            .catch((e) => {
+              console.log(e);
+
+            })
+        };
+      }
+      else {
+        const inStock = data[0]?.in_stock || 0;
+        let categories;
+
+
+        async function fetchCategoriesAndRender() {
+          try {
+
+            const res = await fetch(`<%= url_pathname %>get_products/${productId}`);
+            if (!res.ok) {
+              throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+            categories = await res.json();
+            categories = categories.data;
+
+            const categoriesContainer = document.getElementById("modal-categoriess");
+            categoriesContainer.innerHTML = "";
+            const unitsPrices = document.getElementById("modal-total-prices");
+
+            if (categories.length > 0) {
+              unitsPrices.innerText = `₹${categories[0].discount_price}`;
+            }
+
+            categories.forEach((category, index) => {
+              const categoryDiv = document.createElement("div");
+              categoryDiv.className = "categorys-item";
+              categoryDiv.textContent = category.label_name;
+
+              if (index === 0) {
+                categoryDiv.classList.add("selected");
+              }
+
+              categoryDiv.addEventListener("click", () => {
+                document.querySelectorAll(".categorys-item").forEach((item) => {
+                  item.classList.remove("selected");
+                });
+
+                categoryDiv.classList.add("selected");
+                unitsPrices.innerText = `₹${category.discount_price}`;
+              });
+
+              categoriesContainer.appendChild(categoryDiv);
+            });
+
+          } catch (error) {
+            console.error("Error fetching categories:", error);
+          }
+        }
+
+        fetchCategoriesAndRender();
+
+        document.getElementById("modal-product-names").innerText = `${productName}`;
+        document.getElementById("modal-images").src = `${imageUrl}`;
+        cartModals.classList.remove("hidden");
+
+        document.getElementById("view-cart-btns").onclick = () => {
+          const selectedCategory = document.querySelector(".categorys-item.selected");
+          const selectedCategoryData = categories.find(
+            (cat) => cat.label_name === selectedCategory.textContent
+          );
+          const batch_id = selectedCategoryData.id;
+
+          let totalAdded = carts
+            .filter((item) => item.productId === productId)
+            .reduce((acc, item) => acc + item.quantity * item.unitData.batch_quantity, 0);
+          totalAdded = parseFloat(totalAdded.toFixed(2))
+
+          let batch_quan = parseFloat(selectedCategoryData.batch_quantity);
+
+          let valuesss = parseFloat(data[0].in_stock)
+
+
+
+          if ((totalAdded + batch_quan) > valuesss) {
+            showPopup(
+              `Product exceeds the max limit`,
+              "Cannot add more",
+              "failure"
+            );
+            return;
+          }
+
+          const product = {
+            productName,
+            productId,
+            quantity: 1,
+            imageUrl,
+            unitData: selectedCategoryData,
+            batchId: batch_id,
+            type: attribute_data
+          };
+
+          const existingBatch = carts.find((item) => {
+
+            return item.productId === productId && item.unitData.label_name !== selectedCategoryData.label_name && item.batchId === batch_id
+          }
+          );
+
+          const existingProduct = carts.find((item) => {
+            return item.productId === productId && item.unitData.id === batch_id
+          });
+
+          if (existingProduct) {
+            existingProduct.quantity += 1;
+            existingProduct.unitData.label_name = selectedCategoryData.label_name;
+            existingProduct.unitData.batch_quantity = selectedCategoryData.batch_quantity;
+            existingProduct.unitData.discount_price = selectedCategoryData.discount_price;
+            existingProduct.unitData.mrp = selectedCategoryData.mrp;
+            existingProduct.productMrp = selectedCategoryData.mrp;
+            existingProduct.productPrice = selectedCategoryData.discount_price
+
+          } else {
+            carts.push(product);
+          }
+
+          localStorage.setItem("carts", encryptData(carts));
+          updateCartCount();
+
+
+          cartModals.classList.add("hidden");
+          window.location.href = "/cart";
+        };
+
+      }
+
+    })
+    .catch((error) => {
+      console.error("Error fetching product data:", error);
+      alert("Could not validate stock availability while adding. Please try again.");
+    });
+});
+});
+}, 0);
+
+setTimeout(()=>{
+document.querySelectorAll("[image-product-name]").forEach((img) => {
+img.addEventListener("click", (event) => {
+let productName = img.getAttribute("image-product-name");
+if (productName) {
+  const seoProductName = productName.replaceAll(" ", "-");
+  event.preventDefault();
+  window.location.href = `prods/${seoProductName}`;
+} else {
+  console.error("Product name is missing for this image.");
+}
+});
+});
+function closeProductDetail(closeButton, event) {
+if (event) event.stopPropagation();
+
+const productItem = closeButton.closest('.product-items'); // find the parent product item
+const productContainer = productItem.querySelector('.product-container');
+const overlay = productItem.querySelector('.overlay');
+
+productContainer.style.display = 'none';
+overlay.style.display = 'none';
+}
+
+document.querySelectorAll('.overlay').forEach((overlay) => {
+overlay.addEventListener('click', function (event) {
+event.stopPropagation(); // prevent bubbling to .product-items
+const productItem = this.closest('.product-items');
+const productContainer = productItem.querySelector('.product-container');
+this.style.display = 'none';
+productContainer.style.display = 'none';
+});
+});
+},100)
+}
+  </script>
+
+</body>
+
+</html>

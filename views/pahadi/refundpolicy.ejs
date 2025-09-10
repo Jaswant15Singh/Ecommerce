@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" style="
+-ms-overflow-style: none;
+ scrollbar-width: none; 
+ ">
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width'>
+    <link rel="icon" href="/images/LOGOG.png" type="image/png">
+
+    <title><%= title %></title>
+    <meta name="robots" content="noindex, follow">
+
+    <style>
+        .privacy-policy {
+            padding: 1rem;
+            margin-top: 107px;
+            margin-bottom: 50px;
+        }
+
+        @media (min-width:768px) and (max-width:991px) {
+            .privacy-policy {
+                margin-top: 225px !important;
+                margin-bottom: 50px !important;
+            }
+        }
+
+        @media (max-width:767px) {
+            .privacy-policy {
+                margin-top: 68px !important;
+                margin-bottom: 40px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("header.ejs") %>
+        <div class="privacy-policy">
+            <h2>Refund Policy</h2>
+            <p> At <strong>Pahadi Rasyan</strong>, we take pride in delivering 100% organic and chemical-free agricultural produce sourced directly from the farmers of Uttarakhand. Our priority is to ensure customer satisfaction with every order
+            </p>
+            <p><strong>Eligibility for Refunds</strong></p>
+            <p>We offer refunds under the following conditions:
+            </p>
+            <ul>
+                <li><strong>Damaged or Defective Products </strong>– If the product received is damaged, spoiled, or defective.e</li>
+                <li><strong>Incorrect Product Received</strong> – If you receive a different product than what was ordered.</li>
+                <li><strong>Expired Product </strong>– If the product delivered is past its expiration date.</li>
+            </ul>
+            
+            <p><strong>Refund Process</strong></p>
+            <ul>
+                <li>To request a refund, customers must notify us within <strong>48 hours of receiving the product</strong>.</li>
+                <li>Email us at pahadi.rasyan@gmai.com or Whats App us at <strong>+91-7977782638</strong> with: 
+                   <ul>
+                    <li>Order number</li>
+                    <li>Clear images of the product showing the issue</li>
+                    <li>A brief explanation of the problem</li>
+                   </ul>
+                    </li>
+                <li>Once verified, we will initiate a refund or replacement within <strong>7 business day</strong>s</li>
+            </ul>
+<p><strong>Non-Refundable Items</strong></p>
+<ul>
+    <li>Products that have been <strong>opened or used</strong> (unless damaged upon arrival).</li>
+    <li>Orders placed by mistake or due to a change of mind.</li>
+    <li>Items that do not meet our refund eligibility criteria.</li>
+</ul>
+
+<p>We reserve the right to approve or reject refund claims at our discretion.</p>
+<p>For any queries, contact us at <span>
+    <a href="mailto:pahadi.rasyan@gmail.com" style="color: black; cursor: pointer;">pahadi.rasyan@gmail.com</a>
+</span> or Call us at:                                     <span><a style="color: black;text-decoration: none;" href="tel:+91 7977782638">7977782638</a></span>
+</p>
+           
+        <%- include("./addToCart.ejs") %>
+</body>
+
+</html>

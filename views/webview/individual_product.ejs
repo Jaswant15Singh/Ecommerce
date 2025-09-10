@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+	<link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <title>
+    <%= product.product_name %>
+  </title>
+
+  <meta property="og:price:currency" content="INR">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <meta name="author" content="CableGuy CATV" />
+  <meta property="og:site_name" content="CableGuy CATV">
+  <link rel="canonical" href="<%= (url_pathname) %>prods/<%- product.product_name %>">
+  <meta property="og:title" content="<%- product.product_name %>" />
+  <meta property="og:description" content="<%- product.product_description %>">
+  <meta property="og:type" content="product">
+  <meta property="og:url" content="<%= (url_pathname) %>prods/<%- product.product_name %>">
+  <meta property="og:image" content="<%= (url_pathname) %><%= product.product_image %>">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:image:width" content="600">
+  <meta property="og:image:height" content="800">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%- product.product_name %>">
+  <meta name="twitter:description" content="<%- product.product_description %>">
+  <meta name="twitter:image" content="<%= (url_pathname) %><%= product.product_image %>">
+  <link rel="alternate" hreflang="en" href="<%= (url_pathname) %>prods/<%- product.product_name %>">
+ 
+
+  <link rel="stylesheet" type="text/css" href="../stylesheets/anh//bootstrap.css" />
+  <link href="../stylesheets/anh/style.css" rel="stylesheet" />
+  <link href="../stylesheets/anh/responsive.css" rel="stylesheet" />
+  
+  <style>
+    * {
+	box-sizing: border-box;
+}
+
+body {
+	min-height: 100svh;
+	display: grid;
+	place-content: center;
+	background: black;
+	font-family: system-ui;
+	margin: 0;
+}
+.gallery {
+	--gallery-bg-color: rgba(255 255 255 / 0.075);
+	--gallery-border-color: rgba(255 255 255 / 0.25);
+	--gallery-padding: 0.5rem;
+	--gallery-width: 240px;
+	--gallery-height: 400px;
+	--gallery-perspective: 800px;
+	--gallery-divider-height: 4px;
+  display: flex;
+  justify-content: center;
+
+	position: relative;
+	background-color: var(--gallery-bg-color);
+	border: 1px solid var(--gallery-border-color);
+	padding: var(--gallery-padding);
+}
+/* @media (600px < width) { */
+	.gallery {
+		--gallery-width: 300px;
+		--gallery-height: 300px;
+	}
+/* } */
+
+.flip-gallery {
+	position: relative;
+	width: var(--gallery-width);
+	height: var(--gallery-height);
+	text-align: center;
+	perspective: var(--gallery-perspective);
+}
+
+/* image title/author with transition */
+.flip-gallery::before {
+	content: attr(data-title);
+	color: rgba(255 255 255 / 0.75);
+	font-size: 0.75rem;
+	left: calc(var(--gallery-padding) * -1);
+	position: absolute;
+	top: calc(100% + calc(var(--gallery-padding) * 2));
+	line-height: 2;
+	opacity: var(--title-opacity, 0);
+	translate: 0 var(--title-y, 0);
+	transition: opacity 500ms ease-in-out, translate 500ms ease-in-out;
+}
+/* divider line half way down */
+.flip-gallery::after {
+	content: "";
+	position: absolute;
+	background-color: black;
+	width: 100%;
+	height: var(--gallery-divider-height);
+	top: 50%;
+	left: 0;
+	translate: 0 -50%;
+}
+/* image placed in separate elements for flip effect */
+.flip-gallery > * {
+	position: absolute;
+	width: 100%;
+	height: 50%;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-size: var(--gallery-width) var(--gallery-height);
+}
+.top,
+.overlay-top {
+	top: 0;
+	transform-origin: bottom;
+	background-position: top;
+}
+.bottom,
+.overlay-bottom {
+	bottom: 0;
+	transform-origin: top;
+	background-position: bottom;
+}
+/* gallery controls */
+.gallery-nav {
+	position: absolute;
+	bottom: -2rem;
+	display: flex;
+	gap: 2rem;
+}
+.gallery-nav > button {
+	border: none;
+	outline: none;
+	padding: 0;
+	background: rgba(12 74 110 / 0);
+	color: white;
+	opacity: 0.75;
+	font-size: 1.5rem;
+	transition: scale 150ms ease-in-out, opacity 150ms ease-in-out;
+}
+
+.gallery-nav > button:focus-visible,
+.gallery-nav > button:hover {
+	scale: 1.5;
+	opacity: 1;
+}
+.modal {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  display: none;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 100000 !important;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+  overflow: hidden;
+}
+.modal.modal-show {
+  animation: fadeIn 0.1s ease-in-out forwards;
+}
+.modal.modal-hide {
+  animation: fadeOut 0.1s ease-in-out 0.1s forwards;
+}
+.modal-content {
+  position: relative !important;
+  background-color: #fff !important;
+  margin: 2rem !important;
+  padding: 2rem !important;
+  border-radius: 0.25rem !important;
+  width: 50% !important;
+  max-height: 75% !important;
+  overflow: auto !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+  scrollbar-width: none;
+  
+}
+.modal.modal-show .modal-content {
+  animation: fadeInDown 0.3s ease-in-out forwards;
+}
+.modal.modal-hide .modal-content {
+  animation: fadeOutUp 0.2s ease-in-out forwards;
+}
+.modal-content h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.modal-content p {
+  margin: 1rem 0;
+  line-height: 1.5rem;
+}
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.75rem;
+  font-weight: bold;
+  padding: 0 0.75rem;
+  color: rgba(0,0,0,0.2);
+  cursor: pointer;
+  user-select: none;
+  z-index: 100001 !important;
+}
+.modal-close:hover, .modal-close:focus {
+  color: rgba(0,0,0,0.5);
+}
+
+.modal:nth-of-type(2) {
+  justify-content: initial;
+  align-items: initial;
+  background-color: transparent;
+}
+.modal:nth-of-type(2) .modal-content {
+  margin: 0;
+  padding: 2rem 5rem;
+  border-radius: 0;
+  box-shadow: initial;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  text-align: justify;
+}
+.modal:nth-of-type(2) .modal-close {
+  font-size: 3rem;
+  padding: 0;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal:nth-of-type(2).modal-show {
+  animation: none;
+}
+.modal:nth-of-type(2).modal-hide {
+  animation: none;
+}
+.modal:nth-of-type(2).modal-show .modal-content {
+  animation: zoomIn 0.3s ease-in-out forwards; 
+}
+.modal:nth-of-type(2).modal-hide .modal-content {
+  animation: zoomOut 0.2s ease-in-out forwards;
+}
+
+.modal:nth-of-type(3) {
+  justify-content: flex-end;
+  align-items: flex-end;
+  background-color: transparent;
+  overflow: hidden;
+}
+.modal:nth-of-type(3).modal-show {
+  animation: none;
+}
+.modal:nth-of-type(3).modal-hide {
+  animation: none;
+}
+.modal:nth-of-type(3).modal-show .modal-content {
+  animation: fadeInLeft 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+}
+.modal:nth-of-type(3).modal-hide .modal-content {
+  animation: fadeOutRight 0.2s ease-in-out forwards;
+}
+
+.modal:nth-of-type(4) .modal-content {
+  padding: 0;
+}
+.modal:nth-of-type(4) .modal-header, .modal:nth-of-type(4) .modal-footer  {
+  background-color: steelblue;
+  padding: 1rem;
+  color: #fff;
+  text-align: center;
+}
+.modal:nth-of-type(4) .modal-header h1 {
+  margin: 0;
+}
+.modal:nth-of-type(4) .modal-body {
+  padding: 1.25rem;
+}
+.modal:nth-of-type(4) .modal-close {
+  color: rgba(255,255,255,0.5);
+}
+.modal:nth-of-type(4) .modal-close:hover, .modal:nth-of-type(4) .modal-close:focus {
+  color: rgba(255,255,255,0.75);
+}
+
+.modal:nth-of-type(5) {
+  justify-content: center;
+  align-items: center;
+}
+.modal:nth-of-type(5) .modal-content {
+  padding: 0;
+  height: 80%;
+  max-height: 80%;
+  width: auto;
+  max-width: 80%;
+  overflow: visible;
+  border: 3px solid #fff;
+}
+.modal:nth-of-type(5) .modal-content img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  
+}
+.modal:nth-of-type(5) .modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 3rem;
+  height: 3rem;
+  font-size: 3rem;
+  top: -1.5rem;
+  right: -1.5rem;
+  border-radius: 50%;
+  color: #111;
+  background-color: #fff;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.2);
+}
+.modal:nth-of-type(5) .modal-close:hover, .modal:nth-of-type(5) .modal-close:focus {
+  color: #111; /* color: rgba(255,0,0,0.5); */
+}
+.modal:nth-of-type(5).modal-show .modal-content {
+  animation: zoomIn 0.3s ease-in-out forwards;
+}
+.modal:nth-of-type(5).modal-hide .modal-content {
+  animation: zoomOut 0.2s ease-in-out forwards;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-3rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); 
+  }
+}
+@keyframes fadeOutUp {
+  0% { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-3rem);
+  }
+}
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes zoomOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); 
+  }
+}
+@keyframes fadeOutRight {
+  0% { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+#mainImage{
+  width: 400px;height: 400px; max-height: 400px; object-fit: contain; cursor: pointer;
+}
+
+/* #mainImage:hover{
+  transform: scale(1.1);
+  transition: 0.3s ease-in-out;
+} */
+@media (min-width:768px) and (max-width:991px){
+  #mainImage{
+    width: 250px !important;
+  }
+}
+@media(max-width: 992px) {
+  html { font-size: 14px; }
+  .modal-content { width: 80%; }
+}
+@media(max-width:767px) {
+  html { font-size: 12px; }
+  .modal-content { padding: 2rem 1rem 1rem 1rem; width: 90%; }
+  .modal-content h1 { margin-bottom: 1.5rem; }
+  .modal:nth-of-type(2) .modal-content { padding: 2rem 3rem; }
+  .modal:nth-of-type(3) { justify-content: center; }
+  .modal:nth-of-type(3) .modal-content { width: 80%; }
+  .modal:nth-of-type(5) .modal-content { max-width: 85%; }
+}
+
+@media (max-width:475px){
+  #mainImage{
+    width: 250px !important;
+    height: 250px !important;
+  }
+}
+
+@media (max-width:600px){
+.btn-con{
+  justify-content: center !important;
+}
+}
+
+.review-container{
+  display: none;
+}
+.product-review {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  transition: max-height 0.5s ease-in-out;
+}
+
+.product-review:hover {
+  -webkit-line-clamp: unset; 
+  max-height: 100%; 
+}
+
+.card-review:hover{
+  background-color: rgb(226, 221, 221) !important;
+  transition: 0.3s ease-in-out;
+  cursor: pointer;
+}
+@media (max-width:767px){
+  .product-review:active{
+    -webkit-line-clamp: unset; 
+    max-height: 100%; 
+  }
+}
+
+.share-icons {
+      /* font-size: 1.5rem; */
+      margin: 0.5rem 0;
+    }
+
+    .share-icons img {
+      height: 1.7rem;
+      width: 1.7rem;
+    }
+    
+  </style>
+</head>
+
+<body>
+  <%- include("./header") %>
+ 
+  <!-- end hero area -->
+
+  <!-- shop section -->
+
+  <section class="shop_section layout_padding" style="padding-bottom: 2rem;">
+    <div class="container product-items">
+      <div class="heading_container heading_center">
+      
+      </div>
+      <div class="row">
+        <!-- Image Gallery -->
+        <div class="col-sm-12 col-md-6 col-lg-6 d-flex justify-content-center ">
+          <div class="thumbnail-container" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;scrollbar-width: none;">
+            <% if (product.product_image) { %>
+                
+                    <img class="thumbnail" src="<%= (url_pathname) %><%= product.product_image %>"
+                         onclick="changeImage(this)"
+                         style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; margin: 5px;display: block;">
+          
+            <% } %>
+            <% if (product.product_image_two) { %>
+                
+              <img class="thumbnail" src="<%= (url_pathname) %><%= product.product_image_two %>"
+                   onclick="changeImage(this)"
+                   style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; margin: 5px;display: block;margin-top: 1rem;">
+    
+      <% } %>
+      <% if (product.product_image_three) { %>
+                
+        <img class="thumbnail" src="<%= (url_pathname) %><%= product.product_image_three %>"
+             onclick="changeImage(this)"
+             style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; margin: 5px;display: block;margin-top: 1rem;">
+
+<% } %>
+        </div>
+            <div class="img-box">
+                <!-- Main Image -->
+                <img id="mainImage" src="<%= (url_pathname) %><%= product.product_image %>" 
+                     alt="<%= product.name %>" 
+                     >
+            </div>
+         
+        </div>
+    
+        <!-- Product Details -->
+        <div class="col-sm-12 col-md-6 col-lg-6">
+              <h3 style="margin-top: 10px;"><%= product.product_name %> 
+              <span> 
+                <a class="a2a_dd" href="https://www.addtoany.com/share" style="margin-left: 0.5rem;">
+                  <img src="/images/newshareicon.jpg" alt="Share" width="27" height="27" />
+                </a>
+              </span>
+            </h2>
+        
+            <h6 style="text-align: justify; font-weight: 300;margin: 1rem 0;">
+                <%= product.product_description %>
+                
+            </h6>
+            <div class="button-area pt-0">
+                
+              <div class="row g-1 mt-2">
+             
+                <div 
+                class="d-none" 
+                style="align-items: center;"
+              >
+              
+                  <button 
+                    type="button" 
+                    class="no-styles sub" 
+                   
+                    onclick="changeQuantity('<%= product.id %>', -1)"
+                  >
+                    <span style="width: 7px;">-</span>
+                  </button>
+                  <input 
+                    type="number" 
+                    name="quantity"
+                    class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                    value="1" 
+                    min="1"
+                    max="<%= product.in_stock %>" 
+                    data-stock="<%= product.in_stock %>" 
+                    data-product-id="<%= product.id %>" 
+                    inputmode="numeric" 
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                  >
+                  <button 
+                    type="button" 
+                    class="no-styles add" 
+                    onclick="changeQuantity('<%= product.id %>', 1)"
+                  >
+                    <span style="width: 7px;">+</span>
+                  </button>
+                </div>
+              
+                <div 
+                  class="col-lg-12 col-md-12 col-sm-12 btn-con" 
+                  style="display: flex; align-items: center;"
+                >
+                <a class="btn btn-success" id="wa_enquire_now" style="display: inline;margin: 0.5rem 0;padding: 10px 20px;width: 50%;" target="_blank" >Enquire Now <i class="fa-brands fa-whatsapp"></i></a>
+                  <button 
+                    data-product-id="<%= product.id %>"
+                    class="button-box btn-cart"
+                    data-typeattribute="<%= product.type %>"
+                    style="width: 50%;"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>   
+              <span class="badge badge-danger p-2" style="font-size: 0.9rem;margin-top:0.5rem;"><%= product.brand_name %></span>
+              <span class="badge badge-info p-2" style="font-size: 0.9rem;margin-top:0.5rem;"><%= product.category_name %></span>
+            </div>
+            <!-- <a  class="btn btn-success" style="display: inline;margin: 0.5rem 0;" href="https://api.whatsapp.com/send/?phone=9372698500&text=Hey! I wanted to enquire about <%= product.product_name %> from your store. Could you please share more details?&type=phone_number&app_absent=0"
+              target="_blank" >Enquire Now <i class="fa-brands fa-whatsapp"></i></a> -->
+              <!-- <a href="https://api.whatsapp.com/send/?phone=9372698500&text=Hey! I'm interested in <%= product.product_name %> from your store. Could you please share more details?&type=phone_number&app_absent=0"
+              target="_blank" class="btn btn-outline-light"> -->
+              <!-- <img src="/images/whatsapp.png" alt="whatsapp" loading="lazy" height="35px" width="35px"> -->
+            </a>
+         
+              <% if (Array.isArray(product.batch_details) && product.batch_details.length> 0) { %>
+                <% const item=product.batch_details[0]; %>
+
+                    <div class="pricing " style="margin: 1rem 0 1rem 0;">
+                      <label for="sizeSelector" class="form-label fw-bold">Select Size:</label>
+                      <select id="sizeSelector" class="styled-select" style="padding: 0.5rem;" onchange="handleSizeChange(this)">
+                        <% product.batch_details.forEach((item, index) => { %>
+                          <option 
+                            value="<%= index %>" 
+                            data-mrp="<%= item.mrp %>" 
+                            data-discount="<%= item.discount_price %>">
+                            <%= item.flavour ? item.flavour + '-' : '' %><%= item.label_name %> - ₹<%= item.discount_price %> (<%= item.mrp - item.discount_price %> OFF)
+                          </option>
+                        <% }); %>
+                      </select>
+                  </div>
+                  
+                  <div class="d-flex gap-2 prod-price mb-2">
+                    <div class="product-prices-div d-flex align-items-center">    
+                       
+                      <del style="font-size: small !important; margin-right: 0.5rem;" class="product-mrp-text"> <span>&#8377;</span><%= product.batch_details[0].mrp %></del>
+                      <span id="discountPrice" class="product-price-text" style="color: #db4566 !important;"><span>&#8377;</span><%= product.batch_details[0].discount_price %></span>
+             
+                    </div>
+                  </div>
+
+          <% } %>
+       <% if (product.health_benefits) { %>
+        <div class="fw-normal">
+            <span style="color: black;">Health Benefits:</span>
+            <ul>
+                <% product.health_benefits.split('|').forEach(benefit => { %>
+                    <li><%= benefit %></li>
+                <% }); %>
+            </ul>
+        </div>
+    <% } %>               
+    
+           
+     
+              </div>
+    </div>
+      <div class="btn-box">
+        <div style="text-align: center;margin-bottom: 2rem;">
+          <button class="button-box" style="margin: 1rem auto;" onclick="openModal()">Add
+              Review</button>
+        </div>
+        <div id="reviewModal" style="z-index: 10000;" class="modal-review">
+          <div class="modal-review-content">
+              <span class="close" onclick="closeModal()">&times;</span>
+      
+              <form id="productReview">
+                  <div class="star-rating">
+                      <span class="star" data-value="5">&#9733;</span>
+                      <span class="star" data-value="4">&#9733;</span>
+                      <span class="star" data-value="3">&#9733;</span>
+                      <span class="star" data-value="2">&#9733;</span>
+                      <span class="star" data-value="1">&#9733;</span>
+                  </div>
+                  <textarea style="width: 100%;padding-left: 8px;" type="text" name="review" id="reviewInput" placeholder="Enter <%= product.product_name %> review" cols="4" rows="4"
+                      required></textarea>
+                  <input type="hidden" id="ratingValue" name="rating" value="0">
+                  <button type="submit" class="button-box d-flex justify-content-center">Submit</button>
+              </form>
+          </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+<div class="modal" id="modal1">
+  <div class="modal-content" style="padding-left: 20 !important;">
+    <span class="modal-close">&times;</span>
+    <h1><%= product.product_name %></h1>
+    <div class="gallery" style="margin-bottom: 100px;">
+      <div id="flip-gallery" class="flip-gallery ">
+        <div class="top unite"></div>
+        <div class="bottom unite"></div>
+        <div class="overlay-top unite"></div>
+        <div class="overlay-bottom unite"></div>
+      </div>
+      <div class="gallery-nav" style="background-color: transparent;transform: translateY(2rem);">
+        <button type="button" data-gallery-nav="-1" title="Previous" style="color: black;font-size: 2rem;">&#10094;</button>
+        <button type="button" data-gallery-nav="1" title="Next" style="color: black;font-size: 2rem;">&#10095;</button>
+      </div>
+    </div>   
+  </div>
+</div>
+
+<div id="reviewsContainer" class="container"></div>
+<div id="paginationContainer" class="container" style="display: none; justify-content: center; gap: 10px; margin:2rem auto"></div>
+<!-- <div class="container review-container">
+  <div class="row">
+    <div class="col-md-10 mx-auto">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white fs-5">
+          <p style="font-weight: 700;"><%= product.product_name %> <span> reviews</span></p>
+        </div>
+        <div class="card-body p-3">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Rating</th>
+                <th scope="col">Review</th>
+              </tr>
+            </thead>
+            <tbody id="dataWrap"></tbody>
+          </table>
+          <div class="position-relative" id="pagination"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+  <!-- end shop section -->
+
+  <!-- info section -->
+
+	<%-include("./footer.ejs")%>
+
+
+  <!-- end info section -->
+
+
+  <%- include("./newScript.ejs") %>
+    
+<script>
+
+  const productName = "<%= product.product_name %>";
+  const phone_enquiry = "9372698500";
+  const currentUrl = (window.location.href);
+  const message = encodeURIComponent(`Hey! I wanted to enquire about ${productName} from your store.\n\Product link: ${currentUrl}`);
+  document.getElementById("wa_enquire_now").href = `https://api.whatsapp.com/send/?phone=${phone_enquiry}&text=${message}&type=phone_number&app_absent=0`;
+
+// const product_id=<%= product.id %>;
+const product_id=<%= product.id %>;
+
+
+const stars = document.querySelectorAll(".star");
+const ratingInput = document.getElementById("ratingValue");
+
+stars.forEach((star) => {
+  star.addEventListener("click", () => {
+    const rating = star.getAttribute("data-value");
+    ratingInput.value = rating;
+
+    stars.forEach((s) => {
+      if (s.getAttribute("data-value") <= rating) {
+        s.classList.add("selected");
+      } else {
+        s.classList.remove("selected");
+      }
+    });
+  });
+});
+
+    document.getElementById("productReview").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const review = document.getElementById("reviewInput").value;
+        
+        const customer_review_name = localStorage.getItem("name");
+        const rating = ratingValue.value;
+        const contact=localStorage.getItem("contactid");
+
+        const product_id=<%= product.id %>;
+        if (!rating || rating < 1 || rating > 5) {
+            showPopup('Oops', 'Please select a rating', 'failure');
+            
+            return;
+        }
+
+        fetch("<%= url_pathname %>create_product_review", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({  review, rating ,customer_review_name,product_id,contact})
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                showPopup("Success", data.message, "Success");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                console.log(data);
+                
+                showPopup('Oops', data.message, 'failure');
+          
+            }
+        })
+        .catch((e)=>{
+            console.log(e);
+            
+        })
+    });
+
+
+
+const fetchProductReviews = async () => {
+  try {
+
+    if (!product_id) {
+      console.error("Product ID is missing in the URL");
+      return;
+    }
+
+    const response = await fetch(`<%= url_pathname %>get_product_reviews/${product_id}`);
+    const { success, data } = await response.json();
+
+    if (!success) {
+      console.error("Failed to fetch product reviews");
+      return;
+    }
+
+    console.log("data",data);
+    if(data.length>0){
+document.getElementById("paginationContainer").style.display="flex"
+    }
+    else{
+      document.getElementById("paginationContainer").style.display="none"
+      
+    }
+    
+    renderReviews(data);
+  } catch (error) {
+    console.error("Error fetching product reviews:", error);
+  }
+};
+
+const reviewsPerPage = 5; 
+let currentPage = 1; 
+let allReviews = []; // Store all reviews globally
+
+const reviewsContainer = document.getElementById("reviewsContainer");
+const paginationContainer = document.getElementById("paginationContainer");
+
+const renderReviews = (reviews) => {
+  allReviews = reviews; // Store all reviews
+  currentPage = 1; // Reset to first page
+  updateReviewsDisplay();
+};
+
+const updateReviewsDisplay = () => {
+  reviewsContainer.innerHTML = ""; 
+
+  // Calculate start and end indexes for pagination
+  const start = (currentPage - 1) * reviewsPerPage;
+  const end = start + reviewsPerPage;
+  const paginatedReviews = allReviews.slice(start, end);
+
+  paginatedReviews.forEach(({ customer_review_name, inserted_date, review, rating }) => {
+    let starHtml = "";
+    for (let i = 5; i >= 1; i--) {
+      starHtml += `<span style="color: ${i <= rating ? "gold" : "#ccc"}; font-size: 20px;">&#9733;</span>`;
+    }
+
+    reviewsContainer.innerHTML += `
+      <div class="col-12" style="margin:1rem 0;padding:0.5rem 2rem;">
+        <div class="card h-100 card-review">
+          <div class="card-header pb-0 d-flex flex-row justify-content-between align-items-center" style="border:none">
+            <div class="d-flex align-items-center">
+              <div class="d-flex flex-column justify-content-center align-items-start fs-5 lh-sm">
+                <b style="font-size:small">${customer_review_name}<span class="text-muted" style="font-size:small;margin-left:1rem">${new Date(inserted_date).toLocaleDateString()}</span>
+</b>
+                <div class="star-rating" style="display: flex; flex-direction: row-reverse; gap: 2px; margin: 10px 0;cursor: default;">
+                  ${starHtml} 
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body py-2">
+            <p class="card-text product-review" style="font-size:small">${review}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  renderPaginationButtons();
+};
+
+// Function to render pagination buttons
+const renderPaginationButtons = () => {
+  paginationContainer.innerHTML = `
+    <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""} class="button-box" style="width:100px;display:flex;justify-content:center;">Previous</button>
+    <span style="display:flex;align-items:center"> Page ${currentPage} of ${Math.ceil(allReviews.length / reviewsPerPage)} </span>
+    <button onclick="nextPage()" ${currentPage === Math.ceil(allReviews.length / reviewsPerPage) ? "disabled" : ""} class="button-box" style="width:100px;justify-content:center;">Next</button>
+  `;
+};
+
+// Function to go to the next page
+const nextPage = () => {
+  if (currentPage < Math.ceil(allReviews.length / reviewsPerPage)) {
+    currentPage++;
+    updateReviewsDisplay();
+  }
+};
+
+// Function to go to the previous page
+const prevPage = () => {
+  if (currentPage > 1) {
+    currentPage--;
+    updateReviewsDisplay();
+  }
+};
+
+
+const changeImage=(e)=>{
+const mainImage=document.getElementById("mainImage");
+mainImage.src=e.src;
+
+}
+
+function handleSizeChange(selectElement) {
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const mrp = selectedOption.getAttribute('data-mrp');
+    const discount = selectedOption.getAttribute('data-discount');
+
+    manageSize(mrp, discount);
+  }
+
+  function manageSize(mrp, discount) {
+    const product_price_text=document.querySelector(".product-price-text");
+    const product_mrp_text=document.querySelector(".product-mrp-text");
+    product_price_text.innerHTML=`<span><span>&#8377;</span></span>${discount}`;
+    product_mrp_text.innerHTML=`<span><span>&#8377;</span>${mrp}</span>`
+  }
+
+window.onload = fetchProductReviews;
+
+function openModal() {
+                document.body.style.overflowY = "hidden"
+                document.getElementById("reviewModal").style.display = "flex";
+            }
+
+            function closeModal() {
+                document.body.style.overflowY = "auto"
+                document.getElementById("reviewModal").style.display = "none";
+            }
+            window.onclick = function (event) {
+                const modal = document.getElementById("reviewModal");
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+
+
+</script>
+
+
+</body>
+
+</html>

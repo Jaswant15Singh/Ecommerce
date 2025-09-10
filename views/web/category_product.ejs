@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" style="
+-ms-overflow-style: none;
+ scrollbar-width: none; 
+ ">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= title %>
+  </title>
+  <link rel="icon" type="image/png" href="/images/Rasyyaan.png">
+  <meta name="description"
+    content="Shop fresh groceries online from Pahadi Rasyan!Pahadi Rasyan helps you get the best quality fruits, grains, pulses, rice and spices delivered to your doorstep." />
+  <meta name="keywords"
+    content="Pahadi Rasyan,fresh,groceries, fruits ,grains,pulses,rice,spices,online grocery shopping.">
+  <meta property="og:title" content="Products by Category" />
+  <meta name="keywords"
+    content="Pahadi Rasyan,products, healthy ,fresh,natural products,category,pure,products byu category, grocery" />
+  <meta name="author" content="Pahadi Rasyan" />
+  <meta property="og:site_name" content="Pahadi Rasyan">
+  <meta property="og:type" content="website">
+  <meta name="robots" content="index, follow">
+  <meta property="og:image" content="<%= (url_pathname) %>/images/RasyyannLogo.png">
+  <meta property="og:locale" content="en_IN, hi_IN">
+  <style>
+    .responsive-page,
+    #top {
+      margin-top: 130px;
+    }
+
+    @media (max-width:767px) {
+      .ind_prod button {
+        width: 100%;
+      }
+
+      .ind-prods {
+        margin-top: 35px !important;
+      }
+
+      .pr_name {
+        font-size: 1.5rem !important;
+      }
+
+      .ind-prods {
+        margin-top: 35px !important;
+      }
+
+      .responsive-page,
+      #top {
+        margin-top: 0px !important;
+
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <%- include("header")%>
+    <section class="pb-5 responsive-page py-3">
+      <div class="container-lg">
+        <div class="row">
+          <div class="col-md-12">
+
+            <div
+              class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5"
+              id='product-container'>
+              <% if (product && product.length> 0) { %>
+                <% product.forEach(e=> { %>
+                  <div class="col">
+                    <div class="product-item ind-prods">
+                      <figure>
+                        <a href="#" title="<%= e.product_name %>">
+                          <img image-product-idd="<%= e.id %>" src="<%= (url_pathname) %><%= e.product_image %>"
+                            alt="Product Thumbnail" class="tab-image" loading="lazy">
+                        </a>
+                        <a href="#" title="<%= e.product_name %>">
+                          <img src="<%= (url_pathname) %><%= e.product_image_two %>"
+                            image-product-idd="<%= e.id %>" alt="<%= e.product_name %>" class="tab-image image_two"
+                            loading="lazy">
+                        </a>
+                        <div class="eye_icon" onclick="toggleProductDetails(this, '<%= e.id %>')">
+                          <p><i class="fa-solid fa-eye"></i></p>
+                        </div>
+                      </figure>
+                      <div class="d-flex flex-column text-center  products-details">
+                        <h4 class="fw-normal product-name">
+                          <%= e.product_name %>
+                        </h4>
+                        <h4 class="fs-6 fw-normal product-desc product-des">
+                          <%= e.product_description %>
+                        </h4>
+
+                        <% if(e.type==="PIECES" ){%>
+                          <div class="d-flex justify-content-center align-items-center gap-2">
+                          <div>
+                            <del><span>&#8377;</span>
+                              <%= e.mrp_price %>
+                            </del>
+                            <span class="text-dark fw-semibold"><span>&#8377;</span>
+                              <%= e.product_price %>
+                              / 
+                              pc
+                            </span>
+                          </div>
+                            <!-- <span
+                              class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary product-price">
+                              <span>&#8377;</span>
+                              <%= e.mrp_price - e.product_price %> OFF
+                              
+                            </span> -->
+                          </div>
+                          <div class="product-price-mobile">
+                            <span class="badge  rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary ">
+                              <span>&#8377;</span>
+                              <%= e.mrp_price - e.product_price %> <span class="fw-bolder">OFF</span>
+                            </span>
+                          </div>
+                          <div onclick="toggleProductDetails(this, '<%= e.id %>')">
+                            <p class="m-0 read-more">Read more...</p>
+                          </div>
+                          <%}%>
+                            <% if (e.type==="UNITS" ) { %>
+                              <% if (Array.isArray(e.batch_details) && e.batch_details.length> 0) { %>
+                                <% const item=e.batch_details[0]; %>
+                                  <% if (item && item.mrp !==undefined && item.discount_price !==undefined) { %>
+                                    <div class="d-flex justify-content-center align-items-center gap-2">
+                                      <div>
+                                        <del>
+                                          <span>&#8377;</span>
+                                          <%= item.mrp %>
+                                        </del>
+                                        <span class="text-dark fw-semibold">
+                                          <span>&#8377;</span>
+                                          <%= item.discount_price %>
+                                          /
+                                          <%= item.label_name %>
+                                        </span>
+                                      </div>
+                                      <!-- <span
+                                        class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary product-price">
+                                        <span>&#8377;</span>
+                                        <%= item.mrp - item.discount_price %> OFF
+                                      </span> -->
+                                    </div>
+                                    <div class="product-price-mobile">
+                                      <span class="badge  rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary ">
+                                        <span>&#8377;</span><%= item.mrp - item.discount_price %> <span class="fw-bolder">OFF</span>
+                                      </span>
+                                    </div>
+                                    <div onclick="toggleProductDetails(this, '<%= e.id %>')">
+                                      <p class="m-0 read-more">Read more...</p>
+                                    </div>
+                                    <% } %>
+                                      <% } %>
+                                        <% } %>
+                                        <% if (e.in_stock_status) { %>
+                                          <div class="button-area p-3 pt-0">
+                                            
+                                            <div class="row g-1 mt-2">
+                                              <div 
+                                                class="d-none" 
+                                                style="align-items: center;"
+                                              >
+                                                <button 
+                                                  type="button" 
+                                                  class="no-styles sub" 
+                                                 
+                                                  onclick="changeQuantity('<%= e.id %>', -1)"
+                                                >
+                                                  <span style="width: 7px;">-</span>
+                                                </button>
+                                                <input 
+                                                  type="number" 
+                                                  name="quantity"
+                                                  class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                                                  value="1" 
+                                                  min="1"
+                                                  max="<%= e.in_stock %>" 
+                                                  data-stock="<%= e.in_stock %>" 
+                                                  data-product-id="<%= e.id %>" 
+                                                  inputmode="numeric" 
+                                                  oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                                >
+                                                <button 
+                                                  type="button" 
+                                                  class="no-styles add" 
+                                                  onclick="changeQuantity('<%= e.id %>', 1)"
+                                                >
+                                                  <span style="width: 7px;">+</span>
+                                                </button>
+                                              </div>
+                                            
+                                              <div 
+                                                class="col-lg-12 col-md-12 col-sm-12" 
+                                                style="display: flex; align-items: center;"
+                                              >
+                                                <button 
+                                                  data-product-id="<%= e.id %>"
+                                                  class="btn btn-primary rounded-1 p-2 fs-7 btn-cart"
+                                                  data-typeattribute="<%= e.type %>"
+                                                >
+                                                  <svg width="18" height="18"></svg> Add to Cart
+                                                </button>
+                                              </div>
+                                            </div>
+                                            
+                                            
+                                          </div>
+                                        <% } else { %>
+                                          <div class="button-area p-3 pt-0">
+                                            <div class="row g-1 mt-2">
+                                              <div class="col-12">
+                                                <button class="btn btn-primary rounded-1 p-2 fs-7 btn-cart"  style="background-color: red; opacity: 0.6;">
+                                                  <svg width="18" height="18"></svg> Out Of Stock
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </div>
+                
+                                        <% } %>
+                                                <div class="overlay" style="display: none;"></div>
+
+                                                <div class="product-container"
+                                                  style="display: none; text-align: center;">
+                                                  <div class="product-card row">
+                                                    <!-- Close Button -->
+                                                    <p 
+                              class="close-note close-btn" 
+                              style="position: absolute; top: 5px; right: 5px; font-weight: lighter; cursor: pointer; border-radius: 50%; height: 2rem; width: 2rem; display: flex; justify-content: center; align-items: center;"
+                              onclick="closeProductDetails(this)"
+                            >
+                            &#10006;
+                            </p>
+
+                                                    <!-- Product Image -->
+                                                    <div class="product-image col-lg-6 md-12 sm-12"
+                                                      style="height: 250px;">
+
+                                                      <img src="<%= (url_pathname) %><%= e.product_image_three %>"
+                                                        alt="<%= e.name %>"
+                                                        style="width: 100%; height: 100%; border-radius: 8px; " />
+                                                    </div>
+
+                                                    <!-- Content Section -->
+                                                    <div class="product-content col-lg-6 md-12 sm-12"
+                                                      style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+                                                      <h2 class="product-name"
+                                                        style="font-size: 1.5rem; margin-bottom: 8px;">
+                                                        <%= e.product_name %>
+                                                      </h2>
+                                                      <p class="product-description"
+                                                        style="margin-bottom: 8px; color: #555;">
+                                                        <%= e.product_description %>
+                                                      </p>
+                                                      <% if (e.health_benefits) { %>
+                                                        <h2 style="font-size: 1.5rem; margin-bottom: 8px;">Health
+                                                          benefits:</h2>
+                                                        <ul>
+                                                          <% e.health_benefits.split('|').forEach(benefit=> { %>
+                                                            <li>
+                                                              <%= benefit %>
+                                                            </li>
+                                                            <% }); %>
+                                                        </ul>
+                                                        <% } %>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                      </div>
+                    </div>
+                  </div>
+                  <% }); %>
+                    <% } else { %>
+                      <p>No products available.</p>
+                      <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <%-include("./addToCart.ejs")%>
+</body>
+
+</html>

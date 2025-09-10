@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en" style="
+    -ms-overflow-style: none;
+    scrollbar-width: none;">
+
+<head>
+  <title>Pahadi Rasyan</title>
+  <link rel="icon" href="/images/PahadiLogo.png" type="image/png" style="height: 512px;width: 512px;">
+  <meta charset="utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="robots" content="index, follow">
+
+  <meta name="description" content="Shop fresh groceries online from Pahadi Rasyan!Pahadi Rasyan helps you get the best quality fruits, grains, pulses, rice and spices delivered to your doorstep." />
+  <meta name="author" content="Pahadi Rasyan" />
+  <meta property="og:site_name" content="Pahadi Rasyan"> 
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= (url_pathname) %>">
+  <meta property="og:image" content="<%= (url_pathname) %>images/RasyyannLogo.png">
+  <meta property="og:locale" content="en_IN, hi_IN">
+  <link rel="stylesheet" href="stylesheets/products.css">
+
+<style>
+.background-button {
+    font-size: large;
+    padding: 10px;
+}
+
+.bg-image {
+    margin-top: 121px;
+    height: calc(100vh - 190px);
+    overflow: hidden;
+}
+.mobile-bg-image{
+  display: none;
+}
+.swiper-prev,
+.swiper-next {
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    background: #F1F1F1;
+    color: #222222;
+    padding: 0;
+    text-align: center;
+    border-radius: 10px;
+    --bs-btn-border-color: transparent;
+    --bs-btn-active-bg: #ec9b22;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-hover-bg: var(--bs-primary);
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-disabled-color: #ccc;
+    --bs-btn-disabled-bg: #eaeaea;
+    --bs-btn-disabled-border-color: #eaeaea
+}
+
+.swiper-prev:hover,
+.swiper-next:hover {
+    background: var(--bs-primary);
+}
+
+.category-carousel .category-item {
+    background: #FFFFFF;
+    border: 1px solid #FBFBFB;
+    box-shadow: 0px 5px 22px rgba(0, 0, 0, 0.04);
+    border-radius: 16px;
+    text-align: center;
+    padding: 60px 20px;
+    margin: 20px 0;
+    transition: box-shadow 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.category-carousel .category-item:hover {
+    transform: translate3d(0, -10px, 0);
+    box-shadow: 0px 21px 44px rgba(0, 0, 0, 0.08);
+}
+
+.category-carousel .category-item .category-title {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 27px;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+    color: #222222;
+    margin-top: 20px;
+}
+
+.rounded-circle{
+  transition: 0.8s;
+}
+.rounded-circle:hover{
+  transform: scale(1.1);
+}
+.ls-1 {
+    letter-spacing: -0.04em;
+}
+
+
+@media (max-width:600px) {
+
+
+    .background-button {
+        justify-content: center;
+
+    }
+
+    div.d-flex a.background-button a {
+        gap: 3px;
+    }
+
+    div.d-flex a.background-button a {
+        font-size: me !important;
+    }
+
+    /* .bg-image {
+        background-image: url('/images/Website-bg-small.jpg') !important;
+        margin-top: 0px !important;
+        height: calc(100vh - 80px) !important;
+    } */
+
+    .background-data {
+        position: relative;
+        top: -85px;
+        height: 100%;
+    }
+
+}
+
+
+@media (max-width:768px) {
+    /* .bg-image {
+        background-image: url('/images/Website-bg-small.jpg') !important;
+        margin-top: 0px !important;
+        height: calc(100vh - 80px) !important;
+    } */
+
+    .bg-content {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .background-header {
+        margin-top: 1rem;
+
+        font-size: 2rem !important;
+        text-align: center;
+    }
+
+    .background-header2 {
+        font-size: 2rem !important;
+        margin-top: 1rem;
+        text-align: center;
+    }
+}
+
+
+@media (min-width: 760px) and (max-width: 991px) {
+    .background-button {
+        padding: 5px !important;
+        font-size: medium !important;
+    }
+
+    .bg-content {
+        margin-top: -2rem !important;
+    }
+
+    .bg-image {
+        margin-top: 212px !important;
+        height: 500px !important;
+        background-position: bottom center !important;
+    }
+}
+
+@media (min-width:1400px) {
+    .background-data {
+        margin-top: -5rem !important;
+        margin-left: 7rem !important;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    .bg-content .background-header {
+        font-size: 40px !important;
+    }
+
+    .card-body h5 {
+        font-size: 20px !important;
+    }
+
+    .bg-content a {
+        font-size: 20px !important;
+    }
+}
+
+.background-button {
+    font-size: large;
+    padding: 10px
+}
+
+.bg-image {
+    margin-top: 105px;
+    height: calc(100vh - 150px);
+    overflow: hidden
+}
+
+.swiper-next,
+.swiper-prev {
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    background: #f1f1f1;
+    color: #222;
+    padding: 0;
+    text-align: center;
+    border-radius: 10px;
+    --bs-btn-border-color: transparent;
+    --bs-btn-active-bg: #ec9b22;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-hover-bg: var(--bs-primary);
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-disabled-color: #ccc;
+    --bs-btn-disabled-bg: #eaeaea;
+    --bs-btn-disabled-border-color: #eaeaea
+}
+
+.swiper-next:hover,
+.swiper-prev:hover {
+    background: var(--bs-primary)
+}
+
+.category-carousel .category-item {
+    background: #fff;
+    border: 1px solid #fbfbfb;
+    box-shadow: 0 5px 22px rgba(0, 0, 0, .04);
+    border-radius: 16px;
+    text-align: center;
+    padding: 60px 20px;
+    margin: 20px 0;
+    transition: box-shadow .3s ease-out, transform .3s ease-out
+}
+
+.category-carousel .category-item:hover {
+    transform: translate3d(0, -10px, 0);
+    box-shadow: 0 21px 44px rgba(0, 0, 0, .08)
+}
+
+.category-carousel .category-item .category-title {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 27px;
+    letter-spacing: .02em;
+    text-transform: capitalize;
+    color: #222;
+    margin-top: 20px
+}
+
+
+
+.ls-1 {
+    letter-spacing: -.04em
+}
+
+@media (max-width:600px) {
+    .background-button {
+        justify-content: center
+    }
+
+    div.d-flex a.background-button a {
+        gap: 3px;
+        font-size: me !important
+    }
+
+    /* .bg-image {
+        background-image: url('/images/Website-bg-small.jpg') !important;
+        height: calc(100vh - 80px) !important
+    } */
+
+    .background-data {
+        position: relative;
+        top: -85px;
+        height: 100%
+    }
+}
+
+@media (max-width:767px) {
+    /* .bg-image {
+        background-image: url('/images/Website-bg-small.jpg') !important;
+        height: calc(100vh - 80px) !important;
+        margin-top: 67px !important;
+    } */
+.bg-image{
+  display: none !important;
+}
+.footer-menu{
+  font-size: small !important;
+}
+.contact-phone{
+  display: none !important;
+}
+    .background-header,
+    .background-header2 {
+        font-size: 2rem !important;
+        margin-top: 1rem;
+        text-align: center
+    }
+
+    .bg-content {
+        display: flex;
+        flex-direction: column;
+        align-items: start
+    }
+}
+
+@media (max-width:455px){
+  .mobile-bg-image{
+  display: block;
+  margin-top: 67px;
+  min-height: 205px !important;
+}
+.bg-content{
+  padding-top: 4rem !important;
+  width: 50% !important;
+  padding-left: 5px !important;
+}
+.background-header,.background-header2{
+margin-top: 0.5rem !important;
+  font-size: small !important;
+  text-align: left;
+}
+.bg-content{
+  height: 205px !important;
+  overflow: hidden;
+}
+}
+@media (min-width:456px) and (max-width:518px){
+  .mobile-bg-image{
+  display: block;
+  margin-top: 67px;
+  min-height: 245px !important;
+}
+.bg-content{
+  padding-top: 4rem !important;
+  width: 60% !important;
+  padding-left: 12px !important;
+}
+.background-header,.background-header2{
+margin-top: 0.5rem !important;
+  font-size: large !important;
+  text-align: left;
+}
+.bg-content{
+  height: 205px !important;
+  overflow: hidden;
+}}
+
+@media (min-width:519px) and (max-width:580px){
+  .mobile-bg-image{
+  display: block;
+  margin-top: 67px;
+  min-height: 275px !important;
+}
+.bg-content{
+  padding-top: 6rem !important;
+  width: 70% !important;
+  padding-left: 5px !important;
+}
+.background-header,.background-header2{
+margin-top: 0.5rem !important;
+  font-size: large !important;
+  text-align: left;
+}
+.bg-content{
+  height: 205px !important;
+  overflow: hidden;
+}}
+@media (min-width:581px) and (max-width:767px){
+  .mobile-bg-image{
+  display: block;
+  margin-top: 67px;
+  min-height: 400px !important;
+}
+.bg-content{
+  padding-top: 3rem !important;
+  width: 70% !important;
+  padding-left: 12px !important;
+}
+.background-header,.background-header2{
+margin-top: 0.5rem !important;
+  font-size: larger !important;
+  text-align: left;
+}
+.bg-content{
+  height: 205px !important;
+  overflow: hidden;
+}}
+
+@media (min-width:760px) and (max-width:991px) {
+    .background-button {
+        padding: 5px !important;
+        font-size: medium !important
+    }
+
+    .bg-content {
+        margin-top: -2rem !important
+    }
+
+    .bg-image {
+        background-image: url('images/ipads.jpg') !important;
+        margin-top: 248px;
+        height: 560px !important
+    }
+}
+
+@media (min-width:991px) and (min-height:800px){
+  .bg-image {
+        height: 500px !important
+    }
+}
+@media (min-width:1400px) {
+    .background-data {
+        margin-top: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around
+    }
+
+    .bg-content .background-header {
+        font-size: 60px
+    }
+
+    .card-body h5 {
+        font-size: 25px
+    }
+
+    .bg-content a {
+        font-size: 30px
+    }
+}
+h1 span
+        {
+            background-color: rgb(231, 243, 255);
+            padding: 15px;
+            border-radius: 2vw;
+        }
+        .spectacledcoder-pop-up
+        {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            margin: auto;
+            margin-right: 3%;
+            width: 300px;
+            height: fit-content;
+            min-height: 150px;
+            flex-direction: column;
+            opacity: 0%;
+            display: none;
+
+            animation: pop-up 1s 0s 1 linear forwards;
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-top
+        {
+            margin: auto;
+            width: 100%;
+            height: 30px;
+            display: flex;
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-top img
+        {
+            margin: auto;
+            margin-right: 0px;
+            padding: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            background-color: rgb(0, 0, 0);
+           
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-top img:hover
+        {
+            background-color: rgb(0, 0, 0);
+            padding: 5px;
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-content
+        {
+            margin: auto;
+            margin-left: 0px;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            background-color: rgb(255, 255, 255);
+            border-radius: 30px;
+            border: 1px solid black;
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-content p
+        {
+            width: 80%;
+            margin: auto;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: medium;
+            text-align: left;
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-content a
+        {
+            text-decoration: none;
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-content button
+        {
+            all: unset;
+            margin: auto;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            width: fit-content;
+            min-width: 100px;
+            height: 30px;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            background-color: rgb(255, 255, 255);
+            border: 0.5px solid black;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: small;
+            font-weight: 500;
+            color: rgb(0, 0, 0);
+            display: flex;
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-content button:hover
+        {
+            background-color: black;
+            color: white;
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-content button p
+        {
+            margin: auto;
+            width: 80%;
+        }
+        .spectacledcoder-pop-up .spectacledcoder-pop-up-content button img
+        {
+            margin: auto;
+            width: 20%;
+        }
+
+        @keyframes pop-up 
+        {
+            0%
+            {
+                opacity: 0%;
+                margin-bottom: 0px;
+            }
+            100%
+            {
+                opacity: 100%;
+                margin-bottom: 5%;
+            } 
+        }
+
+        @media only screen and (max-width: 500px) 
+        {
+            .spectacledcoder-pop-up
+            {
+                zoom: 0.8;
+            }
+
+        }
+
+        .disclaimer
+        {
+            font-family: 'Belanosima', sans-serif;
+            position: absolute;
+            bottom: 0px; 
+            left: 0; 
+            margin-left: auto; 
+            right: 0; 
+            margin-right: auto; 
+            width: fit-content;
+            color: rgb(0, 0, 0);
+            text-align: center;
+        }
+        .disclaimer a
+        {
+            text-decoration: none;
+            color: #000000;
+            font-family: "Kaushan Script", cursive;
+            font-weight: 900;
+        }
+        .disclaimer a:hover
+        {
+            text-decoration: overline;
+        }
+   
+</style>
+</head>
+
+<body>
+
+  <%-include('header')%>
+  <%-include('socialmedia')%>
+
+  <section class="bg-image" style="background-image: url('images/Websnew.jpg');background-repeat: no-repeat;background-size: cover;width: 100vw;z-index: 1000 !important;background-position: center;">
+    <div class="container-lg background-data" >
+      <div class="row">
+        <div class="col-lg-6 pt-5 mt-5 bg-content">
+          <h2 class=" ls-1 background-header"><span class="fw-bold text-primary">Natural</span> Foods at your <span
+              class="fw-bold">Doorsteps</span></h2>
+              <h3 class="background-header2">Boost Your Immunity Today!</h3>
+          <div class="d-flex gap-1 background-button">
+            <a href="#product-container" class="btn btn-primary text-uppercase  a-bg rounded-pill  background-button">Start Shopping</a>
+            <a href="/aboutus" class="btn btn-dark text-uppercase  a-bg rounded-pill  background-button">Know More</a>
+          </div> 
+          <br>
+          <br>
+        </div>
+      </div>
+      
+    </div>
+    <!-- <div id="welcomeMessage"></div> -->
+
+  </section>
+
+</div>
+  <section class="mobile-bg-image" style="background-image: url('images/mobilebgs.jpg');background-repeat: no-repeat;background-size: contain;width: 100vw;z-index: 1000 !important;">
+    <div class="container-lg background-data" >
+      <div class="row">
+        <div class="col-lg-6 mt-5 bg-content">
+          <h2 class=" ls-1 background-header"><span class="fw-bold text-primary">Natural</span> Foods at your <span
+              class="fw-bold">Doorsteps</span></h2>
+              <h3 class="background-header2">Boost Your Immunity Today!</h3>
+          <!-- <div class="d-flex gap-1 background-button">
+            <a href="#product-container" class="btn btn-primary text-uppercase  a-bg rounded-pill  background-button">Start Shopping</a>
+            <a href="#" class="btn btn-dark text-uppercase  a-bg rounded-pill  background-button">Join Now</a>
+          </div>  -->
+          <br>
+          <br>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+
+  <section class="py-5 overflow-hidden categories-section">
+    <div class="container-lg">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="section-header d-flex flex-wrap justify-content-between mb-3">
+            <h2 class="section-title">Category</h2>
+            <div class="d-flex align-items-center gap-2 ">
+              <div class="swiper-buttons">
+                <button class="swiper-prev category-carousel-prev btn btn-yellow">❮</button>
+                <button class="swiper-next category-carousel-next btn btn-yellow">❯</button>
+              </div>
+              <a href="/categories" class="btn btn-primary me-2 category-swiper">View All</a>        
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="category-carousel swiper">
+            <div class="swiper-wrapper">
+              <% if (category && category.length> 0) { %>
+                <% category.forEach(e=> { %>
+              <a  href="javascript:void(0)" class="nav-link swiper-slide text-center"onclick="fetchCategoryProducts(<%= e.id %>, this)"><img src="<%= e.category_image %>" 
+
+                alt="<%= e.category_name %>"
+                width="130px" 
+                style="object-fit: cover; border-radius: 0.7rem;" 
+                loading="lazy">
+           
+                    <h4 class="fs-6 mt-3 fw-normal category-title">
+                      <%= e.category_name %>
+                    </h4> 
+                  </a>
+                  <% }); %>
+                    <% } else { %>
+                      <p>No products available.</p>
+                      <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="py-5 overflow-hidden mobile-products">
+    <div class="container-lg">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="section-header d-flex flex-wrap justify-content-between mb-3">
+            <h2 class="section-title">Products</h2>
+            <div class="d-flex align-items-center gap-2">
+              <div class="swiper-buttons">
+                <button class="swiper-prev product-carousel-prev btn btn-yellow">❮</button>
+                <button class="swiper-next product-carousel-next btn btn-yellow">❯</button>
+              </div>
+              <a href="/product" class="btn btn-primary me-2 category-swiper">View All</a>        
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="product-carousel swiper" style="overflow: visible;">
+            <div class="swiper-wrapper">
+              <% if (products_instock && products_instock.length> 0) { %>
+                <% products_instock.forEach(e=> { %>
+              <div class="nav-link swiper-slide text-center">
+                <div style="height: 160px;width: 160px;">
+                  <img src="<%= e.product_image %>" 
+               
+                image-product-id="<%= e.id %>" 
+                image-product-name="<%= e.product_name %>"
+                alt="<%= e.product_name %>" 
+                  height="100%" width="100%"
+                style="object-fit: cover; border-radius: 0.7rem;" 
+                id="pr-Img" 
+                loading="lazy">
+                </div>
+           
+                      <div class="eye_icon" 
+                      style="display: block !important; background-color: white !important; height: 30px !important; width: 30px !important;"
+                      onclick="toggleProductDetailss(this, 
+                        '<%= e.id %>',
+                        '<%= e.product_name.replace(/'/g, '\\\'') %>', 
+                        '<%= e.product_description.replace(/'/g, '\\\'') %>',
+                        '<%= e.product_image_three %>',
+                        '<%= e.mrp_price %>',
+                        '<%= e.product_price %>',
+                        '<%= (e.health_benefits ? e.health_benefits.replace(/'/g, "\\'") : '') %>',
+                        '<%= e.type %>',
+                        <%= JSON.stringify(e.batch_details) %>
+                      )">
+                        <p style="margin-top: -4.5px !important;">
+                          <i class="fa-solid fa-eye text-dark" style="color: black !important; border: black !important;"></i>
+                        </p>
+                    </div>
+                    
+                    <h4 class="fs-6 mt-3 fw-normal category-title product-name" style="text-align: center;">
+                      <%= e.product_name %>
+                    </h4> 
+
+                    <h4 class="fs-6 fw-normal product-desc">
+                      <%= e.product_description %>
+                    </h4>
+                    <% if(e.type==="PIECES"){%>  
+                      <div class="d-flex justify-content-center align-items-center gap-2 product-prices" style="font-size: 14px;">
+                          <del><span>&#8377;</span>
+                              <%= e.mrp_price %>
+                          </del>
+                          <span class="text-dark fw-semibold"><span>&#8377;</span>
+                              <%= e.product_price %> /
+                              pc
+
+                          </span>
+                      </div>
+                      <%}%>
+                      <% if (e.type === "UNITS") { %>
+                        <% if (Array.isArray(e.batch_details) && e.batch_details.length > 0) { %>
+                          <% const item = e.batch_details[0]; %>
+                          <div class="d-flex justify-content-center align-items-center gap-2 product-prices"style="font-size: 14px;">
+                              <div>
+                                <del>
+                                  <span>&#8377;</span><%= item.mrp %>
+                                </del>
+                                <span class="text-dark fw-semibold">
+                                  <span>&#8377;</span><%= item.discount_price %>
+                                  /
+                                  <%= item.label_name %>
+                                </span>
+                              </div>
+                          </div>
+                        <% } %>
+                      <% } %>
+                      <% if (e.in_stock_status) { %>
+                        <div class="button-area p-3 pt-0" style="width: 100% !important;">
+                          
+                          <div class="row g-1 mt-2">
+                    
+                            <div 
+                            class=" d-none" 
+                            style="align-items: center;"
+                          >
+                              <button 
+                                type="button" 
+                                class="no-styles sub" 
+                               
+                                onclick="changeQuantity('<%= e.id %>', -1)"
+                              >
+                                <span style="width: 7px;">-</span>
+                              </button>
+                              <input 
+                                type="number" 
+                                name="quantity"
+                                class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                                value="1" 
+                                min="1"
+                                max="<%= e.in_stock %>" 
+                                data-stock="<%= e.in_stock %>" 
+                                data-product-id="<%= e.id %>" 
+                                inputmode="numeric" 
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                              >
+                              <button 
+                                type="button" 
+                                class="no-styles add" 
+                                onclick="changeQuantity('<%= e.id %>', 1)"
+                              >
+                                <span style="width: 7px;">+</span>
+                              </button>
+                            </div>
+                          
+                            <div 
+                              class="col-lg-12 col-md-12 col-sm-12" 
+                              style="display: flex; align-items: center;"
+                            >
+                              <button 
+                                data-product-id="<%= e.id %>"
+                                class="btn btn-primary rounded-1 p-2 fs-7 btn-carts"
+                                data-typeattribute="<%= e.type %>"
+                              >
+                                Add to Cart
+                              </button>
+                            </div>
+                          </div>
+                          
+                          
+                        </div>
+                      <% } else { %>
+                        <div class="button-area p-3 pt-0" style="width: 100% !important;">
+                          <div class="row g-1 mt-2">
+                            <div class="col-12">
+                              <button class="btn btn-primary rounded-1 p-2 fs-7 btn-cart"  style="background-color: red; opacity: 0.6;">
+                                Out Of Stock
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                      <% } %>
+                        <!-- <div class="overlay" style="display: none;"></div> 
+
+                        <div class="product-containers" style="display: none; text-align: center;">
+                          <div 
+                            class="product-card row" 
+                            >
+                            <p 
+                              class="close-note close-btn" 
+                              style="position: absolute; top: 5px; right: 5px; font-weight: lighter; cursor: pointer; background-color: #f44336; color: white; border-radius: 50%; height: 2rem; width: 2rem; display: flex; justify-content: center; align-items: center;"
+                              onclick="closeProductDetailss(this)"
+                            >
+                              X
+                            </p>
+                        
+                            <div class="product-image col-lg-6 md-12 sm-12" style="height: 250px;"> 
+                              
+                              <img 
+                                  src="<%= e.product_image_three %>"
+                                  alt="<%= e.name %>" 
+                                  style="width: 100%; height: 100%; border-radius: 8px; "
+                              />
+                          </div>
+                        
+                            <div class="product-content col-lg-6 md-12 sm-12" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+                              <h2 class="product-name" style="font-size: 1.5rem; margin-bottom: 8px;">
+                                <%= e.product_name %>
+                              </h2>
+                              <p class="product-description" style="margin-bottom: 8px; color: #555;">
+                                <%= e.product_description %>
+                              </p>
+
+                              <% if (e.health_benefits) { %>
+                                <div class="fw-normal">
+                                    <span class="fw-bold">Health Benefits:</span>
+                                    <ul>
+                                        <% e.health_benefits.split('|').forEach(benefit => { %>
+                                            <li><%= benefit %></li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            <% } %>
+                                                  
+                            </div>
+                          </div>
+                        </div> -->
+                  </div>
+                  <% }); %>
+                    <% } else { %>
+                      <p>No products available.</p>
+                      <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="overlay" style="display: none;"></div> 
+
+  <div class="product-containers" style="display: none; text-align: center;">
+    <div 
+      class="product-card row" 
+      >
+      <p 
+        class="close-note close-btn" 
+        style="position: absolute; top: 5px; right: 5px; font-weight: lighter; cursor: pointer; border-radius: 50%; height: 2rem; width: 2rem; display: flex; justify-content: center; align-items: center;"
+        onclick="closeProductDetailss(this)"
+      >
+        &#10006;
+      </p>
+  
+      <div class="product-image  col-lg-6 md-12 sm-12"  style="height: 250px;"> 
+        
+        <img 
+        class="product-container-image"
+            src=""
+            alt="product-image" 
+            style="width: 100%; height: 100%; border-radius: 8px; "
+            loading="lazy"
+        />
+    </div>
+  
+      <div class="product-content col-lg-6 md-12 sm-12" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+        <h2 class="product-name product-container-name" style="font-size: 1.5rem; margin-bottom: 8px;">
+          
+        </h2>
+        <p class="product-description product-container-desc" style="margin-bottom: 8px; color: #555;">
+          name
+        </p>
+        <div class="fw-normal health_benefits_container">
+          <span style="color: black;">Health Benefits:</span>
+          <ul class="product-container-health">
+              
+          </ul>
+      </div>
+
+        <!-- <div class="d-flex justify-content-center align-items-center gap-2 product-prices product-container-price" style="font-size: 14px;">
+          <del class="product-container-mrp"><span>&#8377;</span>
+            
+          </del>
+          <span class="text-dark fw-semibold product-container-disc"><span>&#8377;</span>
+            
+          </span>
+      </div> -->
+                            
+      </div>
+    </div>
+  </div>
+  <section class="pb-5 desktop-products" >
+    <div class="container-lg">
+
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="section-header d-flex flex-wrap justify-content-between my-4">
+
+            <h2 class="section-title">Products</h2>
+            
+            <div class="d-flex align-items-center">
+              <a href="/product" class="btn btn-primary rounded-1">View All</a>
+            </div>
+          </div>
+          <p class="fw-bold text-dark">Affordable Health Products Online</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+
+          <div
+            class="products-carousel product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 all_products"
+            id='product-container'>
+            <% if (products_instock && products_instock.length > 0) { %>
+              <% let count = 0; %>
+              <% products_instock.forEach(e => { %>
+                <% if (count < 8) { %>
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="product-item">
+                      <figure image-product-id="<%= e.id %>" image-product-name="<%= e.product_name %>">
+                        <a href="#" title="<%= e.product_name %>">
+                          <img src="<%= e.product_image %>" image-product-id="<%= e.id %>" image-product-name="<%= e.product_name %>" alt="<%= e.product_name %>" class="tab-image" loading="lazy">
+                        </a>
+                        <a href="#" title="<%= e.product_name %>">
+                          <img src="<%= e.product_image_two %>" image-product-id="<%= e.id %>" image-product-name="<%= e.product_name %>" alt="<%= e.product_name %>" class="tab-image image_two" loading="lazy">
+                        </a>
+                        <div class="eye_icon" onclick="toggleProductDetails(this, '<%= e.id %>')">
+                          <p><i class="fa-solid fa-eye"></i></p> 
+                        </div>
+                      </figure>
+                      <div class="d-flex flex-column text-center products-details">
+                        <h4 class="fw-normal product-name">
+                          <%= e.product_name %>
+                        </h4>
+                        <h4 class="fs-6 fw-normal product-desc product-des">
+                          <%= e.product_description %>
+                        </h4>
+                        <% if(e.type==="PIECES"){%>
+                          <div class="d-flex justify-content-center align-items-center gap-2 product-prices">
+                              <del><span>&#8377;</span>
+                                  <%= e.mrp_price %>
+                              </del>
+                              <span class="text-dark fw-semibold"><span>&#8377;</span>
+                                  <%= e.product_price %>
+                             /
+                               pc
+                              </span>   
+                          </div>
+                          <%}%>
+                          <% if (e.type === "UNITS") { %>
+                            <% if (Array.isArray(e.batch_details) && e.batch_details.length > 0) { %>
+                              <% const item = e.batch_details[0]; %>
+                              <div class="d-flex justify-content-center align-items-center gap-2 product-prices">
+                                  <div>
+                                    <del>
+                                      <span>&#8377;</span><%= item.mrp %>
+                                    </del>
+                                    <span class="text-dark fw-semibold">
+                                      <span>&#8377;</span><%= item.discount_price %>
+                                     /
+                                     <%= item.label_name %>
+                                    </span>
+                                  </div>
+                              </div>
+                            <% } %>
+                          <% } %>
+                          
+                          
+                        <% if (e.in_stock_status) { %>
+                          <div class="button-area p-3 pt-0">
+                            
+                            <div class="row g-1 mt-2">
+                           
+                              <div 
+                              class="d-none" 
+                              style="align-items: center;"
+                            >
+                                <button 
+                                  type="button" 
+                                  class="no-styles sub" 
+                                 
+                                  onclick="changeQuantity('<%= e.id %>', -1)"
+                                >
+                                  <span style="width: 7px;">-</span>
+                                </button>
+                                <input 
+                                  type="number" 
+                                  name="quantity"
+                                  class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                                  value="1" 
+                                  min="1"
+                                  max="<%= e.in_stock %>" 
+                                  data-stock="<%= e.in_stock %>" 
+                                  data-product-id="<%= e.id %>" 
+                                  inputmode="numeric" 
+                                  oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                >
+                                <button 
+                                  type="button" 
+                                  class="no-styles add" 
+                                  onclick="changeQuantity('<%= e.id %>', 1)"
+                                >
+                                  <span style="width: 7px;">+</span>
+                                </button>
+                              </div>
+                            
+                              <div 
+                                class="col-lg-12 col-md-12 col-sm-12" 
+                                style="display: flex; align-items: center;"
+                              >
+                                <button 
+                                  data-product-id="<%= e.id %>"
+                                  class="btn btn-primary rounded-1 p-2 fs-7 btn-cart"
+                                  data-typeattribute="<%= e.type %>"
+                                >
+                                  <svg width="18" height="18"></svg> Add to Cart
+                                </button>
+                              </div>
+                            </div>
+                            
+                            
+                          </div>
+                        <% } else { %>
+                          <div class="button-area p-3 pt-0">
+                            <div class="row g-1 mt-2">
+                              <div class="col-12">
+                                <button class="btn btn-primary rounded-1 p-2 fs-7 btn-cart"  style="background-color: red; opacity: 0.6;">
+                                  <svg width="18" height="18"></svg> Out Of Stock
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                        <% } %>
+                        <div class="overlay" style="display: none;"></div> 
+
+                        <div class="product-container" style="display: none; text-align: center;">
+                          <div 
+                            class="product-card row" 
+                            >
+                            <p 
+                              class="close-note close-btn" 
+                              style="position: absolute; top: 5px; right: 5px; font-weight: lighter; cursor: pointer; border-radius: 50%; height: 2rem; width: 2rem; display: flex; justify-content: center; align-items: center;"
+                              onclick="closeProductDetails(this)"
+                            >
+                            &#10006;
+                            </p>
+                        
+                            <div class="product-image  col-lg-6 md-12 sm-12" style="height: 250px;"> 
+                              
+                              <img 
+                                  src="<%= e.product_image_three %>"
+                                  alt="<%= e.name %>" 
+                                  style="width: 100%; height: 100%; border-radius: 8px; "
+                                  loading="lazy"
+                              />
+                          </div>
+                        
+                            <div class="product-content col-lg-6 md-12 sm-12" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+                              <h2 class="product-name" style="font-size: 1.5rem; margin-bottom: 8px;">
+                                <%= e.product_name %>
+                              </h2>
+                              <p class="product-description" style="margin-bottom: 8px; color: #555;">
+                                <%= e.product_description %>
+                              </p>
+                              <!-- <p class="product-price" style="margin-bottom: 8px; font-weight: bold; color: #333;">
+                                Price: <span class="fw-normal">₹<%= e.product_price %></span>
+                              </p> -->
+                              <% if (e.health_benefits) { %>
+                                <div class="fw-normal">
+                                    <span style="color: black;">Health Benefits:</span>
+                                    <ul>
+                                        <% e.health_benefits.split('|').forEach(benefit => { %>
+                                            <li><%= benefit %></li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            <% } %>
+                                                  
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <% count++; %>
+                <% } %>
+              <% }); %>
+            <% } else { %>
+              <p>No products available.</p>
+            <% } %>
+          </div>
+          <!-- / product-grid -->
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+<section class="py-1" style="overflow-x: auto;">
+<%- include('promotional') %>
+</section>
+  <!-- <section class="py-4">
+    <div class="container-lg">
+      <div class="row row-cols-1 row-cols-sm-3 row-cols-lg-5">
+        <div class="col">
+          <div class="card mb-3 border border-dark-subtle p-3 offers">
+            <div class="text-dark mb-3 more_offers" >
+              <svg width="32" height="32">
+                <use xlink:href="#package"></use>
+              </svg>
+            </div>
+            <div class="card-body p-0" >
+              <h5>Free and quick delivery</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card mb-3 border border-dark-subtle p-3 offers">
+            <div class="text-dark mb-3 more_offers">
+              <svg width="32" height="32">
+                <use xlink:href="#secure"></use>
+              </svg>
+            </div>
+            <div class="card-body p-0">
+              <h5>100% secure payment</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card mb-3 border border-dark-subtle p-3 offers">
+            <div class="text-dark mb-3 more_offers">
+              <svg width="32" height="32">
+                <use xlink:href="#quality"></use>
+              </svg>
+            </div>
+            <div class="card-body p-0">
+              <h5>Quality guarantee</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card mb-3 border border-dark-subtle p-3 offers">
+            <div class="text-dark mb-3 more_offers">
+              <svg width="32" height="32">
+                <use xlink:href="#savings"></use>
+              </svg>
+            </div>
+            <div class="card-body p-0">
+              <h5>guaranteed savings</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card mb-3 border border-dark-subtle p-3 offers">
+            <div class="text-dark mb-3 more_offers">
+              <svg width="32" height="32">
+                <use xlink:href="#offers"></use>
+              </svg>
+            </div>
+            <div class="card-body p-0">
+              <h5>Daily offers & coupons</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+  <footer style="background-color: #EEF6FA; padding: 1rem 0 3.5rem 0;">
+    <div class="container-lg">
+      <div class="row d-flex align-items-center fs-6 g-1 " >
+
+        <div class="col-lg-1 col-md-1 col-sm-4 col-3 p-2 contact-phone" style="float: right;">
+          
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-3 p-2 contact-phone" style="float: right;">
+          <ul style="list-style: none; padding: 0;">
+            <li style="text-align: center;">
+              <a style="text-decoration: none;" href="/contact" class="fw-bold text-dark">Contact Us</a>
+            </li>
+          </ul>
+        </div>
+  
+        <!-- Refund Policy -->
+        <div class="col-lg-2 col-md-2 col-sm-6 col-3 p-2 phone-footer">
+          <div class="footer-menu">
+            <a class="nav-link" target="_blank" href="refundpolicy"><p class="widget-title fw-bold text-dark">Refund Policy</p></a>
+          </div>
+        </div>
+  
+        <!-- Privacy Policy -->
+        <div class="col-lg-2 col-md-2 col-sm-6 col-3 p-2">
+          <div class="footer-menu">
+            <a class="nav-link" target="_blank" href="/privacypolicy"><p class="widget-title fw-bold text-dark">Privacy Policy</p></a>
+          </div>
+        </div>
+  
+        <!-- Terms of Service -->
+        <div class="col-lg-2 col-md-2 col-sm-6 col-3 p-2">
+          <div class="footer-menu">
+            <a class="nav-link" target="_blank" href="termsservice"><p class="widget-title fw-bold text-dark">Terms of Service</p></a>
+          </div>
+        </div>
+  
+        <!-- Shipping Policy -->
+        <div class="col-lg-2 col-md-2 col-sm-6 col-3 p-2 " >
+          <div class="footer-menu">
+            <a class="nav-link" target="_blank" href="shippingpolicy"><p class="widget-title fw-bold text-dark">Shipping Policy</p></a>
+          </div>
+        </div>
+        <div class="col-lg-1 col-md-1 col-sm-41 col-3 p-2 contact-phone" style="float: right;">
+          
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const overlay=document.querySelector(".overlay");
+
+
+     const name=localStorage.getItem("name");
+        const hasVisited=sessionStorage.getItem("has-visited");
+        const popupModal=document.querySelector(".spectacledcoder-pop-up");
+        var closebtn = document.getElementById("close-btn");
+        const user=document.querySelector(".user");
+        function closepopup() 
+        {
+            popupModal.style.display="none";
+            overlay.style.display="none";
+        }
+
+
+        if(name && !hasVisited){
+          popupModal.style.display="block";
+          overlay.style.display="block";
+          user.innerText=`Welcome back ${name}`
+          sessionStorage.setItem("has-visited","visited");
+        }
+        
+  </script>
+	<%-include("./addToCart.ejs")%>
+
+</body>
+
+</html>
+

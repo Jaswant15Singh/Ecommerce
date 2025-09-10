@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="icon" type="image/png" href="/images/Rasyyaan.png">
+    <meta name="description"
+        content="Explore our handpicked selection of top-quality products that stand out for their exceptional quality and value. Shop now to find the perfect item for your needs!">
+    <meta name="keywords"
+        content="Featured Products, Best Sellers, Top Products, Exclusive Offers, Popular Items, Handpicked Selection, Quality Products, Special Promotions">
+    <meta property="og:title" content="Featured Products" />
+
+    <meta name="author" content="Pahadi Rasyan" />
+    <meta property="og:site_name" content="Pahadi Rasyan">
+    <link rel="canonical" href="https://www.yourcompanywebsite.com/featured-products">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    <meta property="og:url" content="<%= (url_pathname) %>/featured">
+    <meta property="og:image" content="<%= (url_pathname) %>/images/RasyyannLogo.png">
+    <meta property="og:locale" content="en_IN, hi_IN">
+
+</head>
+
+<body>
+    <%- include('header')%>
+
+        <section class="pb-5 responsive-page">
+            <div class="container-lg">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5"
+                            id='product-container'>
+                            <% if (featured_instock && featured_instock.length> 0) { %>
+                                <% featured_instock.forEach(e=> { %>
+                                    <div class="col">
+                                        <div class="product-item">
+                                            <figure>
+                                                <a href="#" title="<%= e.product_name %>">
+                                                    <img image-product-id="<%= e.id %>"
+                                                        src="<%= (url_pathname) %><%= e.product_image %>"
+                                                        alt="Product Thumbnail" class="tab-image" loading="lazy">
+                                                </a>
+                                            </figure>
+                                            <div class="d-flex flex-column text-center">
+                                                <h4 class="fw-normal product-name">
+                                                    <%= e.product_name %>
+                                                </h4>
+                                                <h4 class="fs-6 fw-normal product-desc">
+                                                    <%= e.product_description %>
+                                                </h4>
+                                                <div>
+                                                    <span class="rating">
+                                                        <svg width="18" height="18" class="text-warning">
+                                                            <use xlink:href="#star-full"></use>
+                                                        </svg>
+                                                        <svg width="18" height="18" class="text-warning">
+                                                            <use xlink:href="#star-full"></use>
+                                                        </svg>
+                                                        <svg width="18" height="18" class="text-warning">
+                                                            <use xlink:href="#star-full"></use>
+                                                        </svg>
+                                                        <svg width="18" height="18" class="text-warning">
+                                                            <use xlink:href="#star-full"></use>
+                                                        </svg>
+                                                        <svg width="18" height="18" class="text-warning">
+                                                            <use xlink:href="#star-half"></use>
+                                                        </svg>
+                                                    </span>
+                                                    <span>4.2</span>
+                                                </div>
+                                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                                    <del><span>&#8377;</span>
+                                                        <%= e.mrp_price %>
+                                                    </del>
+                                                    <span class="text-dark fw-semibold"><span>&#8377;</span>
+                                                        <%= e.product_price %>
+                                                    </span>
+                                                    <span
+                                                        class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary product-price">
+                                                        <span>&#8377;</span>
+                                                        <%= e.mrp_price - e.product_price %> OFF
+
+                                                    </span>
+                                                </div>
+                                                <% if (e.stock_status==="Out of stock" ) { %>
+                                                    <div class="button-area p-3 pt-0">
+                                                        <div class="row g-1 mt-2">
+
+                                                            <div class="col-12">
+                                                                <button
+                                                                    class="btn btn-primary rounded-1 p-2 fs-7 btn-cart"
+                                                                    style="background-color: red;opacity: 0.6;">
+                                                                    <svg width="18" height="18">
+
+                                                                    </svg> Out Of Stock
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <% } else { %>
+                                                        <div class="button-area p-3 pt-0">
+                                                            <div class="row g-1 mt-2">
+                                                                <div class="col-5"
+                                                                    style="display: flex; align-items: center;">
+                                                                    <button type="button" class="no-styles sub"
+                                                                        onclick="changeQuantity('<%= e.id %>', -1)"><span
+                                                                            style="width: 7px;">-</span></button>
+                                                                    <input type="number" name="quantity"
+                                                                        class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                                                                        value="1" min="1" max="<%= e.in_stock %>"
+                                                                        data-stock="<%= e.in_stock %>"
+                                                                        data-product-id="<%= e.id %>"
+                                                                        inputmode="numeric"
+                                                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                                    <button type="button" class="no-styles add"
+                                                                        onclick="changeQuantity('<%= e.id %>', 1)"><span
+                                                                            style="width: 7px;">+</span></button>
+                                                                </div>
+                                                                <div class="col-7"
+                                                                    style="display: flex; align-items: center;">
+                                                                    <button data-product-id="<%= e.id %>"
+                                                                        class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
+                                                                        <svg width="18" height="18"></svg> Add to Cart
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="overlay" style="display: none;"></div> 
+
+                                                        <div class="product-container" style="display: none; text-align: center;">
+                                                            <div 
+                                                              class="product-card row" 
+                                                              >
+                                                              <!-- Close Button -->
+                                                              <p 
+                                                                class="close-note close-btn" 
+                                                                style="position: absolute; top: 5px; right: 5px; font-weight: lighter; cursor: pointer; background-color: #f44336; color: white; border-radius: 50%; height: 2rem; width: 2rem; display: flex; justify-content: center; align-items: center;"
+                                                                onclick="closeProductDetails(this)"
+                                                              >
+                                                                X
+                                                              </p>
+                                                          
+                                                              <!-- Product Image -->
+                                                              <div class="product-image col-6" style="height: 250px;"> 
+                                                                
+                                                                <img 
+                                                                    src="<%= e.product_image %>"
+                                                                    alt="<%= e.name %>" 
+                                                                    style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;"
+                                                                />
+                                                            </div>
+                                                          
+                                                              <!-- Content Section -->
+                                                              <div class="product-content col-6" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+                                                                <h2 class="product-name" style="font-size: 1.5rem; margin-bottom: 8px;">
+                                                                  <%= e.product_name %>
+                                                                </h2>
+                                                                <p class="product-description" style="margin-bottom: 8px; color: #555;">
+                                                                  <%= e.product_description %>
+                                                                </p>
+                                                                <p class="product-price" style="margin-bottom: 8px; font-weight: bold; color: #333;">
+                                                                  Price: ₹<%= e.product_price %>
+                                                                </p>
+                                                                <% if (e.health_benefits) { %>
+                                                                    <div class="fw-normal">
+                                                                        <span class="fw-bold">Health Benefits:</span>
+                                                                        <ul>
+                                                                            <% e.health_benefits.split('|').forEach(benefit => { %>
+                                                                                <li><%= benefit %></li>
+                                                                            <% }); %>
+                                                                        </ul>
+                                                                    </div>
+                                                                <% } %>                                                          
+                                                              </div>
+                                                            </div>
+                                                          </div>
+
+                                                        <div class="mt-3 close-note" style="text-align: center;">
+                                                            <button class="read-more-btn no-styles"
+                                                                style="width: 50% !important; "
+                                                                onclick="toggleProductDetails(this, '<%= e.id %>')">
+                                                                Read More
+                                                            </button>
+                                                        </div>
+                                                        <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <p>No products available.</p>
+                                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+</body>
+
+</html>

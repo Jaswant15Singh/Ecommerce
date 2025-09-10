@@ -1,0 +1,187 @@
+<%- include('./headerNav') %>
+	<ul class="side-menu top">
+		<li class="active">
+			<a href="<%= (url_pathname) %>admin/dashboard">
+				<i class='bx bxs-dashboard'></i>
+				<span class="text">Dashboard</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/category">
+				<i class='bx  bx-category'></i>
+				<span class="text">Category</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/brand">
+				<i class='bx  bx-category'></i>
+				<span class="text">Brand</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/flavour">
+				<i class='bx  bx-category'></i>
+				<span class="text">Flavour</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/products">
+				<i class='bx bx-package'></i>
+				<span class="text">Products</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/deletedproducts">
+				<i class='bx bxs-trash'></i>
+				<span class="text">Deleted Products</span>
+			</a>
+		</li>
+
+		<li>
+			<a href="<%= (url_pathname) %>admin/blogs">
+				<i class='bx bxs-pencil'></i>
+				<span class="text">Blogs</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/banner">
+				<i class='bx bxs-megaphone'></i>
+				<span class="text">Banner</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/order_details">
+				<i class='bx bxs-shopping-bag-alt'></i>
+				<span class="text">Order Details</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/customers">
+				<i class='bx bxs-user-check'></i>
+				<span class="text">Customers</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/customerservice">
+				<i class='bx bx-user-voice'></i>
+				<span class="text">Customer Service</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/customerreview">
+				<i class='bx bx-comment-dots'></i>
+				<span class="text">Customer Review</span>
+			</a>
+		</li>
+
+	</ul>
+	<ul class="side-menu logout">
+		<li>
+			<a href="/admin/login" class="logout" id="logoutButton">
+				<i class='bx bxs-log-out-circle'></i>
+				<span class="text">Logout</span>
+			</a>
+		</li>
+	</ul>
+	
+	</section>
+	<main class="main">
+		<div class="head-title">
+			<div class="left">
+				<h1>Dashboard</h1>
+				<ul class="breadcrumb">
+					<li>
+						<a href="#">Dashboard</a>
+					</li>
+					<li><i class='bx bx-chevron-right'></i></li>
+					<li>
+						<a class="active" href="#">Home</a>
+					</li>
+				</ul>
+			</div>
+			<a href="pos" style="text-decoration: none;" class="btn btn-primary" target="_blank">POS</a>
+		</div>
+
+		<ul class="box-info">
+
+			<li>
+				<a href="/admin/category">
+					<img width="50px" height="50px" src="/images/category.png" alt="" loading="lazy">
+					<span class="text">
+						<h3 id="category-count"></h3>
+						<p>Categories</p>
+					</span>
+				</a>
+
+			</li>
+			<li>
+				<a href="/admin/products">
+
+					<img width="50px" height="50px" src="/images/Product1.png" alt="" loading="lazy">
+					<span class="text product-count">
+						<h3 id="product-count"></h3>
+						<p> Products</p>
+					</span>
+				</a>
+
+			</li>
+			<li>
+				<a href="/admin/order_details">
+				<img width="50px" height="50px" src="/images/order.png" alt="" loading="lazy">
+
+				<span class="text">
+					<h3 id="order-count"></h3>
+					<p>Total Orders</p>
+				</span>
+			</a>
+			</li>
+			
+		</ul>
+
+		<div class="head-title">
+			<h1 class="left">
+				Recent Orders
+			</h1>
+		</div>
+
+		<div class="table-data">
+			<div class="order">
+
+                <table id="dashboardtable">
+
+                    <thead>
+                        <tr>
+                            <th style="width: 4%;">Sr No</th>
+							<th style="width: 6%;">Order Id</th>
+                            <th style="width: 13%;">Customer Name</th>
+                            <th style="width: 17%;">Customer Email</th>
+                            <th style="width: 8%;">Customer Contact</th>
+                            <th style="width: 10%;">Total Price</th>
+                            <th style="width: 10%;">Payment Status</th>
+							<th style="width: 10%;">Delivery Status</th>
+                            <th style="width: 12%;">Ordered Date</th>
+							<th style="width: 10%;">View</th>
+                            <!-- <th >View</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+                    </tbody>
+
+                </table>
+                <div id="pagination" style="margin-top: 20px;"></div>
+            </div>
+		
+		
+		</div>
+	</main>
+	<!-- MAIN -->
+	</section>
+	<!-- CONTENT -->
+
+
+	<%-include("../javascriptss/dashboard.ejs")%>
+	</body>
+
+	</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" style="
+-ms-overflow-style: none;
+ scrollbar-width: none; 
+ ">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- title %></title>
+  <meta name="robots" content="noindex, follow">
+
+  <link rel="icon" href="/images/LOGOG.png" type="image/png">
+  <style>
+    *,
+    * ::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      box-sizing: border-box;
+      font-family: Roboto, sans-serif;
+      color: #333333;
+      letter-spacing: 0.01rem;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .main {
+      width: 100%;
+      min-height: 100vh;
+      padding-bottom: 2rem;
+      overflow: hidden;
+      background-color: whitesmoke;
+      margin-top: 107px;
+    }
+
+    .container {
+      max-width: 80rem;
+      height: 100%;
+      overflow: hidden;
+      margin: 0 auto;
+      display: flex;
+      flex-flow: column;
+      align-items: center;
+      padding: 3rem 0;
+    }
+
+    .container .deco {
+      height: 3rem;
+      width: 23rem;
+      filter: brightness(120%);
+    }
+
+    .flex-container {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 3rem;
+      width: 100%;
+    }
+
+    .cards-container {
+      padding: 2rem;
+    }
+
+    .card-box {
+      display: flex;
+      flex-flow: column;
+      width: 36.3rem;
+      background-color: white;
+      font-size: 0.92rem;
+      box-shadow: 0px 3px 4px gray;
+    }
+
+    .card-img {
+      height: 23rem;
+      object-fit: contain;
+      margin-top: 1rem;
+    }
+
+    .card-data,
+    .card-title,
+    .card-description {
+      padding: 0 1.5rem;
+    }
+
+    .share-blog h6 {
+      color: #333333 !important;
+
+    }
+
+    .share-blog {
+      padding: 0 1.5rem;
+    }
+
+    .card-data {
+      padding-top: 2rem;
+      padding-bottom: 1.3rem;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    .card-data p {
+      display: inline-block;
+    }
+
+    .text-right {
+      margin-left: 9.4rem;
+      margin-right: 1rem;
+    }
+
+    .autor {
+      font-weight: bold;
+    }
+
+    .card-title {
+      display: block;
+      margin: 0;
+      margin-top: 1rem;
+      margin-bottom: 1.3rem;
+      font-size: 1.5em;
+      font-weight: 500;
+      color: black !important;
+      text-decoration: none;
+    }
+
+    /* .card-title:hover {
+      color: #84A935;
+    } */
+
+    .card-description {
+      font-size: 1.15rem;
+      line-height: 1.7rem;
+      padding-bottom: 2rem;
+    }
+
+    .share-icons {
+      /* font-size: 1.5rem; */
+      margin: 0.5rem 0;
+    }
+
+    .share-icons img {
+      height: 1.5rem;
+      width: 1.5rem;
+    }
+
+    @media all and (max-width: 1200px) {
+      .card-box {
+        width: 30rem;
+      }
+
+      .container {
+        padding: 1%;
+      }
+
+      .card-data {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .text-right {
+        margin: 0;
+      }
+
+      .card-img {
+        height: 20rem;
+      }
+    }
+
+    @media (min-width:768px) and (max-width:991px) {
+      .main {
+        margin-top: 212px !important;
+      }
+    }
+
+    /* @media all and (max-width: 1000px) {
+  .flex-container {
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+  }
+
+  .card-box {
+    width: 100%;
+  }
+
+  .card-img {
+    height: 27rem;
+  }
+} */
+
+    @media all and (max-width: 767px) {
+      .container {
+        margin-bottom: 4rem;
+
+      }
+
+      .main {
+        margin-top: 67px !important;
+      }
+
+      .card-img {
+        height: 20rem;
+      }
+
+      .data-text {
+        font-size: 0.85rem;
+      }
+
+      .card-title {
+        font-size: 1.2rem;
+      }
+
+      .card-description {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+  <%- include('header') %>
+    <section class="main">
+
+      <div class="container cards-container">
+
+
+        <% blogs.forEach((blog)=> { %>
+          <h1>Blog-
+            <%= blog.blog_header %>
+          </h1>
+          <img class="deco"
+            src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fpluspng.com%2Fimg-png%2Fdivider-png-hd-divider-png-1589-304-1589.png&f=1&nofb=1">
+          <div class="flex-container">
+            <div class="card-box">
+              <video src="../<%= blog.blog_image %>"  class="card-img" controls></video>
+              <div class="card-text">
+                <p class="card-title">
+                  <%= blog.blog_header %>
+                </p>
+                <div class="share-blog">
+                  <h6>
+                    <i style="font-size: 1.2rem; color: white; background-color: #3FA0E7; padding: 5px;" 
+                       class="fa-solid fa-share-nodes"></i>
+                  </h6>
+                  <div class="share-icons">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(url_pathname + 'blog/' + blog.id) %>" 
+                       target="_blank">
+                      <img src="../images/facebook.png" alt="Facebook">
+                    </a>
+                    <a href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(url_pathname + 'blog/' + blog.id) %>" 
+                       target="_blank">
+                      <img src="../images/twitter.png" alt="Twitter">
+                    </a>
+
+                  </div>
+                </div>
+                
+                <p class="card-description">
+                  <%= blog.blog_content %>
+                </p>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+      </div>
+    </section>
+    <%- include("./addToCart.ejs") %>
+
+</body>
+
+</html>

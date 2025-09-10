@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .containers {
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            padding: 10px;
+            display: none;
+        }
+
+        .nav-bar {
+            min-height: 4.375em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-menu {
+            position: fixed;
+            left: -100%;
+            top: 3.375em;
+            flex-direction: column;
+            background-color: white;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: 750ms;
+            z-index: 4000;
+            list-style: none;
+
+        }
+
+        .nav-menu li {
+            font-weight: 700;
+            font-size: medium;
+            color: black;
+            margin: 3rem;
+        }
+
+        .nav-menu.active {
+            left: 0;
+        }
+
+        .hamburger {
+            cursor: pointer;
+            color: black;
+        }
+
+        .bar {
+            display: block;
+            background-color: black;
+            width: 24px;
+            height: 2px;
+            margin: 6px auto;
+            transition: all 300ms ease-in-out;
+
+        }
+
+        .hamburger.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        @media (min-width: 768px) {
+            .nav-menu {
+                position: static;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1em;
+                width: auto;
+            }
+
+            .hamburger {
+                display: none;
+            }
+        }
+
+        .nav-menu li {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: black;
+            margin: 2rem 0;
+            padding: 0.5rem 1rem;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .nav-menu li:hover {
+            background-color: dodgerblue;
+            color: white;
+            border-color: dodgerblue;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 300ms ease, visibility 300ms ease;
+            z-index: 3000;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            .containers {
+                display: block;
+            }
+
+            .nav-menu {
+                margin-top: 20px;
+            }
+
+            .nav-menu li {
+                font-weight: bold;
+                font-size: 1.2rem;
+                /* Slightly larger for better readability */
+                color: black;
+                margin: 2rem 0;
+                /* Spacing above and below */
+                padding: 0.5rem 1rem;
+                /* Add padding for a "button-like" feel */
+                border: 2px solid transparent;
+                /* Border for hover effect */
+                border-radius: 8px;
+                /* Rounded corners */
+                transition: all 0.3s ease-in-out;
+                /* Smooth transition for hover effect */
+                cursor: pointer;
+                /* Pointer cursor for better UX */
+            }
+
+            .nav-menu li:hover {
+                background-color: dodgerblue;
+                /* Highlight background on hover */
+                color: white;
+                /* Change text color on hover */
+                border-color: dodgerblue;
+                /* Add border color on hover */
+                transform: scale(1.05);
+                /* Slightly enlarge on hover */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                /* Add shadow for depth */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="headers">
+        <div class="containers">
+            <nav class="nav-bar">
+                <!-- <a href="#" class="nav-branding">J.K.</a> -->
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Contact</a>
+                    </li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="overlay"></div>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script> -->
+
+    <script>
+        const hamburger = document.querySelector(".hamburger");
+        const navMenu = document.querySelector(".nav-menu");
+        const overlay = document.querySelector(".overlay");
+
+        hamburger.addEventListener("click", () => {
+            hamburger.classList.toggle("active");
+            navMenu.classList.toggle("active");
+            overlay.classList.toggle("active");
+
+            let menuOpen = navMenu.classList.contains("active");
+            hamburger.setAttribute("aria-expanded", menuOpen);
+        });
+
+        // Close menu and overlay on link click
+        document.querySelectorAll(".nav-link").forEach((n) => n.addEventListener("click", () => {
+            hamburger.classList.remove("active");
+            navMenu.classList.remove("active");
+            overlay.classList.remove("active");
+        }));
+
+        // Close menu and overlay on overlay click
+        overlay.addEventListener("click", () => {
+            hamburger.classList.remove("active");
+            navMenu.classList.remove("active");
+            overlay.classList.remove("active");
+        });
+    </script>
+</body>
+
+</html>

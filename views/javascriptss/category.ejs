@@ -1,0 +1,257 @@
+<script>
+    function resetForm() {
+        (document.querySelector("#category-name").value = ""), (document.querySelector("#category-image-container").innerHTML = "");
+        let e = document.querySelector("#category-image");
+        (e.value = ""), (e.style.display = "block"), (document.querySelector("#change-image").style.display = "none"), (document.querySelector("#cancel-button").style.display = "none");
+        let t = document.createElement("img");
+        (t.style.width = "100px"), (t.style.height = "100px"), (t.style.display = "none"), document.querySelector("#category-image-container").appendChild(t);
+        document.getElementById("visibility").checked=false;
+
+    }
+    function setCategory() {
+        (document.querySelector(".form-label").innerText = "Category Name"), resetForm(), (document.querySelector("#category-id").value = ""), closeMenu();
+    }
+    function closeMenu() {
+        let e = document.querySelector("#sidebar");
+        e.style.display = "none";
+    }
+    function openUpdateModal(e, t, a,isChecked) {
+        (document.querySelector(".form-label").innerText = "Update Category"), document.getElementById("exampleModalLabel").innerText="Update Category",document.getElementById("add-category-button").innerText="Update Category",(document.querySelector("#category-name").value = t), (document.querySelector("#category-id").value = e);
+        let r = document.querySelector("#category-image-container");
+        r.innerHTML = `
+    <img src="<%= (url_pathname) %>${a}" style="width: 100px; height: 100px; cursor: pointer;" id="preview-image" />
+`;
+        let n = document.querySelector("#preview-image"),
+            l = document.querySelector("#category-image"),
+            o = document.querySelector("#change-image"),
+            i = document.querySelector("#cancel-button");
+            document.getElementById("visibility").checked = isChecked === 'true';
+        (l.style.display = "none"),
+            (o.style.display = "inline-block"),
+            (i.style.display = "none"),
+            o.addEventListener("click", (e) => {
+                e.preventDefault(), (n.style.display = "none"), (l.style.display = "block"), l.click(), (o.style.display = "none"), (i.style.display = "inline-block");
+            }),
+            l.addEventListener("change", (e) => {
+                if (e.target.files.length > 0) {
+                    let t = e.target.files[0],
+                        r = new FileReader();
+                    (r.onload = function (e) {
+                        (n.src = e.target.result), (n.style.display = "block"), (l.style.display = "none"), (o.style.display = "none"), (i.style.display = "none");
+                    }),
+                        r.readAsDataURL(t);
+                } else (n.src = `<%= (url_pathname) %>${a}`), (n.style.display = "block"), (l.style.display = "none"), (o.style.display = "inline-block"), (i.style.display = "none");
+            }),
+            i.addEventListener("click", (e) => {
+                e.preventDefault(), (n.src = `<%= (url_pathname) %>${a}`), (n.style.display = "block"), (l.style.display = "none"), (o.style.display = "inline-block"), (i.style.display = "none");
+            }),
+            closeMenu();
+    }
+    function openAddCategoryModal() {
+        (document.querySelector(".form-label").innerText = "Add Category"), resetForm(), (document.querySelector("#category-id").value = ""), closeMenu();
+    }
+    document.getElementById("category-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        let t = new FormData(this),
+        
+            a = document.querySelector("#category-id").value,
+            r = a ? `<%= (url_pathname) %>admin/update-cat/${a}` : "<%= (url_pathname) %>admin/create-category";
+
+            if (document.getElementById('visibility').checked) {
+            t.set('visibility', true);
+        } else {
+            t.set('visibility', false);
+        }
+        fetch(r, { method: a ? "PUT" : "POST", body: t })
+            .then((e) => e.json())
+            .then((e) => {
+                this.reset(),
+                    closeMenu(),
+                    e.success
+                        ? (showPopup("Success", e.message, "Success"),
+                          resetForm(),
+                          setTimeout(() => {
+                              window.location.reload();
+                          }, 1e3))
+                        : "Missing fields" === e.message
+                        ? showPopup("Error", "Missing Fields", "Failed")
+                        : showPopup("Error", e.message, "Failed"),
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+            })
+            .catch((e) => {
+                console.error("Error:", e);
+            });
+    }),
+        document.addEventListener("DOMContentLoaded", function () {
+            let e = document.getElementById("exampleModal");
+            e.addEventListener("hidden.bs.modal", function () {
+                let e = document.querySelector("#sidebar");
+                e ? (e.style.display = "block") : console.log("Sidebar not found");
+            });
+        }),
+        document.querySelectorAll('input[type="number"]').forEach(function (e) {
+            e.addEventListener("wheel", function (e) {
+                e.preventDefault();
+            });
+        });
+    const menuBar = document.querySelector("#content nav .bx.bx-menu"),
+        sidebar = document.getElementById("sidebar");
+    window.innerWidth < 769 && sidebar.classList.add("hide"),
+        menuBar.addEventListener("click", function () {
+            sidebar.classList.toggle("hide");
+        });
+    let categoryData = [],
+        filteredCategoryData = [],
+        categoryPage = 1;
+    const rowsPerCategoryPage = 5;
+    document.addEventListener("DOMContentLoaded", function () {
+        let e = document.getElementById("searchInput");
+        document.getElementById("pagination");
+        let t = document.getElementById("startDate"),
+            a = document.getElementById("endDate"),
+            r = document.getElementById("filterButton"),
+            n = new Date(),
+            l = n.getFullYear(),
+            o = String(n.getMonth() + 1).padStart(2, "0"),
+            i = String(n.getDate()).padStart(2, "0"),
+            c = `${l}-${o}-${i}`,
+            d = `${l}-${o}-${i}`;
+        function s() {
+            fetch("<%= (url_pathname) %>admin/get/category/Admin")
+                .then((e) => {
+                    if (!e.ok) throw Error("Network response was not ok");
+                    return e.json();
+                })
+                .then((e) => {
+                    e && e.data ? ((filteredCategoryData = categoryData = e.data), y(categoryPage), g(filteredCategoryData.length)) : console.error("No category data received.");
+                })
+                .catch((e) => {
+                    console.error("Error fetching category data:", e);
+                });
+        }
+        function y(e) {
+            let t = document.querySelector("#categoryTable tbody");
+            t.innerHTML = "";
+            let a = (e - 1) * 5,
+                r = filteredCategoryData.slice(a, a + 5);
+            if (0 === r.length) {
+                t.innerHTML = '<tr><td colspan="12">No data available</td></tr>';
+                return;
+            }
+            r.forEach((e, r) => {
+                const visibility=e.visibility?"Visible":"Hidden";
+                let n = `
+            <tr>
+                <td>${a + r + 1}</td>
+                <td>${e.category_name}</td>
+                <td>
+                    <img src="<%= (url_pathname) %>${e.category_image}" alt="${e.category_name}" style="width:70px;height:70px;">
+                </td>
+                <td>${visibility}</td>
+                <td>${new Date(e.inserted_date).toLocaleDateString()}</td>
+
+                <td>
+                  <button 
+                      type="button" 
+                      class="btn btn-primary" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#exampleModal" 
+                      onclick="openUpdateModal('${e.id}', '${e.category_name}', '${e.category_image}','${e.visibility}')">
+                      Update
+                  </button>
+                </td>
+            </tr>
+        `;
+                t.insertAdjacentHTML("beforeend", n);
+            });
+        }
+        function g(e) {
+            let t = document.querySelector("#pagination");
+            t.innerHTML = "";
+            let a = Math.ceil(e / 5),
+                r = Math.floor(2.5),
+                n,
+                l;
+            if ((a <= 5 ? ((n = 1), (l = a)) : categoryPage <= r ? ((n = 1), (l = 5)) : categoryPage + r >= a ? ((n = a - 5 + 1), (l = a)) : ((n = categoryPage - r), (l = categoryPage + r)), categoryPage > 1)) {
+                let o = document.createElement("button");
+                (o.textContent = "Previous"),
+                    (o.className = "pagination-btn"),
+                    o.addEventListener("click", () => {
+                        y(--categoryPage), g(e);
+                    }),
+                    t.appendChild(o);
+            }
+            for (let i = n; i <= l; i++) {
+                let c = document.createElement("button");
+                (c.textContent = i),
+                    (c.className = "pagination-btn"),
+                    i === categoryPage && c.classList.add("active"),
+                    c.addEventListener("click", () => {
+                        y((categoryPage = i)), g(e);
+                    }),
+                    t.appendChild(c);
+            }
+            if (categoryPage < a) {
+                let d = document.createElement("button");
+                (d.textContent = "Next"),
+                    (d.className = "pagination-btn"),
+                    d.addEventListener("click", () => {
+                        y(++categoryPage), g(e);
+                    }),
+                    t.appendChild(d);
+            }
+        }
+        (t.value = d),
+            (a.value = d),
+            t.setAttribute("max", c),
+            a.setAttribute("max", c),
+            e.addEventListener("input", function () {
+                let t = e.value.trim();
+                t.length > 0
+                    ? (function e(t) {
+                          fetch(`/search-cat?search=${encodeURIComponent(t)}`)
+                              .then((e) => {
+                                  if (!e.ok) throw Error("Failed to fetch search results");
+                                  return e.json();
+                              })
+                              .then((e) => {
+                                  e && e.length > 0 ? ((filteredCategoryData = e), y((categoryPage = 1)), g(filteredCategoryData.length)) : ((filteredCategoryData = []), y(categoryPage), g(filteredCategoryData.length));
+                              })
+                              .catch((e) => {
+                                  console.error("Error fetching search results:", e);
+                              });
+                      })(t)
+                    : s();
+            }),
+            r.addEventListener("click", function () {
+                let e = t.value.trim(),
+                    r = a.value.trim();
+                if (!e || !r) {
+                    showPopup("OOPS", "Please select both start and end dates.", "FAILURE");
+                    return;
+                }
+                let n = new Date(e),
+                    l = new Date(r);
+                if (isNaN(n) || isNaN(l)) {
+                    showPopup("OOPS", "Please select valid start and end dates.", "FAILURE");
+                    return;
+                }
+                if (n > l) {
+                    showPopup("OOPS", "Start date cannot be later than end date.", "FAILURE");
+                    return;
+                }
+                0 ===
+                (filteredCategoryData = categoryData.filter((e) => {
+                    let t = new Date(e.inserted_date).toISOString().split("T")[0],
+                        a = n.toISOString().split("T")[0],
+                        r = l.toISOString().split("T")[0];
+                    return t >= a && t <= r;
+                })).length
+                    ? (showPopup("No Data", "No categories found for the selected time period.", "INFO"), y(categoryPage), g(filteredCategoryData.length))
+                    : (y((categoryPage = 1)), g(filteredCategoryData.length));
+            }),
+            s();
+    });
+</script>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" style="
+-ms-overflow-style: none;
+ scrollbar-width: none; 
+ ">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%- title %></title>
+    <link rel="icon" type="image/png" href="/images/Rasyyaan.png">
+    <meta name="description" content="Contact us for any inquiries, feedback, or support. We are here to assist you with your questions and concerns.">
+    <meta property="og:title" content="Contact Us - Pahadi Rasyan">
+    <meta name="keywords" content="Contact Us, Customer Support, Feedback, Inquiries, Support Services, Help Center">
+    <link rel="canonical" href="<%= (url_pathname) %>/contact">
+    <meta name="author" content="Pahadi Rasyan" />
+    <meta property="og:site_name" content="Pahadi Rasyan">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    <meta property="og:url" content="<%= (url_pathname) %>/contact">
+    <meta property="og:image" content="<%= (url_pathname) %>/images/RasyyannLogo.png">
+    <meta property="og:locale" content="en_IN, hi_IN">
+    <style>
+        section {
+            padding: 20px 0;
+            min-height: 100vh;
+            margin-top: 107px;
+            margin-bottom: 48px;
+        }
+
+        .contact-info {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+            height: 17rem;
+        }
+
+        .contact-info-icon {
+            margin-bottom: 5px;
+        }
+
+        .contact-info-item {
+            background: #071C34;
+            padding: 30px 0px;
+            height: 100%;
+        }
+
+        .contact-page-sec .contact-page-form h2 {
+            color: white !important;
+            text-transform: capitalize;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .contact-page-form .col-md-6.col-sm-6.col-xs-12 {
+            padding-left: 0;
+        }
+
+        .contact-page-form.contact-form input {
+            margin-bottom: 5px;
+        }
+
+        .contact-page-form.contact-form textarea {
+            height: 110px;
+        }
+
+        .contact-page-form.contact-form input[type="submit"] {
+            background: #071C34;
+            width: 150px;
+            border-color: #071C34;
+        }
+
+        .contact-info-icon i {
+            font-size: 36px;
+            color: #fda40b;
+        }
+/* 
+        .contact-info-text {
+            text-align: left;
+            padding-left: 10px;
+        } */
+
+        .contact-info-text p {
+            margin-bottom: 0px;
+        }
+
+        .contact-info-text h2 {
+            color: #fff !important;
+            font-size: 22px;
+            text-transform: capitalize;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .contact-info-text span {
+            color: white;
+            font-size: 16px;
+            /* font-weight: ; */
+            display: inline-block;
+            width: 100%;
+        }
+
+        .contact-page-form input {
+            background: #f9f9f9 none repeat scroll 0 0;
+            border: 1px solid #f9f9f9;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .contact-page-form .message-input {
+            display: inline-block;
+            width: 100%;
+            padding-left: 0;
+        }
+
+        .single-input-field textarea {
+            background: #f9f9f9 none repeat scroll 0 0;
+            border: 1px solid #f9f9f9;
+            width: 100%;
+            height: 120px;
+            padding: 12px 16px;
+            border-radius: 4px;
+        }
+
+        .single-input-fieldsbtn input[type="submit"] {
+            background: #fda40b none repeat scroll 0 0;
+            color: #fff;
+            display: inline-block;
+            font-weight: 600;
+            padding: 10px 0;
+            text-transform: capitalize;
+            width: 150px;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .single-input-fieldsbtn input[type="submit"]:hover {
+            background: #071C34;
+            transition: all 0.4s ease-in-out 0s;
+            border-color: #071C34
+        }
+
+        .single-input-field h4 {
+            color: #464646;
+            text-transform: capitalize;
+            font-size: 14px;
+        }
+
+        .contact-page-form {
+            display: inline-block;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .contact-page-map {
+            margin-top: 36px;
+        }
+
+        .contact-page-form form {
+            padding: 20px 15px 0;
+        }
+        .contact-form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        /* h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #111827;
+        } */
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.5rem !important;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            font-size: 1rem;
+            transition: all 0.15s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .validation-icon {
+            position: absolute;
+            right: 1rem;
+            top: 2.5rem;
+            display: none;
+        }
+
+        .validation-icon.success {
+            color: var(--success);
+            display: block;
+        }
+
+        .validation-icon.error {
+            color: var(--error);
+            display: block;
+        }
+
+        input.success, textarea.success {
+            border-color: var(--success);
+        }
+
+        input.error, textarea.error {
+            border-color: var(--error);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: start;
+            gap: 0.25rem;
+            margin-top: 1rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-top: 0.25rem;
+        }
+
+        .checkbox-group label {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .privacy-notice {
+            font-size: 0.875rem;
+            color: var(--gray);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .success-message {
+            display: none;
+            background: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        @media (min-width:768px)  and (max-width:991px) {
+            section{
+                margin-top: 248px !important;
+            }
+        }
+
+        @media (max-width:767px) {
+            section {
+                margin-top: 67px !important;
+                margin-bottom: 80px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("header") %>
+    <%-include('socialmedia') %>
+    <%- include("modal_pop") %>
+
+        <section class="contact-page-sec">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="contact-info">
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon">
+                                    <i class="fas fa-map-marked"></i>
+                                </div>
+                                <div class="contact-info-text">
+                                    <h2>address</h2>
+                                    <span> Building-4, N.G. Park, A-503, Phase-3, Rawalpada, Dahisar East </span>
+                                    <span> Mumbai, Maharashtra 400068 ,INDIA</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="contact-info">
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-info-text">
+                                    <h2>E-mail</h2>
+                             
+                                    <span>
+                                        <a href="mailto:pahadi.rasyan@gmail.com" style="color: white; cursor: pointer;">pahadi.rasyan@gmail.com</a>
+                                    </span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="contact-info">
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon">
+                                    <i class="fa-sharp fa-regular fa-phone"></i>
+                                </div>
+                                <div class="contact-info-text">
+                                    <h2>Contact Us</h2>
+                                    <span><a style="color: white;text-decoration: none;" href="tel:+91 7977782638">7977782638</a></span>
+                                    <span><a style="color: white;text-decoration: none;" href="tel:+91 7738306229">7738306229</a></span>
+                                    <!-- <span>+91 7977782638</span>
+                                    <span>+91 7738306229</span> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="contact-page-map">
+                            <a style="padding:0.5rem;text-decoration: none;background-color:#6BB252; color: white;font-weight: 700;font-size: 1.5rem;" target="_blank" href="https://www.google.com/search?hl=en-IN&gl=in&q=Building-4,+Pahadi+Rasyan,+N.G.+Park,+A-503,+Phase-3,+Rawalpada,+Dahisar+East,+Mumbai,+Maharashtra+400068&ludocid=5576101941892946779&lsig=AB86z5WowhXS5lxM1WTM20UjDOZ8&hl=en&gl=IN#lrd=0x3be7b11aa99a25df:0x4d624b2c35e51b5b,1">Write a review</a>
+
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3766.9184042852526!2d72.8696600742728!3d19.242387546729788!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b11aa99a25df%3A0x4d624b2c35e51b5b!2sPahadi%20Rasyan!5e0!3m2!1sen!2sin!4v1734696216182!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="contact-form-container">
+                            <div class="success-message" id="successMessage">
+                                Thank you! Your form has been submitted successfully.
+                            </div>
+                            
+                            <h1>Customer Service Form</h1>
+                            <form id="gdprForm" >
+                                <div class="form-group">
+                                    <label for="customer_name">Full Name *</label>
+                                    <input type="text" id="customer_name" name="customer_name" required>
+                                    <!-- <span class="validation-icon">✓</span>
+                                    <div class="error-message" id="nameError">Please enter your full name</div> -->
+                                </div>
+                    
+                                <div class="form-group">
+                                    <label for="customer_contact">Contact *</label>
+                                    <input type="tel" id="customer_contact" name="customer_contact" 
+                                    pattern="[0-9]{10}" maxlength="10" required
+                                    title="Please enter a valid 10-digit number"
+                                    placeholder="Enter 10-digit contact number">
+                                    
+                                </div>
+                                <div class="form-group">
+                                    <label for="customer_email">Email *</label>
+                                    <input type="email" id="customer_email" name="customer_email" required>
+                                    <!-- <span class="validation-icon">✓</span>
+                                    <div class="error-message" id="emailError">Please enter a valid email address</div> -->
+                                </div>
+                                <div class="form-group">
+                                    <label for="customer_query">Message *</label>
+                                    <textarea id="customer_query" name="customer_query" rows="3" required></textarea>
+                                    <!-- <span class="validation-icon">✓</span>
+                                    <div class="error-message" id="messageError">Please enter your message</div> -->
+                                </div>             
+                                <button type="submit">Submit Form</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script>
+            const form=document.getElementById("gdprForm");
+
+
+            form.addEventListener("submit",async(e)=>{
+                const customer_name=document.getElementById("customer_name").value;
+            const customer_contact=document.getElementById("customer_contact").value;
+            const customer_email=document.getElementById("customer_email").value;
+            const customer_query=document.getElementById("customer_query").value;
+            
+                e.preventDefault();
+                fetch("<%= url_pathname %>customer_service",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({customer_contact,customer_email,customer_name,customer_query})
+                })
+                .then((res)=>{
+                    return res.json()
+                })
+                .then((data)=>{
+                    
+                    if(data.success){
+                        showPopup('Success', data.message, 'Success');
+                        form.reset()
+                    }                    
+                    else{
+                        
+                        showPopup('Oops', data.message, 'failure');
+
+                    }
+                })
+            })
+        </script>
+        <%-include("./addToCart.ejs")%>
+
+</body>
+
+</html>

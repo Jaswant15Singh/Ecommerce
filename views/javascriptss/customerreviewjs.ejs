@@ -1,0 +1,183 @@
+<script>
+    const url = window.location.pathname;
+    const parts = url.split('/');
+    const id = parts[parts.length - 1];
+    document.getElementById("review-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const id = document.querySelector("#category-id").value;
+        const visiblityValue = document.getElementById("review-hidden").checked; // true/false
+
+        fetch(`/admin/update_review/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ visiblity: visiblityValue }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    showPopup("Success", data.message, "Success");
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1000)
+                } else {
+                    showPopup("Error", "Some issue occurred", "Failed");
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1000)
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error.message);
+            });
+    });
+
+    function closeMenu() {
+        const sideMenu = document.querySelector("#sidebar");
+        sideMenu.style.display = "none";
+    }
+    function resetForm() {
+        document.querySelector("#review-hidden").checked = false;
+
+    }
+    // document.getElementById("review-form").addEventListener("click",()=>{
+    //     document.getElementById("sidebar").style.display="block"
+    // })
+    function openUpdateModal(id) {
+        closeMenu()
+        function getBlogs() {
+            fetch(`<%= url_pathname %>admin/ind_review/${id}`)
+                .then((res) => { return res.json() })
+                .then((data) => {
+                    document.querySelector("#category-id").value = data.data.id;
+                    document.getElementById("review-hidden").checked = (data.data.visiblity === true || data.data.visiblity === 'true');
+
+                })
+        }
+        getBlogs()
+    }
+    const menuBar = document.querySelector('#content nav .bx.bx-menu');
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth < 768) {
+        sidebar.classList.add('hide');
+    }
+    menuBar.addEventListener('click', function () {
+        sidebar.classList.toggle('hide');
+    })
+    document.addEventListener("DOMContentLoaded", function () {
+        const productModal = document.getElementById("exampleModal");
+
+        productModal.addEventListener("hidden.bs.modal", function () {
+            const sideMenu = document.querySelector("#sidebar");
+
+            if (sideMenu) {
+                sideMenu.style.display = "block";
+            } else {
+                console.log("Sidebar not found");
+            }
+        });
+    });
+
+    let categoryData = [];
+
+    let categoryPage = 1;
+    const rowsPerCategoryPage = 5;
+    function fetchCategoryData() {
+        fetch(`<%= (url_pathname) %>admin/get_customer_review`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.data) {
+
+                    categoryData = data.data;
+                    displayCategoryPage(categoryPage);
+                    // generatepdf(data.data)
+                    setupCategoryPagination(categoryData.length);
+                } else {
+                    console.error("No category data received.");
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching category data:', error);
+            });
+    }
+
+    function displayCategoryPage(page) {
+        const tableBody = document.querySelector('#individualtable tbody');
+        tableBody.innerHTML = '';
+
+        const start = (page - 1) * rowsPerCategoryPage;
+        const end = start + rowsPerCategoryPage;
+        const paginatedCategoryData = categoryData.slice(start, end);
+        if(paginatedCategoryData.length <1){
+            tableBody.innerHTML = '<tr><td colspan="13">No data available</td></tr>';
+            return;
+        }
+        let counter = start + 1;
+        paginatedCategoryData.forEach(category => {
+
+            const insertedDate = new Date(category.inserted_date);
+            const formattedDateTime = `${insertedDate.getDate().toString().padStart(2, '0')}-${(insertedDate.getMonth() + 1).toString().padStart(2, '0')}-${insertedDate.getFullYear()} ${insertedDate.getHours().toString().padStart(2, '0')}:${insertedDate.getMinutes().toString().padStart(2, '0')}:${insertedDate.getSeconds().toString().padStart(2, '0')}`;
+            const visibility = category.visiblity ? "Visible" : "Hidden"
+
+            const rowHTML = `
+            <tr>
+                <td>${counter}</td>
+                 <td>${category.customer_review_name}</td>
+                <td>${category.rating}</td>
+                <td>${category.review}</td>
+                <td>${formattedDateTime}</td>
+                <td>${visibility}</td>
+<td>
+                      <button 
+                          type="button" 
+                          class="btn btn-primary" 
+                          data-bs-toggle="modal" 
+                          data-bs-target="#exampleModal" 
+                          onclick="openUpdateModal('${category.id}')"
+                          >Update
+                      </button>
+                    </td>            </tr>
+        `;
+            tableBody.insertAdjacentHTML('beforeend', rowHTML);
+            counter++;
+        });
+    }
+
+    function setupCategoryPagination(totalItems) {
+        const paginationDiv = document.querySelector('#pagination');
+        paginationDiv.innerHTML = '';
+
+        const totalPages = Math.ceil(totalItems / rowsPerCategoryPage);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i;
+            button.className = 'pagination-btn';
+            if (i === categoryPage) {
+                button.classList.add('active');
+            }
+
+            button.addEventListener('click', () => {
+                categoryPage = i;
+                displayCategoryPage(categoryPage);
+
+                document.querySelectorAll('.pagination-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+
+            paginationDiv.appendChild(button);
+        }
+    }
+
+    fetchCategoryData();
+
+
+
+</script>

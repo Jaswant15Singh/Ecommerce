@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+	<link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <link rel="stylesheet" type="text/css" href="../stylesheets/anh//bootstrap.css" />
+  <link href="../stylesheets/anh/style.css" rel="stylesheet" />
+  <link href="../stylesheets/anh/responsive.css" rel="stylesheet" />
+</head>
+<body>
+  <%- include('header') %>
+  <section class="shop_section layout_padding">
+    <div class="container">
+      <div class="heading_container heading_center m-0">
+        <h2>
+         All Brands
+        </h2>
+        <span style="margin-top: 1rem;"><input type="search" class="form-control" id="search-brand" placeholder="Search brand...">
+         </span>
+      </div>
+      <div id="search-brand-data">
+          <div class="row g-1 d-flex" style="display: flex;flex-wrap: wrap;">
+            <% if (brand && brand.length > 0) { %>
+          <% brand.forEach((e) => { %>
+         <div class="col-12 col-sm-6 col-md-4 col-lg-3" style="cursor: pointer;z-index: 99;border-radius: 0.8rem;">
+            <div class="box pb-0"  onclick="fetchBrandProducts(<%= e.id %>)">
+                <div class="img-box" style="background-color: none;height: 150px;">
+                  <img src="<%= e.brand_image %>" alt="<%= e.name %>" height="120px" loading="lazy" width="120px" style="border-radius:50%;object-fit: contain;margin-top: -2rem;">
+                </div>
+                <div class="detail-box" style="display: flex;justify-content: center;align-items: center;text-align: center;">
+                  <h6>
+                    <%= e.brand_name %>
+                  </h6>
+                </div>
+          </div>
+          </div>
+        <% }) %>
+        <% } else { %>
+          <p>No Brands available.</p>
+        <% } %>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+	<%-include("./footer.ejs")%>
+	<%-include("./newScript.ejs")%>
+  <script>
+  let allCategories = [];
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("<%= url_pathname %>all_brands");
+    let data = await res.json();
+    data=data.data
+    console.log(data); 
+    allCategories = [...data];
+    console.log("Categories loaded:", allCategories);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
+});
+const input_search = document.getElementById("search-brand");
+const results = document.getElementById("search-brand-data");
+input_search.addEventListener("input", () => {
+  const query = input_search.value.toLowerCase().trim();
+  const matched = allCategories.filter(cat =>
+    cat.brand_name.toLowerCase().includes(query)
+  );
+  results.innerHTML = '';
+  let html = `  
+          <div class="row g-1" style="display: flex;flex-wrap: wrap;">
+`;
+  matched.forEach(e => {
+    html += `
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3" style="cursor: pointer;z-index: 99;border-radius: 0.8rem;">
+        <div class="box pb-0"  onclick="fetchBrandProducts(${e.id})">
+          <div class="img-box" style="background-color: none;height:150px;">
+            <img src="${e.brand_image}" alt="${e.brand_name}" height="120px" width="120px" style="border-radius:50%;object-fit: contain;margin-top: -2rem;">
+          </div>
+          <div class="detail-box" style="display: flex;justify-content: center;align-items: center;text-align: center;">
+            <h6>${e.brand_name}</h6>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  html += `
+    </div>
+  `;
+  results.innerHTML = html;
+});
+  </script>
+</body>
+</html>

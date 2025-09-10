@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon">
+
+  <title>
+    <%= siteTitle %>-Contact us
+  </title>
+
+  <!-- slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+<!-- Add this inside the <head> tag -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<link rel="stylesheet" type="text/css" href="../stylesheets/anh//bootstrap.css" />
+<link href="../stylesheets/anh/style.css" rel="stylesheet" />
+<link href="../stylesheets/anh/responsive.css" rel="stylesheet" />
+</head>
+
+<body>
+  <%- include('./header') %>
+
+  <!-- end hero area -->
+
+  <!-- contact section -->
+
+  <section class="contact_section layout_padding">
+    <div class="container px-0">
+      <div class="heading_container ">
+        <div class="heading_container heading_center">
+          <h2>Contact Us</h2>
+      </div>
+      </div>
+    </div>
+    <div class="container container-bg layout_padding container-bg">
+      <div class="row">
+        <div class="col-lg-6 col-md-6 px-0" style="overflow-x: hidden;">
+          <div class="map_container">
+            <div class="map-responsive">
+              <iframe src="<%= map_address %>" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-6 px-0">
+          <form id="gdprForm" >
+            <div class="form-group">
+                <input type="text" id="customer_name" name="customer_name" required placeholder="Name">
+              
+            </div>
+
+            <div class="form-group">
+                <input type="tel" id="customer_contact" name="customer_contact" 
+                pattern="^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$" inputmode="numeric"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="10" required
+                title="Please enter a valid 10-digit number"
+                placeholder="Contact number"  onkeydown="validateFirstDigit(event)">
+                
+            </div>
+            <div class="form-group">
+                <input type="email" id="customer_email" name="customer_email" placeholder="Email" required>
+             
+            </div>
+            <div class="form-group">
+              <label for="customer_query">Message</label>
+                <textarea style="width: 100%;padding-left: 25px;" id="customer_query" name="customer_query" rows="3" required></textarea>
+
+            </div>             
+            <button type="submit">Submit Form</button>        </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- end contact section -->
+
+  <!-- info section -->
+
+	<%-include("./footer.ejs")%>
+
+
+  <!-- end info section -->
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js">
+  </script>
+  <%- include("./newScript.ejs") %>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("gdprForm");
+
+    if (!form) {
+        console.error("❌ Form with ID 'gdprForm' not found!");
+        return;
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        console.log("✔ Form submitted!");
+
+        const customer_name = document.getElementById("customer_name").value;
+        const customer_contact = document.getElementById("customer_contact").value;
+        const customer_email = document.getElementById("customer_email").value;
+        const customer_query = document.getElementById("customer_query").value;
+
+        console.log({ customer_name, customer_contact, customer_email, customer_query });
+
+        try {
+            const response = await fetch("<%= url_pathname %>customer_service", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ customer_name, customer_contact, customer_email, customer_query })
+            });
+
+            const data = await response.json();
+            console.log("✔ Server Response:", data);
+
+            if (data.success) {
+                showPopup('Done', data.message, 'Success');
+                form.reset();
+            } else {
+                showPopup('Oops', data.message, 'Failure');
+            }
+        } catch (error) {
+            console.error("❌ Fetch error:", error);
+        }
+    });
+});
+
+function validateFirstDigit(event) {
+        const phoneInput = document.getElementById('phone');
+
+        if (['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+          return;
+        }
+
+        if (phoneInput.value.length === 0 && event.key < '6' && event.key >= '0' && event.key <= '9') {
+          event.preventDefault();
+        } else {
+        }
+      }
+
+  </script>
+
+</body>
+
+</html>

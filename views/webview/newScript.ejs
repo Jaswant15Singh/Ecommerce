@@ -1,0 +1,1144 @@
+<script>
+  window.addEventListener("pageshow", function (event) {
+    var historyTraversal = event.persisted ||
+      (typeof window.performance != "undefined" &&
+        window.performance.navigation.type === 2);
+    if (historyTraversal) {
+      window.location.reload();
+    }
+  });
+
+  function isTouchDevices() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+  }
+
+  function setupTouchClass() {
+    if (isTouchDevices()) {
+      document.body.classList.add('touch-device');
+    }
+  }
+
+  setupTouchClass();
+  const secretKey = 'your-unique-secret-key';
+  const existingCart = localStorage.getItem("carts");
+
+  let carts = [];
+
+
+  if (existingCart) {
+    try {
+      carts = decryptData(existingCart);
+    } catch (error) {
+      console.error("Error decrypting cart data:", error);
+      carts = [];
+    }
+  }
+
+  function decryptData(encryptedData) {
+    if (!encryptedData) {
+      console.warn("No data found to decrypt");
+      return [];
+    }
+    try {
+      const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
+      const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+      if (!decryptedString) {
+        throw new Error("Decryption failed, possibly wrong key or corrupted data");
+      }
+      return JSON.parse(decryptedString);
+    } catch (error) {
+      console.error("Error decrypting data:", error);
+      return [];
+    }
+  }
+
+  function encryptData(data) {
+    return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
+  }
+  let data = localStorage.getItem("carts");
+
+  const cartModal = document.getElementById("cart-model");
+  const closeModalButton = cartModal.querySelector(".close-button");
+  const viewCartButton = document.getElementById("view-cart-btn");
+  const continueShoppingButton = document.getElementById("continue-shopping-btn");
+  const continueShoppingButtons = document.getElementById("continue-shopping-btns");
+
+  const cartModals = document.getElementById("cart-modals");
+  const closeModalButtons = cartModals.querySelector(".close-buttons");
+  const viewCartButtons = document.getElementById("view-cart-btns");
+  // const continueShoppingButtons = document.getElementById("continue-shopping-btns");
+
+  function showCartModal(productName, productPrice, quantity, imageUrl) {
+    document.getElementById("modal-product-name").innerText = `${productName}`;
+    document.getElementById("modal-quantity").innerText = `${quantity}`;
+    document.getElementById("modal-total-price").innerText = `${(productPrice * quantity)}`;
+    document.getElementById("modal-image").src = imageUrl;
+    // setTimeout(() => {
+    //   cartModal.classList.add("hidden");
+    // }, 1000)
+    cartModal.classList.remove("hidden");
+  }
+
+  function hideCartModal() {
+    cartModal.classList.add("hidden");
+  }
+  function hideCartModals() {
+
+    cartModals.classList.add("hidden");
+  }
+  closeModalButton.addEventListener("click", hideCartModal);
+  closeModalButtons.addEventListener("click", hideCartModals);
+
+  continueShoppingButton.addEventListener("click", hideCartModal);
+  continueShoppingButtons.addEventListener("click", hideCartModals);
+
+  viewCartButton.addEventListener("click", () => {
+    // window.location.href = "/cart";
+    cartModal.classList.add("hidden");
+    window.location.reload();
+  }
+  );
+
+
+  function updateCartCount() {
+    const len_cart = carts.reduce((sum, item) => sum + item.quantity, 0);
+    const cartCount = document.querySelector(".cartX");
+    cartCount.innerText = len_cart;
+  }
+
+  document.getElementById("cart-push").addEventListener("click", async () => {
+    try {
+      const response = await fetch('<%= url_pathname %>cart_productss');
+      const availableProducts = await response.json();
+      const updatedCart = carts.filter(cartItem =>
+        availableProducts.some(product => product.id.toString() === cartItem.productId)
+      );
+      localStorage.setItem('carts', encryptData(updatedCart));
+      window.location.href = "/cart"
+      // renderCart(updatedCart);
+    } catch (error) {
+      console.error('Error syncing cart with database:', error);
+    }
+  })
+
+
+  let no_flavour_batchId;
+
+  document.querySelectorAll(".btn-cart").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const productId = button.getAttribute('data-product-id');
+      const quantityInput = document.querySelector(".cartquantity");
+      const enteredQuantity = parseInt(quantityInput.value) || 1;
+      const attribute_data = button.getAttribute("data-typeattribute");
+      const url = attribute_data === "PIECES" ? `<%= url_pathname %>pieces_products/${productId}` : `<%= url_pathname %>units_products/${productId}`
+      fetch(`${url}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const existingProduct = carts.find((item) => item.productId === productId);
+          let totalQuantity = enteredQuantity;
+          if (existingProduct) {
+            totalQuantity += existingProduct.quantity;
+          }
+          let productName;
+          productName = data[0].product_name;
+          const productPrice = parseFloat(
+            document.querySelector(".product-price-text").innerText.replace("₹", "")
+          );
+          const baseUrl = window.location.origin;
+          const imageUrl = data[0].product_image.startsWith('http')
+            ? data[0].product_image
+            : `${baseUrl}/${data[0].product_image}`;
+          if (attribute_data === "PIECES") {
+            let allPiecesData = [];
+            let selectedLabelName;
+            let categories;
+            async function fetchCategoriesAndRender() {
+              try {
+                const res = await fetch(`<%= url_pathname %>get_products/${productId}`);
+                if (!res.ok) {
+                  throw new Error(`HTTP error! Status: ${res.status}`);
+                }
+                categories = await res.json();
+                categories = categories.data;
+                const uniqueByLabel = categories.reduce((acc, current) => {
+                  if (!acc.find(item => item.label_name === current.label_name)) {
+                    acc.push(current);
+                  }
+                  return acc;
+                }, []);
+
+                const categoriesContainer = document.getElementById("modal-categoriess");
+                categoriesContainer.innerHTML = "";
+                const unitsPrices = document.getElementById("modal-total-prices");
+                if (categories.length > 0) {
+                  unitsPrices.innerText = `₹${categories[0].discount_price}`;
+                }
+                allPiecesData = [...categories];
+                uniqueByLabel.forEach((category, index) => {
+                  const categoryDiv = document.createElement("div");
+                  categoryDiv.className = "categorys-item";
+                  categoryDiv.textContent = category.label_name;
+                  if (index === 0) {
+                    categoryDiv.classList.add("selected");
+                    selectedLabelName = category.label_name;
+                    filteredFlavours()
+                  }
+                  categoryDiv.addEventListener("click", () => {
+                    document.querySelectorAll(".categorys-item").forEach((item) => {
+                      item.classList.remove("selected");
+                    });
+                    categoryDiv.classList.add("selected");
+                    selectedLabelName = category.label_name
+                    unitsPrices.innerText = `₹${category.discount_price}`;
+                    filteredFlavours()
+                  });
+                  categoriesContainer.appendChild(categoryDiv);
+                });
+
+
+                function filteredFlavours() {
+                  const modailInnerContents = document.getElementById("flavour-categoriess");
+                  modailInnerContents.innerHTML = "";
+                  no_flavour_batchId = "";
+                  const filteredFlavour = allPiecesData.filter((e) => {
+                    return e.label_name === selectedLabelName
+                  });
+                  modailInnerContents.classList.add("flavour-categories-div")
+                  if (filteredFlavour.length === 1) {
+                    selectedLabelName = filteredFlavour[0].label_name;
+                    unitsPrices.innerText = `₹${filteredFlavour[0].discount_price}`;
+                    no_flavour_batchId = filteredFlavour[0].id;
+                  }
+                  else {
+                    filteredFlavour.forEach((e, index) => {
+                      const filterDiv = document.createElement("div");
+                      filterDiv.classList.add("filtered-item")
+                      filterDiv.innerText = e.flavour_name;
+                      if (index === 0) {
+                        filterDiv.classList.add("selected");
+                        filterDiv.setAttribute("flavour", e.flavour_id)
+                      }
+                      filterDiv.addEventListener("click", () => {
+                        document.querySelectorAll(".filtered-item").forEach((item) => {
+                          item.classList.remove("selected");
+                        });
+                        filterDiv.classList.add("selected");
+                        filterDiv.setAttribute("flavour", e.flavour_id)
+                        selectedLabelName = e.label_name
+                        unitsPrices.innerText = `₹${e.discount_price}`;
+                      });
+                      if (e.flavour_name) {
+                        modailInnerContents.append(filterDiv)
+                      }
+                    })
+                  }
+                }
+              } catch (error) {
+                console.error("Error fetching categories:", error);
+              }
+            }
+
+            fetchCategoriesAndRender();
+            document.getElementById("modal-product-names").innerText = `${productName}`;
+            document.getElementById("modal-images").src = `${imageUrl}`;
+            cartModals.classList.remove("hidden");
+
+            document.getElementById("view-cart-btns").onclick = () => {
+              const selectedCategory = document.querySelector(".filtered-item.selected");
+              const selectedCategoryData = !no_flavour_batchId ? categories.find((cat) => {
+                return cat.flavour_id == selectedCategory.getAttribute("flavour")
+              }
+              ) : categories.find((cat) => {
+                return cat.id == no_flavour_batchId
+              }
+              )
+              const batch_id = selectedCategoryData.id;
+              let totalAdded = carts
+                .filter((item) => item.batchId === batch_id)
+                .reduce((acc, item) => acc + item.quantity * item.unitData.batch_quantity, 0);
+              totalAdded = parseFloat(totalAdded.toFixed(2))
+
+              let batch_quan = parseFloat(selectedCategoryData.batch_quantity);
+              fetch(`<%= url_pathname %>pieces_instock/${batch_id}`)
+                .then((res) => {
+                  return res.json()
+                })
+                .then((data) => {
+                  let valuesss = parseFloat(data.data.in_stock)
+
+                  if ((totalAdded + batch_quan) > valuesss) {
+                    showPopup(
+                      `${productName} ${selectedCategoryData.label_name} exceeds the max limit`,
+                      "Cannot add more",
+                      "failure"
+                    );
+                    return;
+                  }
+                  const product = {
+                    productName,
+                    productId,
+                    quantity: 1,
+                    imageUrl,
+                    unitData: selectedCategoryData,
+                    batchId: batch_id,
+                    type: attribute_data
+                  };
+                  const existingBatch = carts.find((item) => {
+                    return item.productId === productId && item.unitData.label_name !== selectedCategoryData.label_name && item.batchId === batch_id
+                  }
+                  );
+                  const existingProduct = carts.find((item) => {
+                    return item.productId === productId && item.unitData.id === batch_id
+                  });
+
+                  if (existingProduct) {
+                    existingProduct.quantity += 1;
+                    existingProduct.unitData.label_name = selectedCategoryData.label_name;
+                    existingProduct.unitData.batch_quantity = selectedCategoryData.batch_quantity;
+                    existingProduct.unitData.discount_price = selectedCategoryData.discount_price;
+                    existingProduct.unitData.mrp = selectedCategoryData.mrp;
+                    existingProduct.productMrp = selectedCategoryData.mrp;
+                    existingProduct.productPrice = selectedCategoryData.discount_price;
+                  } else {
+                    carts.push(product);
+                  }
+                  console.log("carts",carts);
+                  
+                  localStorage.setItem("carts", encryptData(carts));
+                  updateCartCount();
+                  cartModals.classList.add("hidden");
+                  window.location.href = "/cart";
+                })
+                .catch((e) => {
+                  console.log(e);
+                })
+            };
+          }
+          else {
+            const inStock = data[0]?.in_stock || 0;
+            let categories;
+            async function fetchCategoriesAndRender() {
+              try {
+                const res = await fetch(`<%= url_pathname %>get_products/${productId}`);
+                if (!res.ok) {
+                  throw new Error(`HTTP error! Status: ${res.status}`);
+                }
+                categories = await res.json();
+                categories = categories.data;
+                const categoriesContainer = document.getElementById("modal-categoriess");
+                categoriesContainer.innerHTML = "";
+                const modailInnerContents = document.getElementById("flavour-categoriess");
+                modailInnerContents.innerHTML = "";
+                const unitsPrices = document.getElementById("modal-total-prices");
+                if (categories.length > 0) {
+                  unitsPrices.innerText = `₹${categories[0].discount_price}`;
+                }
+                categories.forEach((category, index) => {
+                  const categoryDiv = document.createElement("div");
+                  categoryDiv.className = "categorys-item";
+                  categoryDiv.textContent = category.label_name;
+                  if (index === 0) {
+                    categoryDiv.classList.add("selected");
+                  }
+                  categoryDiv.addEventListener("click", () => {
+                    document.querySelectorAll(".categorys-item").forEach((item) => {
+                      item.classList.remove("selected");
+                    });
+                    categoryDiv.classList.add("selected");
+                    unitsPrices.innerText = `₹${category.discount_price}`;
+                  });
+
+                  categoriesContainer.appendChild(categoryDiv);
+                });
+              } catch (error) {
+                console.error("Error fetching categories:", error);
+              }
+            }
+
+            fetchCategoriesAndRender();
+
+            document.getElementById("modal-product-names").innerText = `${productName}`;
+            document.getElementById("modal-images").src = `${imageUrl}`;
+            cartModals.classList.remove("hidden");
+
+            document.getElementById("view-cart-btns").onclick = () => {
+              const selectedCategory = document.querySelector(".categorys-item.selected");
+              const selectedCategoryData = categories.find(
+                (cat) => cat.label_name === selectedCategory.textContent
+              );
+              const batch_id = selectedCategoryData.id;
+              let totalAdded = carts
+                .filter((item) => item.productId === productId)
+                .reduce((acc, item) => acc + item.quantity * item.unitData.batch_quantity, 0);
+              totalAdded = parseFloat(totalAdded.toFixed(2))
+
+              let batch_quan = parseFloat(selectedCategoryData.batch_quantity);
+
+              let valuesss = parseFloat(data[0].in_stock)
+
+              if ((totalAdded + batch_quan) > valuesss) {
+                showPopup(
+                  `${productName} ${selectedCategoryData.label_name} exceeds the max limit`,
+                  "Cannot add more",
+                  "failure"
+                );
+                return;
+              }
+
+              const product = {
+                productName,
+                productId,
+                quantity: 1,
+                imageUrl,
+                unitData: selectedCategoryData,
+                batchId: batch_id,
+                type: attribute_data
+              };
+
+              const existingBatch = carts.find((item) => {
+
+                return item.productId === productId && item.unitData.label_name !== selectedCategoryData.label_name && item.batchId === batch_id
+              }
+              );
+              const existingProduct = carts.find((item) => {
+                return item.productId === productId && item.unitData.id === batch_id
+              });
+
+              if (existingProduct) {
+                existingProduct.quantity += 1;
+                existingProduct.unitData.label_name = selectedCategoryData.label_name;
+                existingProduct.unitData.batch_quantity = selectedCategoryData.batch_quantity;
+                existingProduct.unitData.discount_price = selectedCategoryData.discount_price;
+                existingProduct.unitData.mrp = selectedCategoryData.mrp;
+                existingProduct.productMrp = selectedCategoryData.mrp;
+                existingProduct.productPrice = selectedCategoryData.discount_price
+              } else {
+                carts.push(product);
+              }
+              localStorage.setItem("carts", encryptData(carts));
+              updateCartCount();
+              cartModals.classList.add("hidden");
+              window.location.href = "/cart";
+            };
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching product data:", error);
+          alert("Could not validate stock availability while adding. Please try again.");
+        });
+    });
+  });
+  document.addEventListener("DOMContentLoaded", () => {
+    updateCartCount();
+  })
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const currentPath = window.location.pathname;
+
+    const navLinks = document.querySelectorAll(".navbar-nav .nav-item a");
+
+    navLinks.forEach(link => {
+
+      if (link.getAttribute("href") === currentPath) {
+        link.parentElement.classList.add("active");
+      } else {
+        link.parentElement.classList.remove("active");
+      }
+    });
+  });
+  function fetchCategoryProducts(categoryId) {
+    const categoryUrl = `/product?categoryId=${categoryId}`;
+    window.location.href = categoryUrl;
+  }
+
+  function fetchBrandProducts(brandId) {
+    const brandUrl = `/product?brandId=${brandId}`;
+    window.location.href = brandUrl;
+  }
+
+  document.querySelectorAll("[image-product-name]").forEach((img) => {
+
+    img.addEventListener("click", (event) => {
+      let productName = img.getAttribute("image-product-name");
+      if (productName) {
+        // const seoProductName = productName.replaceAll(" ", "-");
+        product_name = String(productName)
+        // .trim() // Remove leading/trailing spaces
+        // .replace(/[\s\-]+/g, "") // Replace multiple spaces or hyphens with a single hyphen
+        // .replace(/^-+|-+$/g, "");
+        event.preventDefault();
+        window.location.href = `prods/${encodeURI(product_name)}`;
+      } else {
+        console.error("Product ID is missing for this image.");
+      }
+    });
+  });
+
+
+  document.querySelectorAll("[image-product-names]").forEach((img) => {
+    img.addEventListener("click", (event) => {
+      const productName = img.getAttribute("image-product-names");
+      if (productName) {
+        event.preventDefault();
+        window.location.href = `/prods/${encodeURI(seoProductName)}`;
+      } else {
+        console.error("Product ID is missing for this image.");
+      }
+    });
+  });
+
+  function toggleProductDetail(button, productId, event) {
+    if (event) event.stopPropagation();
+
+    const productContainer = button.closest('.product-items').querySelector('.product-container');
+    const overlay = button.closest('.product-items').querySelector('.overlay');
+
+    if (productContainer.style.display === 'none' || productContainer.style.display === '') {
+      productContainer.style.display = 'block';
+      overlay.style.display = 'block';
+    } else {
+      productContainer.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+  }
+
+  function closeProductDetail(closeButton, event) {
+    if (event) event.stopPropagation();
+
+    const productItem = closeButton.closest('.product-items'); // find the parent product item
+    const productContainer = productItem.querySelector('.product-container');
+    const overlay = productItem.querySelector('.overlay');
+
+    productContainer.style.display = 'none';
+    overlay.style.display = 'none';
+  }
+
+  document.querySelectorAll('.overlay').forEach((overlay) => {
+    overlay.addEventListener('click', function (event) {
+      event.stopPropagation(); // prevent bubbling to .product-items
+      const productItem = this.closest('.product-items');
+      const productContainer = productItem.querySelector('.product-container');
+      this.style.display = 'none';
+      productContainer.style.display = 'none';
+    });
+  });
+
+
+  const searchInput = document.getElementById('search-input');
+  const suggestionsContainer = document.getElementById('suggestions');
+
+  const fetchProducts = async (query) => {
+    if (query.length > 0) {
+      document.querySelector(".search-prod").style.display = "none"
+      document.body.style.paddingRight = '0px';
+      try {
+        const response = await fetch(`<%= url_pathname %>search?q=${encodeURIComponent(query)}`);
+        const suggestions = await response.json();
+        suggestionsContainer.innerHTML = '';
+
+        if (suggestions.length > 0) {
+          suggestions.forEach(product => {
+            const item = document.createElement('div');
+            item.classList.add('suggestion-item');
+            item.style.display = 'flex';
+            item.style.alignItems = 'center';
+            item.style.padding = '8px';
+            item.style.borderBottom = '1px solid #f0f0f0';
+            item.style.paddingRight = "1rem";
+            item.style.cursor = "pointer"
+            item.addEventListener("mouseover", () => {
+              item.style.background = "lightGray";
+            });
+
+            item.addEventListener("mouseout", () => {
+              item.style.background = "white"; // Reset to original color
+            });
+            const image = document.createElement('img');
+            image.src = `<%= url_pathname %>${product.product_image}`;
+            image.alt = product.product_name;
+            image.style.width = '4rem';
+            image.style.height = '4rem';
+            image.style.objectFit = 'cover';
+            image.style.marginRight = '2rem';
+            image.classList.add("input_image");
+            //below added by pr to open product on click inside search result list
+            image.addEventListener('click', function () {
+              window.location.href = '/prods/' + product.id;
+            });
+
+            image.addEventListener('click', function () {
+              window.location.href = '/prods/' + product.id;
+            });
+
+            const details = document.createElement('div');
+            details.style.display = 'flex';
+            details.style.flexDirection = 'column';
+            //below added by pr to open product on click inside search result list
+
+            // console.log("prodddd",product.id);
+
+            details.addEventListener('click', function () {
+              window.location.href = '/prods/' + product.id;
+            });
+
+            const name = document.createElement('h3');
+            name.textContent = product.product_name;
+            name.style.fontWeight = 'bold';
+            name.style.marginBottom = '5px';
+            name.style.fontSize = "small";
+            name.classList.add("input_name");
+
+            const labelName = document.createElement("span");
+            labelName.textContent = product.label_name;
+            labelName.style.fontWeight = 'bold';
+            labelName.style.marginBottom = '5px';
+            labelName.style.fontSize = "small";
+            labelName.style.marginLeft = '5px';
+
+            const flavourName = document.createElement("span");
+            flavourName.textContent = `(${product.flavour_name})`;
+            flavourName.style.fontWeight = 'bold';
+            flavourName.style.marginBottom = '5px';
+            flavourName.style.fontSize = "small";
+            flavourName.style.marginLeft = '5px';
+            name.append(labelName)
+            if (product.flavour_name) {
+              name.append(flavourName)
+            }
+            const prices = document.createElement("div");
+            const price = document.createElement('span');
+            const discount_prices = document.createElement("span");
+            price.style.color = '#555';
+            price.style.marginRight = "1rem";
+            price.style.fontSize = "0.9rem";
+
+            // fetch(`<%= url_pathname %>batch_products/${product.id}`)
+            //   .then((res) => {
+            //     return res.json();
+            //   })
+            //   .then((e) => {
+            price.textContent = `₹${product.mrp}`;
+            discount_prices.textContent = `₹${product.discount_price}`;
+            discount_prices.style.fontSize = "0.9rem";
+            price.style.textDecoration = "line-through";
+            price.style.color = '#555';
+            prices.appendChild(price);
+            prices.appendChild(discount_prices);
+
+            details.appendChild(name);
+            details.appendChild(prices);
+
+            item.appendChild(image);
+            item.appendChild(details);
+            const actions = document.createElement('div');
+            actions.style.display = 'flex';
+            actions.style.gap = '10px';
+            actions.style.marginLeft = 'auto';
+            actions.style.marginRight = "10px"
+            const readMoreButton = document.createElement('button');
+            readMoreButton.classList.add("btn-cart")
+            readMoreButton.innerHTML = '<i class="fa-solid fa-cart-shopping"></i>';
+            readMoreButton.style.padding = '5px 10px';
+            readMoreButton.style.color = "#f16179";
+            readMoreButton.style.backgroundColor = "white";
+            // readMoreButton.style.marginLeft='10px'
+            readMoreButton.style.cursor = 'pointer';
+            readMoreButton.style.width = "100%";
+            readMoreButton.style.border = "1px solid black"
+
+
+            readMoreButton.addEventListener("click", (event) => {
+              const productId = String(product.id);
+              const quantityInput = document.querySelector(".cartquantity");
+              const attribute_data = product.type;
+              const enteredQuantity = 1;
+              const url = attribute_data === "PIECES" ? `<%= url_pathname %>pieces_products/${productId}` : `<%= url_pathname %>units_products/${productId}`
+
+              fetch(`${url}`)
+                .then((res) => res.json())
+                .then((data) => {
+                  const existingProduct = carts.find((item) => item.productId === productId);
+                  let totalQuantity = enteredQuantity;
+                  if (existingProduct) {
+                    totalQuantity += existingProduct.quantity;
+                  }
+                  let productName;
+                  productName = data[0].product_name;
+                  // const productPrice = parseFloat(
+                  //   document.querySelector(".product-price-text").innerText.replace("₹", "")
+                  // );
+                  const baseUrl = window.location.origin;
+                  const imageUrl = data[0].product_image.startsWith('http')
+                    ? data[0].product_image
+                    : `${baseUrl}/${data[0].product_image}`;
+                  if (attribute_data === "PIECES") {
+                    let allPiecesData = [];
+                    let selectedLabelName;
+                    let categories;
+                    async function fetchCategoriesAndRender() {
+                      try {
+
+                        const res = await fetch(`<%= url_pathname %>get_products/${productId}`);
+                        if (!res.ok) {
+                          throw new Error(`HTTP error! Status: ${res.status}`);
+                        }
+                        categories = await res.json();
+                        categories = categories.data;
+                        const uniqueByLabel = categories.reduce((acc, current) => {
+                          if (!acc.find(item => item.label_name === current.label_name)) {
+                            acc.push(current);
+                          }
+                          return acc;
+                        }, []);
+                        const categoriesContainer = document.getElementById("modal-categoriess");
+                        categoriesContainer.innerHTML = "";
+                        const unitsPrices = document.getElementById("modal-total-prices");
+
+                        if (categories.length > 0) {
+                          unitsPrices.innerText = `₹${categories[0].discount_price}`;
+                        }
+                        allPiecesData = [...categories];
+
+                        uniqueByLabel.forEach((category, index) => {
+                          const categoryDiv = document.createElement("div");
+                          categoryDiv.className = "categorys-item";
+                          categoryDiv.textContent = category.label_name;
+                          if (index === 0) {
+                            categoryDiv.classList.add("selected");
+                            selectedLabelName = category.label_name;
+                            filteredFlavours()
+                          }
+                          categoryDiv.addEventListener("click", () => {
+                            document.querySelectorAll(".categorys-item").forEach((item) => {
+                              item.classList.remove("selected");
+                            });
+                            categoryDiv.classList.add("selected");
+                            selectedLabelName = category.label_name
+
+                            unitsPrices.innerText = `₹${category.discount_price}`;
+                            filteredFlavours()
+                          });
+
+                          categoriesContainer.appendChild(categoryDiv);
+
+                        });
+
+                        function filteredFlavours() {
+                          const modailInnerContents = document.getElementById("flavour-categoriess");
+                          modailInnerContents.innerHTML = "";
+                          no_flavour_batchId = "";
+                          const filteredFlavour = allPiecesData.filter((e) => {
+                            return e.label_name === selectedLabelName
+                          });
+                          
+                          
+                          modailInnerContents.classList.add("flavour-categories-div")
+
+                          if (filteredFlavour.length === 1) {
+                            selectedLabelName = filteredFlavour[0].label_name;
+                            unitsPrices.innerText = `₹${filteredFlavour[0].discount_price}`;
+
+                            no_flavour_batchId = filteredFlavour[0].id;
+                          }
+                          else {
+                            filteredFlavour.forEach((e, index) => {
+                              const filterDiv = document.createElement("div");
+                              filterDiv.classList.add("filtered-item")
+                              filterDiv.innerText = e.flavour_name;
+                              if (index === 0) {
+                                filterDiv.classList.add("selected");
+                                filterDiv.setAttribute("flavour", e.flavour_id)
+
+                              }
+
+                              filterDiv.addEventListener("click", () => {
+                                document.querySelectorAll(".filtered-item").forEach((item) => {
+                                  item.classList.remove("selected");
+                                });
+
+                                filterDiv.classList.add("selected");
+                                filterDiv.setAttribute("flavour", e.flavour_id)
+                                selectedLabelName = e.label_name
+                                unitsPrices.innerText = `₹${e.discount_price}`;
+                              });
+                              if (e.flavour_name) {
+                                modailInnerContents.append(filterDiv)
+                              }
+
+                            })
+                          }
+                        }
+                      } catch (error) {
+                        console.error("Error fetching categories:", error);
+                      }
+                    }
+
+                    fetchCategoriesAndRender();
+
+                    document.getElementById("modal-product-names").innerText = `${productName}`;
+                    document.getElementById("modal-images").src = `${imageUrl}`;
+                    cartModals.classList.remove("hidden");
+                    document.getElementById("view-cart-btns").onclick = () => {
+                    const selectedCategory = document.querySelector(".filtered-item.selected");
+                    const selectedCategoryData = !no_flavour_batchId ? categories.find((cat) => {
+                      return cat.flavour_id == selectedCategory.getAttribute("flavour")
+                    }
+                    ) : categories.find((cat) => {
+                      return cat.id == no_flavour_batchId
+                    }
+                    )
+                    const batch_id = selectedCategoryData.id;
+                      let totalAdded = carts
+                        .filter((item) => item.batchId === batch_id)
+                        .reduce((acc, item) => acc + item.quantity * item.unitData.batch_quantity, 0);
+                      totalAdded = parseFloat(totalAdded.toFixed(2))
+
+                      let batch_quan = parseFloat(selectedCategoryData.batch_quantity);
+                      fetch(`<%= url_pathname %>pieces_instock/${batch_id}`)
+                        .then((res) => {
+                          return res.json()
+                        })
+                        .then((data) => {
+                          let valuesss = parseFloat(data.data.in_stock)
+
+                          if ((totalAdded + batch_quan) > valuesss) {
+                            showPopup(
+                              `${productName} ${selectedCategoryData.label_name} exceeds the max limit`,
+                              "Cannot add more",
+                              "failure"
+                            );
+                            return;
+                          }
+
+                          const product = {
+                            productName,
+                            productId,
+                            quantity: 1,
+                            imageUrl,
+                            unitData: selectedCategoryData,
+                            batchId: batch_id,
+                            type: attribute_data
+                          };
+
+                          const existingBatch = carts.find((item) => {
+
+                            return item.productId === productId && item.unitData.label_name !== selectedCategoryData.label_name && item.batchId === batch_id
+                          }
+                          );
+
+                          const existingProduct = carts.find((item) => {
+
+                            return item.productId === productId && item.unitData.id === batch_id
+                          });
+
+                          if (existingProduct) {
+                            existingProduct.quantity += 1;
+
+                            existingProduct.unitData.label_name = selectedCategoryData.label_name;
+                            existingProduct.unitData.batch_quantity = selectedCategoryData.batch_quantity;
+                            existingProduct.unitData.discount_price = selectedCategoryData.discount_price;
+                            existingProduct.unitData.mrp = selectedCategoryData.mrp;
+                            existingProduct.productMrp = selectedCategoryData.mrp;
+                            existingProduct.productPrice = selectedCategoryData.discount_price
+
+                          } else {
+                            carts.push(product);
+                          }
+
+                          localStorage.setItem("carts", encryptData(carts));
+
+                          updateCartCount();
+                          cartModals.classList.add("hidden");
+                          window.location.href = "/cart";
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                        })
+                    };
+
+                  }
+                  else {
+                    const inStock = data[0]?.in_stock || 0;
+                    let categories;
+
+
+                    async function fetchCategoriesAndRender() {
+                      try {
+
+                        const res = await fetch(`<%= url_pathname %>get_products/${productId}`);
+                        if (!res.ok) {
+                          throw new Error(`HTTP error! Status: ${res.status}`);
+                        }
+                        categories = await res.json();
+                        categories = categories.data;
+
+                        const categoriesContainer = document.getElementById("modal-categoriess");
+                        categoriesContainer.innerHTML = "";
+                        const unitsPrices = document.getElementById("modal-total-prices");
+
+                        if (categories.length > 0) {
+                          unitsPrices.innerText = `₹${categories[0].discount_price}`;
+                        }
+
+                        categories.forEach((category, index) => {
+                          const categoryDiv = document.createElement("div");
+                          categoryDiv.className = "categorys-item";
+                          categoryDiv.textContent = category.label_name;
+
+                          if (index === 0) {
+                            categoryDiv.classList.add("selected");
+                          }
+
+                          categoryDiv.addEventListener("click", () => {
+                            document.querySelectorAll(".categorys-item").forEach((item) => {
+                              item.classList.remove("selected");
+                            });
+
+                            categoryDiv.classList.add("selected");
+                            unitsPrices.innerText = `₹${category.discount_price}`;
+                          });
+
+                          categoriesContainer.appendChild(categoryDiv);
+                        });
+
+                      } catch (error) {
+                        console.error("Error fetching categories:", error);
+                      }
+                    }
+
+                    fetchCategoriesAndRender();
+
+                    document.getElementById("modal-product-names").innerText = `${productName}`;
+                    document.getElementById("modal-images").src = `${imageUrl}`;
+                    cartModals.classList.remove("hidden");
+
+                    document.getElementById("view-cart-btns").onclick = () => {
+                      const selectedCategory = document.querySelector(".categorys-item.selected");
+                      const selectedCategoryData = categories.find(
+                        (cat) => cat.label_name === selectedCategory.textContent
+                      );
+                      const batch_id = selectedCategoryData.id;
+
+                      let totalAdded = carts
+                        .filter((item) => item.productId === productId)
+                        .reduce((acc, item) => acc + item.quantity * item.unitData.batch_quantity, 0);
+                      totalAdded = parseFloat(totalAdded.toFixed(2))
+
+                      let batch_quan = parseFloat(selectedCategoryData.batch_quantity);
+
+                      let valuesss = parseFloat(data[0].in_stock)
+
+                      if ((totalAdded + batch_quan) > valuesss) {
+                        showPopup(
+                          `${productName} ${selectedCategoryData.label_name} exceeds the max limit`,
+                          "Cannot add more",
+                          "failure"
+                        );
+                        return;
+                      }
+
+                      const product = {
+                        productName,
+                        productId,
+                        quantity: 1,
+                        imageUrl,
+                        unitData: selectedCategoryData,
+                        batchId: batch_id,
+                        type: attribute_data
+                      };
+
+                      const existingBatch = carts.find((item) => {
+
+                        return item.productId === productId && item.unitData.label_name !== selectedCategoryData.label_name && item.batchId === batch_id
+                      }
+                      );
+                      const existingProduct = carts.find((item) => {
+
+                        return item.productId === productId && item.unitData.id === batch_id
+                      });
+                      if (existingProduct) {
+                        existingProduct.quantity += 1;
+                        existingProduct.unitData.label_name = selectedCategoryData.label_name;
+                        existingProduct.unitData.batch_quantity = selectedCategoryData.batch_quantity;
+                        existingProduct.unitData.discount_price = selectedCategoryData.discount_price;
+                        existingProduct.unitData.mrp = selectedCategoryData.mrp;
+                        existingProduct.productMrp = selectedCategoryData.mrp;
+                        existingProduct.productPrice = selectedCategoryData.discount_price
+                      } else {
+                        carts.push(product);
+                      }
+
+                      localStorage.setItem("carts", encryptData(carts));
+                      updateCartCount();
+                      cartModals.classList.add("hidden");
+                      window.location.href = "/cart";
+
+                    };
+
+                  }
+
+                })
+                .catch((error) => {
+                  console.error("Error fetching product data:", error);
+                  alert("Could not validate stock availability while adding. Please try again.");
+                });
+            });
+            actions.appendChild(readMoreButton);
+
+            item.appendChild(actions);
+
+            suggestionsContainer.appendChild(item);
+
+            suggestionsContainer.style.display = 'block';
+          })
+
+
+
+        } else {
+          suggestionsContainer.style.display = 'none';
+          // document.querySelector(".search-prod").style.display="block"
+
+        }
+      } catch (error) {
+        console.error('Error fetching suggestions:', error);
+      }
+    } else {
+      suggestionsContainer.innerHTML = '';
+      suggestionsContainer.style.display = 'none';
+      document.body.style.paddingRight = '0';
+    }
+  }
+
+  searchInput.addEventListener('input', async () => {
+    const query = searchInput.value.toLowerCase();
+    if (query.length > 0) {
+      document.getElementById("clear-btn").style.display = "block"
+    }
+    else {
+      document.getElementById("clear-btn").style.display = "none"
+
+    }
+    fetchProducts(query)
+
+  });
+  searchInput.addEventListener('focus', () => {
+    const query = searchInput.value.toLowerCase();
+    fetchProducts(query)
+  });
+
+  document.getElementById("clear-btn").addEventListener("click", () => {
+    searchInput.value = "";
+    document.getElementById("clear-btn").style.display = "none"
+
+  })
+  document.addEventListener('click', (event) => {
+    if (!suggestionsContainer.contains(event.target) && event.target !== searchInput) {
+      suggestionsContainer.innerHTML = '';
+      suggestionsContainer.style.display = 'none';
+      document.body.style.paddingRight = '0';
+    }
+  });
+
+  document.querySelector(".search-product").addEventListener("click", () => {
+    document.querySelector(".search-container").style.display = "block";
+    document.querySelector(".search-overlay").style.display = "block"
+  })
+
+  document.querySelector(".search-products").addEventListener("click", () => {
+    document.querySelector(".search-container").style.display = "block";
+    document.querySelector(".search-overlay").style.display = "block"
+  })
+  document.querySelector(".search-overlay").addEventListener("click", () => {
+    document.querySelector(".search-container").style.display = "none";
+    document.querySelector(".search-overlay").style.display = "none";
+  });
+  //   function openModal() {
+  //                 document.body.style.overflowY = "hidden"
+  //                 document.getElementById("reviewModal").style.display = "flex";
+  //             }
+
+  //             function closeModal() {
+  //                 document.body.style.overflowY = "auto"
+  //                 document.getElementById("reviewModal").style.display = "none";
+  //             }
+  //             window.onclick = function (event) {
+  //                 const modal = document.getElementById("reviewModal");
+  //                 if (event.target === modal) {
+  //                     closeModal();
+  //                 }
+  //             };
+
+  //             document.addEventListener("DOMContentLoaded", function () {
+  //     const stars = document.querySelectorAll(".star");
+  //     const ratingValue = document.getElementById("ratingValue");
+
+  //     stars.forEach((star) => {
+  //         star.addEventListener("click", function () {
+  //             let value = this.getAttribute("data-value");
+  //             ratingValue.value = value;
+
+  //             stars.forEach((s) => s.classList.remove("selected"));
+  //             for (let i = 0; i < stars.length; i++) {
+  //                 if (i >= 5 - value) {
+  //                     stars[i].classList.add("selected");
+  //                 }
+  //             }
+  //         });
+  //     });
+
+  //     document.getElementById("reviewForm").addEventListener("submit", function (event) {
+  //         event.preventDefault();
+
+  //         const review = document.getElementById("reviewInput").value;
+  //         const customer_review_name = localStorage.getItem("name");
+  //         const rating = ratingValue.value;
+
+  //         if (!rating || rating < 1 || rating > 5) {
+  //             showPopup('Oops', 'Please select a rating', 'failure');
+
+  //             return;
+  //         }
+
+  //         fetch("<%= url_pathname %>create_review", {
+  //             method: 'POST',
+  //             headers: {
+  //                 "Content-Type": "application/json"
+  //             },
+  //             body: JSON.stringify({  review, rating ,customer_review_name})
+  //         })
+  //         .then((res) => res.json())
+  //         .then((data) => {
+  //             if (data.success) {
+  //                 showPopup("Done", data.message, "Success");
+  //                 setTimeout(() => {
+  //                     window.location.reload();
+  //                 }, 1000);
+  //             } else {
+  //                 console.log(data);
+
+  //                 showPopup('Oops', data.message, 'failure');
+
+  //             }
+  //         })
+  //         .catch((e)=>{
+  //             console.log(e);
+
+  //         })
+  //     });
+  // });
+  var scrollToTopBtn = document.getElementById("scrollToTopBtn")
+  var rootElement = document.documentElement
+  scrollToTopBtn.addEventListener("click", scrollToTop)
+  function scrollToTop() {
+    rootElement.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    })
+  }
+
+
+
+
+
+</script>

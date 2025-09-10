@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" style="
+    -ms-overflow-style: none;
+    scrollbar-width: none;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link rel="icon" href="/images/LOGOG.png" type="image/png">
+
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+
+        .about-section {
+            position: relative;
+            /* padding: 120px 0px ; */
+            margin-top: 110px;
+        }
+
+        .about-section .content-column {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .about-section .content-column .inner-column {
+            position: relative;
+            padding-top: 50px;
+            padding-right: 40px;
+        }
+
+        .about-section .content-column .text {
+            position: relative;
+            color: #777777;
+            font-size: 18px;
+            line-height: 2em;
+            margin-bottom: 40px;
+            text-align: justify;
+        }
+
+        .about-section .content-column .email {
+            position: relative;
+            color: #252525;
+            font-weight: 700;
+            margin-bottom: 50px;
+        }
+
+        .about-section .image-column {
+            position: relative;
+            margin-bottom: 50px;
+        }
+
+        .about-section .image-column .inner-column {
+            position: relative;
+            padding: 40px 40px 0px 0px;
+            margin-left: 50px;
+        }
+
+        .about-section .image-column .inner-column:after {
+            position: absolute;
+            content: '';
+            right: 0px;
+            top: 0px;
+            left: 40px;
+            bottom: 100px;
+            z-index: -1;
+            border: 2px solid #d7a449;
+        }
+
+        .about-section .image-column .inner-column .image {
+            position: relative;
+        }
+
+        .about-section .image-column .inner-column .image:before {
+            position: absolute;
+            content: '';
+            left: -50px;
+            bottom: -50px;
+            width: 299px;
+            height: 299px;
+            background: url(img/pattern-2.png) no-repeat;
+        }
+
+        .about-section .image-column .inner-column .image img {
+            position: relative;
+            width: 90%;
+            display: block;
+            /* height:calc(100vh - 180px);
+            object-fit: contain; */
+        }
+/* 
+        .founder-vision img{
+        height:calc(100vh - 180px) !important;
+
+        } */
+        .about-section .image-column .inner-column .image .overlay-box {
+            position: absolute;
+            left: 40px;
+            bottom: 48px;
+        }
+
+        .about-section .image-column .inner-column .image .overlay-box .year-box {
+            position: relative;
+            color: #252525;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.4em;
+            padding-left: 125px;
+        }
+
+        .about-section .image-column .inner-column .image .overlay-box .year-box .number {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 110px;
+            height: 110px;
+            color: #d7a449;
+            font-size: 68px;
+            font-weight: 700;
+            line-height: 105px;
+            text-align: center;
+            background-color: #ffffff;
+            border: 1px solid #000000;
+        }
+
+        .about-section .btn-style-three:before {
+            position: absolute;
+            content: '';
+            left: 10px;
+            top: 10px;
+            z-index: -1;
+            right: -10px;
+            bottom: -10px;
+            background: url(https://i.ibb.co/DKn55Qz/pattern-1.jpg) repeat;
+        }
+
+        .about-section .btn-style-three:hover {
+            color: #ffffff;
+            background: #d7a449;
+        }
+
+        .about-section .btn-style-three {
+            position: relative;
+            line-height: 24px;
+            color: #252525;
+            font-size: 15px;
+            font-weight: 700;
+            background: none;
+            display: inline-block;
+            padding: 11px 40px;
+            background-color: #ffffff;
+            text-transform: capitalize;
+            border: 2px solid #d7a449;
+            font-family: 'Arimo', sans-serif;
+        }
+
+        .sec-title2 {
+            color: #fff;
+        }
+
+        .sec-title {
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .sec-title .title {
+            position: relative;
+            color: #d7a449;
+            font-size: 18px;
+            font-weight: 700;
+            padding-right: 50px;
+            margin-bottom: 15px;
+            display: inline-block;
+            text-transform: capitalize;
+        }
+
+        .sec-title .title:before {
+            position: absolute;
+            content: '';
+            right: 0px;
+            bottom: 7px;
+            width: 40px;
+            height: 1px;
+            background-color: #bbbbbb;
+        }
+
+        /* @media (max-width:600px){
+            .about-section .content-column .inner-column {
+            position: relative;
+            padding-top: 10px;
+            padding-right: 10px !important;
+            text-align: justify;
+        }
+        .about-section{
+            padding: 10px;
+        }
+        } */
+        @media (min-width:768px) and (max-width:991px) {
+            .about-section .image-column .inner-column .image img {
+                height: 400px !important;
+                object-fit: contain !important;
+                width: 100% !important;
+            }
+            .about-section {
+                margin-top: 212px !important;
+            }
+
+            .about-section .content-column .inner-column {
+                position: relative;
+                padding-top: 50px;
+                padding-right: 40px !important;
+                text-align: justify;
+            }
+/* 
+            .founder-vision img{
+                height:55vh !important;
+
+              } */
+        }
+
+        @media (max-width:767px) {
+            .about-section {
+                margin-top: 67px !important;
+            }
+
+            .about-section .content-column .inner-column {
+                position: relative;
+                padding-top: 10px;
+                padding-right: 10px !important;
+                text-align: justify;
+            }
+
+            .about-section {
+                padding: 10px !important;
+            }
+            /* .founder-vision img{
+                height:40vh !important;
+
+              } */
+        }
+
+        @media (min-width:992px) and (max-width:1199px) {
+            .about-section .image-column .inner-column .image img{
+                width: 100% !important;
+            }
+            .about-section .content-column .inner-column {
+                position: relative;
+                padding-top: 80px;
+                padding-right: 40px !important;
+                text-align: justify;
+                font-size: 15px;
+            }
+
+            .about-section .content-column .inner-column {
+                position: relative;
+                padding-top: 30px;
+            }
+
+            .about-section .image-column .inner-column .image img {
+                margin-top: 2rem;
+                /* width: 100% !important; */
+            }
+
+        }
+
+        @media (min-width:1400px){
+            .about-section .content-column .text{
+             font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%-include('header')%>
+        <%-include('socialmedia')%>
+
+            <section class="about-section">
+                <div class="container">
+                    <div class="row clearfix">
+
+                        <div class="content-column col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <div class="inner-column">
+                                <div class="sec-title">
+                                    <div class="title">About Us</div>
+                                    <h2>Pahadi Rasyan</h2>
+                                </div>
+                                <div class="text">Pahadi Rasyan, founded by Pushpa Bisht, brings the pure, organic
+                                    produce of Uttarakhand to urban cities like Mumbai. We offer 100% chemical-free,
+                                    farm-fresh products, including Pahadi Rajma, organic mandua flour, and Himalayan
+                                    spices, reflecting the dedication of local farmers. Our mission is to deliver
+                                    healthy, sustainable food while empowering Uttarakhand’s farmers with fair trade
+                                    practices and better livelihoods. With Pahadi Rasyan, you choose premium quality,
+                                    support sustainable farming, and embrace a healthier lifestyle. Experience the
+                                    essence of the Himalayas in every bite!
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="image-column col-lg-6 col-md-12 col-sm-12 col-xs-12 d-flex align-items-center">
+                            <div class="inner-column " data-wow-delay="0ms" data-wow-duration="1500ms">
+                                <div class="image">
+                                    <img src="images/aboutuslogo.jpg" alt="">
+                                    <!-- <div class="overlay-box">
+                                    <div class="year-box"><span class="number">5</span>Years <br> Experience <br>
+                                        Working</div>
+                                </div> -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row clearfix">
+
+
+
+                        <div class="image-column col-lg-6 col-md-12 col-sm-12 col-xs-12 d-flex align-items-center">
+                            <div class="inner-column " data-wow-delay="0ms" data-wow-duration="1500ms">
+                                <div class="image founder-vision">
+                                    <img src="images/pushpabisht.jpg" alt="">
+                                    <!-- <div class="overlay-box">
+                                    <div class="year-box"><span class="number">5</span>Years <br> Experience <br>
+                                        Working</div>
+                                </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-column col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <div class="inner-column">
+                                <div class="sec-title">
+                                    <div class="title">Our founder's vision</div>
+                                </div>
+                                <div class="text">Pahadi Rasyan, founded by Pushpa Bisht, is dedicated to sustainable
+                                    agriculture and supporting Uttarakhand’s farmers. Inspired by the challenges local
+                                    farmers face, Pushpa aims to connect their fresh, chemical-free produce to urban
+                                    markets like Mumbai, ensuring fair trade and better livelihoods.
+                                    <br>
+                                    We offer 100% natural products, including Pahadi Rajma, organic mandua flour, and
+                                    Himalayan spices, all sourced directly from hardworking farmers. Every product
+                                    reflects sustainability, healthy living, and the purity of Uttarakhand’s traditions.
+                                    <br>
+                                    By choosing Pahadi Rasyan, you support local farmers, embrace chemical-free food,
+                                    and contribute to a healthier, more sustainable future for Uttarakhand’s farming
+                                    communities.
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+            <%-include("./addToCart.ejs")%>
+
+</body>
+
+</html>

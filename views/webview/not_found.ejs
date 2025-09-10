@@ -1,0 +1,60 @@
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <link rel="shortcut icon" href="/images/weblogo.webp" type="image/x-icon">
+
+<!-- Add this inside the <head> tag -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <title>
+    Nutrition
+  </title>
+
+  <!-- slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="../stylesheets/anh//bootstrap.css" />
+  <link href="../stylesheets/anh/style.css" rel="stylesheet" />
+  <link href="../stylesheets/anh/responsive.css" rel="stylesheet" />
+  <style>
+     #empty-message {
+            margin-top: 10rem;
+            text-align: center;
+            line-height: 50px;
+        }
+        
+        @media (max-width:768px){
+            #empty-message{
+                font-size: medium;
+                margin-top: 2rem !important;
+            }
+        }
+  </style>
+</head>
+
+<body>
+    <%-include('header')%>
+            <h1 id="empty-message" > No Products for  <span
+                    style="color:#F0331A !important;">particular category</span>! Explore
+                our products and find something you'll love! <br><span> <a style="color:#F0331A !important;" href="/categories"
+                        style="text-decoration: none;">View Other Categories</a></span></h1>
+
+            <script>
+            </script>
+            <script src="/javascripts/jquery-1.11.0.min.js"></script>       
+            <script src="/javascripts/plugins.js"></script>
+            <%- include("./newScript.ejs") %>
+</html>

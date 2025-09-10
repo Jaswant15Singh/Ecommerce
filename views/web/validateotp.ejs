@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+.containers {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(30, 30, 30, 0.9);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 360px;
+    width: 100%;
+    z-index: 10000;
+    border: 1px solid white;
+}
+
+.showpopup {
+    display: block;
+}
+
+.hidepopup {
+    display: none;
+}
+
+
+.otp-input {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.otp-input input {
+    /* width: 50px; */
+    height: 50px;
+    text-align: center;
+    font-size: 1.5rem;
+    border: 2px solid #6665F1;
+    border-radius: 12px;
+    background: rgba(42, 42, 42, 0.8);
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+.otp-input input:focus {
+    border-color: #A556F6;
+    box-shadow: 0 0 8px rgba(166, 86, 246, 0.5);
+}
+
+
+#timer {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #A556F6;
+    margin-left: 10px;
+}
+
+.expired {
+    color: #ff4444;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.resend-text {
+    font-size: 0.9rem;
+    color: #b0b0b0;
+    margin-top: 1rem;
+}
+
+.resend-link {
+    color: #6665F1;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.resend-link:hover {
+    color: #A556F6;
+    text-decoration: underline;
+}
+
+.alert {
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: #10b981;
+    padding: 1rem;
+    border-radius: 8px;
+    display: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s ease;
+}
+
+.alert.active {
+    animation: slide-in 0.5s ease-in-out;
+}
+
+.alert.hide {
+    animation: slide-out 0.5s ease-in-out;
+}
+
+@keyframes slide-in {
+    from {
+        transform: translate(-50%, -120%);
+    }
+    to {
+        transform: translate(-50%, 0);
+    }
+}
+
+@keyframes slide-out {
+    from {
+        transform: translate(-50%, 0);
+    }
+    to {
+        transform: translate(-50%, -120%);
+    }
+}
+
+@media (max-width: 480px) {
+    .containers {
+        max-width: 300px;
+        padding: 1.5rem;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="containers hidepopup">
+        <span style="position: absolute;
+        top: 5px;right: 10px; color: white;cursor: pointer;" onclick="closeOtp()">&#10006;</span>
+        <h1 style="color: white !important;">OTP Verification</h1>
+        <p>Enter the OTP you have received!</p>
+        <div class="otp-input">
+            <input type="text" id="otp-input" maxlength="4" required name="otp">
+        </div>
+        <button onclick="verifyOTP()">Verify</button>
+
+    </div>
+    <script>
+ const closeOtp=()=>{
+            containers.classList.remove("showpopup");
+            containers.classList.add("hidepopup");
+        }        
+        const otpInput = document.getElementById('otp-input');
+
+        otpInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            e.target.value = value.replace(/[^0-9]/g, '').slice(0, 4);
+            console.log(e.target.value);
+        });
+        console.log(2);
+        const inputs = document.querySelectorAll('.otp-input input');
+        const timerDisplay = document.getElementById('timer');
+        const resendLink = document.querySelector('.resend-link');
+        const emailSpan = document.getElementById('email');
+        let timeLeft = 120;
+        let timerId;
+        let canResend = true;
+        const containers = document.querySelector(".containers");
+
+        emailSpan.textContent = "user@example.com";
+
+        console.log(3);
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length > 1) {
+                    e.target.value = e.target.value.slice(0, 1);
+                }
+                if (e.target.value.length === 1) {
+                    if (index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value) {
+                    if (index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                }
+                if (e.key === 'e') {
+                    e.preventDefault();
+                }
+            });
+        });
+        async function verifyOTP() {
+            const formBody = {
+                otp: document.querySelector("[name=otp]").value,
+                id: parseInt(localStorage.getItem("contact"))
+            }
+            console.log(formBody);
+
+            let response = await fetch(`<%= (url_pathname) %>verify-otp`, {
+                method: "POST",
+                headers: { "CONTENT-TYPE": "application/json" },
+                body: JSON.stringify(formBody)
+            })
+            if (!response.ok) {
+                console.log("error");
+            }
+            response = await response.json();
+            if (!response.success) {
+                showPopup("Failure", response.message, "Failure");
+                containers.classList.remove("showpopup")
+                containers.classList.add("hidepopup");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000)
+            }
+            else {
+                containers.classList.remove("showpopup");
+                containers.classList.add("hidepopup");
+                console.log(response);
+
+                localStorage.setItem("contactid", response.data[0].phone)
+                showPopup("Success", response.message, "Success");
+                setTimeout(() => {
+                    window.location.href = "/profile";
+                }, 1000)
+            }
+        }
+
+        startTimer();
+       
+    </script>
+</body>
+
+</html>

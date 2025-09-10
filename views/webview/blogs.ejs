@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" style="
+    -ms-overflow-style: none;
+    scrollbar-width: none;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow">
+	<link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>
+        <%= siteTitle %> -Blogs
+    </title>
+
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="../stylesheets/anh//bootstrap.css" />
+    <link href="../stylesheets/anh/style.css" rel="stylesheet" />
+    <link href="../stylesheets/anh/responsive.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        *,
+        * ::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            box-sizing: border-box;
+            font-family: Roboto, sans-serif;
+            color: #333333;
+            letter-spacing: 0.01rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .main {
+            width: 100%;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .testimonial-main {
+            margin-top: 117px;
+
+        }
+
+        /* .container {
+            max-width: 80rem;
+            height: 100%;
+            overflow: hidden;
+            margin: 0 auto;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            padding: 3rem 0;
+        } */
+
+        .container .deco {
+            height: 3rem;
+            width: 23rem;
+            filter: brightness(120%);
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 3rem;
+            width: 100%;
+        }
+
+        .cards-container {
+            padding: 2rem;
+        }
+
+        .card-box {
+            display: flex;
+            flex-flow: column;
+            background-color: white;
+            font-size: 0.92rem;
+            box-shadow: 4px 3px 33px -6px rgba(0, 0, 0, 0.75);
+            margin-bottom: 2rem;
+            min-height: 350px;
+           
+            overflow-y: hidden;
+            scrollbar-width: none;
+            border-radius: 10px !important;
+        }
+
+        .card-box img,.card-box video {
+            /* height: 10rem !important; */
+            width: 100%;
+            aspect-ratio: 1.1/1;
+            object-fit: cover;
+            object-position: center;
+            margin: 0;
+        }
+
+        .rows {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        /* .card-img {
+            height: 23rem;
+            width: 23rem;
+
+            margin-top: 1rem;
+        } */
+
+        .card-data,
+        .card-title,
+        .card-description {
+            padding: 0 1.5rem;
+            text-align: left;
+        }
+
+        .card-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+        }
+
+        .card-description {
+            font-size: 0.9rem !important;
+            height: 80px;
+            overflow: hidden;
+        }
+
+        .conitnue-reading {
+            padding: 0 1.5rem;
+
+        }
+
+        .card-data {
+            padding-top: 2rem;
+            padding-bottom: 1.3rem;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .card-data p {
+            display: inline-block;
+        }
+
+        .text-right {
+            margin-left: 9.4rem;
+            margin-right: 1rem;
+        }
+
+        .autor {
+            font-weight: bold;
+        }
+
+        .card-title {
+            display: block;
+            margin: 0;
+            margin-bottom: 0.2rem !important;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: 0.3s;
+            text-decoration: none;
+            color: black !important;
+        }
+
+        .card-title:hover {
+            color: #f16179 !important;
+        }
+
+        .card-description {
+            font-size: 1.15rem;
+            line-height: 1.4rem;
+            padding-bottom: 1rem;
+            
+        }
+
+        @media (max-width:570px){
+            .card-box{
+                width: 400px !important;
+                margin: 1rem auto;
+            }
+
+            .card-box img{
+                width: 400px !important;
+                height: 250px !important;
+            }
+        }
+
+        @media (max-width:425px){
+            .card-box{
+                width: 90% !important;
+                margin: 1rem auto;
+            }
+
+            .card-box img{
+                width: 100% !important;
+                height: 250px !important;
+            }
+        }
+/* 
+     @media (min-width: 1200px) {
+    .container {
+        max-width: 90% !important;
+    }
+} */
+    </style>
+</head>
+
+
+<body>
+    <%- include('header') %>
+        <section class="main layout_padding">
+            <div class="container">
+                <div class="heading_container heading_center">
+                <h2>Blogs</h2>
+            </div>
+            <div class="layout_padding">
+                <div class="row g-1">
+                  <% blogs.forEach((post, index) => { %>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                      <div class="card-box">
+                        <% if (post.blog_image && post.blog_image.match(/\.(mp4|webm|ogg)$/)) { %>
+                          <video src="<%= post.blog_image %>" class="img-fluid w-100" controls></video>
+                        <% } else if (post.blog_image) { %>
+                          <img src="<%= post.blog_image %>" class="img-fluid w-100" alt="Blog Image">
+                        <% } else { %>
+                          <img src="/path/to/default.jpg" class="img-fluid w-100" alt="No media">
+                        <% } %>
+              
+                        <div class="card-text p-1">
+                          <a href="/blog/<%= post.id %>" class="card-title p-0"><%= post.blog_header %></a>
+                          <p class="card-description p-0"><%= post.blog_content %></p>
+                        </div>
+                        <a href="/blog/<%= post.id %>" class="continue-reading" style="padding:0.5rem ; text-align: center;color: #f16179;background-color: #f16179;width: 100%;display: block;color: black;">Continue Reading...</a>
+
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+        </section>
+        <%- include("./newScript.ejs") %>
+</body>
+
+</html>

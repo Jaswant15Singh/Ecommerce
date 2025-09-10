@@ -1,0 +1,359 @@
+<script>
+
+    document.getElementById("blog-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const flavour_name=document.getElementById("blog-header").value;
+        
+        const id = document.querySelector("#flavour-id").value;
+        
+        const url = id
+            ? `<%= (url_pathname) %>admin/update_flavour/${id}`
+            : "<%= (url_pathname) %>admin/create_flavour";
+        const method = id ? "PUT" : "POST";
+            body={flavour_name}
+        
+        
+        fetch(url, {
+            method: method,
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(body),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                this.reset();
+                closeMenu();
+                if (data.success) {
+                    showPopup("Success", data.message, "Success");
+                    resetForm();
+
+                    setTimeout(() => {
+                        window.location.reload();
+
+                    }, 1000)
+                }
+
+                else if (data.message === "Missing fields") {
+                    showPopup("Error", 'Missing Fields', "Failed")
+
+                }
+                else {
+                    showPopup("Error", 'Some issue occurred', "Failed")
+
+                }
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500)
+            })
+            .catch((error) => {
+                console.error("Error:", error.message);
+            });
+    });
+
+    function resetForm() {
+        document.querySelector("#blog-header").value = '';
+    }
+
+    function setCategory() {
+        document.querySelector(".form-label").innerText = "Flavour Name";
+        document.getElementById("exampleModalLabel").innerText='Add Flavour';
+        document.querySelector(".flavour-add").innerText="Add Flavour"
+        resetForm();
+        document.querySelector("#flavour-id").value = '';
+        closeMenu();
+    }
+
+
+    function openUpdateModal(id) {
+        
+        function getBlogs() {
+            fetch(`<%= url_pathname %>admin/ind_flavours/${id}`)
+                .then((res) => { return res.json() })
+                .then((data) => {                    
+                    document.querySelector(".form-label").innerText = "Update Flavour";
+                    document.getElementById("exampleModalLabel").innerText='Update Flavour';
+                    document.querySelector(".flavour-add").innerText="Update Flavour"
+                    document.querySelector("#blog-header").value = data.data.flavour_name;
+                    document.querySelector("#flavour-id").value = data.data.id;
+
+                
+                })
+        }
+        getBlogs()
+
+
+        closeMenu();
+
+    }
+    function closeMenu() {
+        const sideMenu = document.querySelector("#sidebar");
+        sideMenu.style.display = "none";
+    }
+
+    document.querySelectorAll('input[type="number"]').forEach(function (input) {
+        input.addEventListener('wheel', function (event) {
+            event.preventDefault();
+        });
+    });
+
+
+    const menuBar = document.querySelector('#content nav .bx.bx-menu');
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth < 769) {
+        sidebar.classList.add('hide');
+    }
+    menuBar.addEventListener('click', function () {
+        sidebar.classList.toggle('hide');
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const productModal = document.getElementById("exampleModal");
+
+        productModal.addEventListener("hidden.bs.modal", function () {
+            const sideMenu = document.querySelector("#sidebar");
+
+            if (sideMenu) {
+                sideMenu.style.display = "block";
+            } else {
+                console.log("Sidebar not found");
+            }
+        });
+    });
+
+    let categoryData = [];
+    let filteredCategoryData = [];
+    let categoryPage = 1;
+    const rowsPerCategoryPage = 5;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchInput");
+        const paginationContainer = document.getElementById("pagination");
+        const startDateInput = document.getElementById("startDate");
+        const endDateInput = document.getElementById("endDate");
+        const filterButton = document.getElementById("filterButton");
+
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const maxDate = `${year}-${month}-${day}`;
+        const formattedDate = `${year}-${month}-${day}`;
+
+        startDateInput.value = formattedDate;
+        endDateInput.value = formattedDate;
+        startDateInput.setAttribute("max", maxDate);
+        endDateInput.setAttribute("max", maxDate);
+
+        searchInput.addEventListener("input", function () {
+
+            const searchQuery = searchInput.value.trim();
+
+            if (searchQuery.length > 0) {
+                searchCategories(searchQuery);
+            } else {
+                fetchCategoryData();
+            }
+        });
+
+        filterButton.addEventListener("click", function () {
+            const startDateValue = startDateInput.value.trim();
+            const endDateValue = endDateInput.value.trim();
+            if (!startDateValue || !endDateValue) {
+                showPopup("OOPS", "Please select both start and end dates.", "FAILURE");
+                return;
+            }
+
+            const startDate = new Date(startDateValue);
+            const endDate = new Date(endDateValue);
+
+            if (isNaN(startDate) || isNaN(endDate)) {
+                showPopup("OOPS", "Please select valid start and end dates.", "FAILURE");
+                return;
+            }
+
+            if (startDate > endDate) {
+                showPopup("OOPS", "Start date cannot be later than end date.", "FAILURE");
+                return;
+            }
+
+            filteredCategoryData = categoryData.filter(category => {
+                let categoryDate = new Date(category.created_date).toISOString().split('T')[0];
+                let formattedStartDate = startDate.toISOString().split('T')[0];
+                let formattedEndDate = endDate.toISOString().split('T')[0];
+
+                return categoryDate >= formattedStartDate && categoryDate <= formattedEndDate;
+
+            });
+
+            if (filteredCategoryData.length === 0) {
+                showPopup("No Data", "No categories found for the selected time period.", "INFO");
+                displayBlogsPage(categoryPage);
+                setupBlogsPagination(filteredCategoryData.length);
+            } else {
+                categoryPage = 1;
+                displayBlogsPage(categoryPage);
+                setupBlogsPagination(filteredCategoryData.length);
+            }
+        });
+
+        fetchCategoryData();
+
+        function fetchCategoryData() {
+            fetch('<%= (url_pathname) %>admin/get/flavours/Admin')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // console.log(data);
+
+                    if (data && data.data) {
+                        categoryData = data.data;
+                        filteredCategoryData = categoryData;
+                        displayBlogsPage(categoryPage);
+                        setupBlogsPagination(filteredCategoryData.length);
+                    } else {
+                        console.error("No category data received.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching category data:', error);
+                });
+        }
+
+        function searchCategories(searchQuery) {
+            fetch(`/Admin/search-blogs?search=${encodeURIComponent(searchQuery)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch search results');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.length > 0) {
+                        filteredCategoryData = data;
+                        categoryPage = 1;
+                        displayBlogsPage(categoryPage);
+                        setupBlogsPagination(filteredCategoryData.length);
+                    } else {
+                        filteredCategoryData = [];
+                        displayBlogsPage(categoryPage);
+                        setupBlogsPagination(filteredCategoryData.length);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching search results:", error);
+                });
+        }
+
+        function displayBlogsPage(page) {
+            const tableBody = document.querySelector('#categoryTable tbody');
+            tableBody.innerHTML = '';
+
+            const start = (page - 1) * rowsPerCategoryPage;
+            const end = start + rowsPerCategoryPage;
+            const paginatedCategoryData = filteredCategoryData.slice(start, end);
+            if (paginatedCategoryData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="12">No data available</td></tr>';
+                return;
+            }
+            paginatedCategoryData.forEach((flavour, index) => {
+                const rowNumber = start + index + 1;
+                const rowHTML = `
+                <tr>
+                    <td>${rowNumber}</td>
+                    <td>${flavour.flavour_name}</td>
+                  
+                  
+                    <td>${new Date(flavour.created_date).toLocaleDateString()}</td>
+                    <td>
+                      <button 
+                          type="button" 
+                          class="btn btn-primary" 
+                          data-bs-toggle="modal" 
+                          data-bs-target="#exampleModal" 
+                          onclick="openUpdateModal('${flavour.id}')"
+                          >Update
+                      </button>
+                    </td>
+                </tr>
+            `;
+                tableBody.insertAdjacentHTML('beforeend', rowHTML);
+            });
+        }
+
+        function setupBlogsPagination(totalItems) {
+            const paginationDiv = document.querySelector('#pagination');
+            paginationDiv.innerHTML = '';
+
+            const totalPages = Math.ceil(totalItems / rowsPerCategoryPage);
+            const maxButtons = 5;
+            const halfMaxButtons = Math.floor(maxButtons / 2);
+
+            let startPage, endPage;
+
+            if (totalPages <= maxButtons) {
+                startPage = 1;
+                endPage = totalPages;
+            } else {
+                if (categoryPage <= halfMaxButtons) {
+                    startPage = 1;
+                    endPage = maxButtons;
+                } else if (categoryPage + halfMaxButtons >= totalPages) {
+                    startPage = totalPages - maxButtons + 1;
+                    endPage = totalPages;
+                } else {
+                    startPage = categoryPage - halfMaxButtons;
+                    endPage = categoryPage + halfMaxButtons;
+                }
+            }
+
+            if (categoryPage > 1) {
+                const prevButton = document.createElement('button');
+                prevButton.textContent = 'Previous';
+                prevButton.className = 'pagination-btn';
+                prevButton.addEventListener('click', () => {
+                    categoryPage--;
+                    displayBlogsPage(categoryPage);
+                    setupBlogsPagination(totalItems);
+                });
+                paginationDiv.appendChild(prevButton);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.className = 'pagination-btn';
+                if (i === categoryPage) {
+                    button.classList.add('active');
+                }
+
+                button.addEventListener('click', () => {
+                    categoryPage = i;
+                    displayBlogsPage(categoryPage);
+                    setupBlogsPagination(totalItems);
+                });
+
+                paginationDiv.appendChild(button);
+            }
+
+            if (categoryPage < totalPages) {
+                const nextButton = document.createElement('button');
+                nextButton.textContent = 'Next';
+                nextButton.className = 'pagination-btn';
+                nextButton.addEventListener('click', () => {
+                    categoryPage++;
+                    displayBlogsPage(categoryPage);
+                    setupBlogsPagination(totalItems);
+                });
+                paginationDiv.appendChild(nextButton);
+            }
+        }
+    });
+
+
+
+</script>

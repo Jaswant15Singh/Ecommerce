@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+	<link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon">
+
+<!-- Add this inside the <head> tag -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <title>
+    <%= siteTitle %>
+  </title>
+
+  <!-- slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="../stylesheets/anh//bootstrap.css" />
+  <link href="../stylesheets/anh/style.css" rel="stylesheet" />
+  <link href="../stylesheets/anh/responsive.css" rel="stylesheet" />
+</head>
+
+<body>
+  <%- include("./header") %>
+ 
+  <!-- end hero area -->
+
+  <!-- shop section -->
+
+  <section class="shop_section layout_padding web-products">
+    <div class="container">
+      <div class="heading_container heading_center">
+        <h2>
+           Products
+        </h2>
+      </div>
+      <div class="row">
+        <% products.forEach((e) => { %>
+          <div class="col-sm-6 col-md-6 col-lg-3">
+            <div class="box product-items" style="cursor: pointer;" image-product-names="<%= e.product_name %>">
+              <div class="eye_icon" onclick="toggleProductDetail(this, '<%= e.id %>',event)">
+                <p><i class="fa-solid fa-eye"></i></p> 
+              </div>
+                <div class="img-box">
+                  <div class="image-container">
+                    <img src="/<%= e.product_image %>" alt="<%= e.name %>"  class="image_one">
+                    <img src="/<%= e.product_image_two %>" alt="<%= e.name %>"  class="image_two">
+                   
+                  </div>            
+                    </div>
+                    <div class="detail-box detail-boxs">
+                      <h6 style="width: 100%;overflow-wrap: anywhere;text-align: center; overflow: hidden;
+                      text-overflow: ellipsis;
+                      display: -webkit-box;
+                      -webkit-line-clamp: 2;
+                      -webkit-box-orient: vertical;
+                      transition: max-height 0.5s ease-in-out;">
+                        <%= e.product_name %> 
+                      </h6>
+                    </div>
+                    <div style="display: flex;justify-content: space-around;align-items: center;">
+                      <span><%= e.label_name %></span>
+                      <h6 style="text-align: center;margin: 0;padding: 0;" >                  
+                        <span style="position: absolute;top: 5px;left: 5px;padding: 5px;background-color: #3e62e1;color: white;transform: skewX(-10deg); display: inline-block;border-radius: 5px;">&#8377;<%= e.mrp - e.discount_price %> off</span>
+                        <del>&#8377;<%= e.mrp %></del>
+                        <span class="product-price-text" style="font-weight: bold !important;color: #db4f66;">&#8377;<%= e.discount_price %></span>
+                      </h6>
+                    </div>
+                <% if (e.isNew) { %>
+                  <div class="new">
+                    <span>
+                      New
+                    </span>
+                  </div>
+                  
+                <% } %>
+                
+                <% if (e.in_stock_status) { %>
+                  <div class="button-area  pt-0">
+                    
+                    <div class="row g-1 mt-2">
+                   
+                      <div 
+                      class="d-none" 
+                      style="align-items: center;"
+                    >
+                        <button 
+                          type="button" 
+                          class="no-styles sub" 
+                         
+                          onclick="changeQuantity('<%= e.id %>', -1)"
+                        >
+                          <span style="width: 7px;">-</span>
+                        </button>
+                        <input 
+                          type="number" 
+                          name="quantity"
+                          class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                          value="1" 
+                          min="1"
+                          max="<%= e.in_stock %>" 
+                          data-stock="<%= e.in_stock %>" 
+                          data-product-id="<%= e.id %>" 
+                          inputmode="numeric" 
+                          oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        >
+                        <button 
+                          type="button" 
+                          class="no-styles add" 
+                          onclick="changeQuantity('<%= e.id %>', 1)"
+                        >
+                          <span style="width: 7px;">+</span>
+                        </button>
+                      </div>
+                    
+                      <div 
+                        class="col-lg-12 col-md-12 col-sm-12" 
+                        style="display: flex; align-items: center;"
+                      >
+                        <button 
+                          data-product-id="<%= e.id %>"
+                          class="button-box btn-cart"
+                          data-typeattribute="<%= e.type %>"
+                          style="width: 100%;"
+                        >
+                          <svg width="18" height="18"></svg> Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                    
+                    
+                  </div>
+                <% } else { %>
+                  <div class="button-area  pt-0">
+                    <div class="row g-1 mt-2">
+                      <div class="col-12">
+                        <button class="button-box"  style="opacity: 0.6;width: 100%;background-color: red !important;">
+                          <svg width="18" height="18"></svg> Out Of Stock
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+  
+                <% } %>
+                <div class="overlay" style="display: none;"></div> 
+  
+                <div class="product-container" style="display: none; text-align: center;">
+                  <div 
+                    class="product-card row" 
+                    >
+                    <p 
+                      class="close-note close-btn" 
+                      style="position: absolute; top: 15px !important; right: 15px !important; font-weight: lighter; cursor: pointer; border-radius: 50%; height: 0rem; width: 0rem; display: flex; justify-content: center; align-items: center;"
+                      onclick="closeProductDetail(this,event)"
+                    >
+                    &#10006;
+                    </p>
+                
+                    <div class="product-image  col-lg-6 md-12 sm-12" style="height: 250px;"> 
+                      
+                      <img 
+                          src="/<%= e.product_image_three %>"
+                          alt="<%= e.name %>" 
+                          style="width: 100%; height: 100%; border-radius: 8px; "
+                          loading="lazy"
+                      />
+                  </div>
+                
+                    <div class="product-content col-lg-6 md-12 sm-12" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+                      <h2 class="product-name" style="font-size: 1.5rem; margin-bottom: 8px;">
+                        <%= e.product_name %>
+                      </h2>
+                      <p class="product-description" style="margin-bottom: 8px; color: black;">
+                        <%= e.product_description %>
+                      </p>
+                      <!-- <p class="product-price" style="margin-bottom: 8px; font-weight: bold; color: #333;">
+                        Price: <span class="fw-normal">₹<%= e.product_price %></span>
+                      </p> -->
+                      <% if (e.health_benefits) { %>
+                        <div class="fw-normal">
+                            <span style="color: black;">Health Benefits:</span>
+                            <ul>
+                                <% e.health_benefits.split('|').forEach(benefit => { %>
+                                    <li style="font-weight: 400;color: #656060;"><%= benefit %></li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    <% } %>
+                                          
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        <% }) %>
+        
+        
+      </div>
+      <div class="btn-box">
+        <a href="/product">
+          View All Products
+        </a>
+      </div>
+    </div>
+  </section>
+  <section class="shop_section layout_padding mobile-products">
+    <div class="container">
+      <div class="heading_container heading_center">
+        <h2>
+           Products
+        </h2>
+      </div>
+      <div class="row">
+        <% products.forEach((e) => { %> 
+          <div class="col-sm-6 col-md-6 col-lg-3 ">
+            <div class="box product-items mobile-prods" image-product-names="<%= e.product_name %>">
+              <div class="eye_icon" onclick="toggleProductDetail(this, '<%= e.id %>',event)">
+                <p><i class="fa-solid fa-eye"></i></p> 
+              </div>
+              <div class="img-box img-boxs" style="width: 60%;padding: 0 10px;height: 150px;">
+              <div class="image-container">
+                <img src="/<%= e.product_image %>" alt="<%= e.name %>" image-product-names="<%= e.product_name %>">
+               
+              </div>
+        
+              </div>
+              <div class="detail-box " style="width: 40%;">
+                <h6>
+                  <%= e.product_name %>
+                </h6>
+                <p style="font-size: small;"><%= e.label_name %></p>
+
+                <h6>
+                      <span style="position: absolute;top: 0px;left: 0;padding: 5px;background-color: #3e62e1;color: white;">&#8377;<%= e.mrp - e.discount_price %> off</span>
+                      <del>&#8377;<%= e.mrp %></del>
+                      <span class="product-price-text"  >&#8377;<%= e.discount_price %></span>
+       
+                </h6>
+                <% if (e.in_stock_status) { %>
+                  <div class="button-area  pt-0">
+                    
+                    <div class="row g-1 mt-2">
+                   
+                      <div 
+                      class="d-none" 
+                      style="align-items: center;"
+                    >
+                        <button 
+                          type="button" 
+                          class="no-styles sub" 
+                         
+                          onclick="changeQuantity('<%= e.id %>', -1)"
+                        >
+                          <span style="width: 7px;">-</span>
+                        </button>
+                        <input 
+                          type="number" 
+                          name="quantity"
+                          class="form-control border-dark-subtle input-number quantity cartquantity mx-2"
+                          value="1" 
+                          min="1"
+                          max="<%= e.in_stock %>" 
+                          data-stock="<%= e.in_stock %>" 
+                          data-product-id="<%= e.id %>" 
+                          inputmode="numeric" 
+                          oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        >
+                        <button 
+                          type="button" 
+                          class="no-styles add" 
+                          onclick="changeQuantity('<%= e.id %>', 1)"
+                        >
+                          <span style="width: 7px;">+</span>
+                        </button>
+                      </div>
+                    
+                      <div 
+                        class="col-lg-12 col-md-12 col-sm-12" 
+                        style="display: flex; align-items: center;"
+                      >
+                        <button 
+                          data-product-id="<%= e.id %>"
+                          class="button-box btn-cart"
+                          data-typeattribute="<%= e.type %>"
+                          style="width: 100%;"
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                    
+                    
+                  </div>
+                <% } else { %>
+                  <div class="button-area  pt-0">
+                    <div class="row g-1 mt-2">
+                      <div class="col-12">
+                        <button class="button-box"  style="opacity: 0.6;width: 100%;background-color: red !important;color: black !important;font-weight: bolder !important;">
+  
+                          Out Of Stock
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+  
+                <% } %>
+              </div>
+              <% if (e.isNew) { %>
+                <div class="new">
+                  <span>New</span>
+                </div>
+              <% } %>
+             
+              <div class="overlay" style="display: none;"></div> 
+
+              <div class="product-container" style="display: none; text-align: center;">
+                <div 
+                  class="product-card row" 
+                  >
+                  <p 
+                    class="close-note close-btn" 
+                    style="position: absolute; top: 15px !important; right: 15px !important; font-weight: lighter; cursor: pointer; border-radius: 50%; height: 0rem; width: 0rem; display: flex; justify-content: center; align-items: center;"
+                    onclick="closeProductDetail(this,event)"
+                  >
+                  &#10006;
+                  </p>
+              
+                  <div class="product-image  col-lg-6 md-12 sm-12" style="height: 250px;"> 
+                    
+                    <img 
+                        src="/<%= e.product_image_three %>"
+                        alt="<%= e.name %>" 
+                        style="width: 100%; height: 100%; border-radius: 8px; "
+                        loading="lazy"
+                    />
+                </div>
+              
+                  <div class="product-content col-lg-6 md-12 sm-12" style="flex: 0 0 50%; max-width: 50%; padding: 8px; text-align: left;">
+                    <h2 class="product-name" style="font-size: 1.5rem; margin-bottom: 8px;">
+                      <%= e.product_name %>
+                    </h2>
+                    <p class="product-description" style="margin-bottom: 8px; color: black;">
+                      <%= e.product_description %>
+                    </p>
+                    <!-- <p class="product-price" style="margin-bottom: 8px; font-weight: bold; color: #333;">
+                      Price: <span class="fw-normal">₹<%= e.product_price %></span>
+                    </p> -->
+                    <% if (e.health_benefits) { %>
+                      <div class="fw-normal">
+                          <span style="color: black;">Health Benefits:</span>
+                          <ul>
+                              <% e.health_benefits.split('|').forEach(benefit => { %>
+                                  <li style="font-weight: 400;color: #656060;"><%= benefit %></li>
+                              <% }); %>
+                          </ul>
+                      </div>
+                  <% } %>
+                                        
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+      
+      <div class="btn-box">
+        <a href="/product" style="text-decoration: none;">
+          View All Products
+        </a>
+      </div>
+    </div>
+  </section>
+  <!-- end shop section -->
+
+  <!-- info section -->
+
+	<%-include("./footer.ejs")%>
+
+
+  <!-- end info section -->
+
+	<%-include("./newScript.ejs")%>
+
+</body>
+
+</html>

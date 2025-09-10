@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <meta name="robots" content="noindex, follow">
+
+  <style>
+    .carousel {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      /* Increased width */
+      margin: 0 auto;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .carousel-image {
+      max-height: 70vh;
+      min-width: 100%;
+      height: auto;
+      object-fit: contain;
+      margin-bottom: 3rem;
+    }
+
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      z-index: 10;
+      border-radius: 50%;
+    }
+
+    .carousel-button.prev {
+      left: 10px;
+    }
+
+    .carousel-button.next {
+      right: 10px;
+    }
+
+    .carousel-button:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="carousel">
+    <div class="carousel-track">
+      <% banner.forEach((e, index)=> { %>
+            <img src="<%= e.promotional_image %>" alt="<%= e.altText || 'Slide ' + (index + 1) %>"
+              role="presentation" class="carousel-image">
+
+        <% }) %>
+
+    </div>
+    <button class="carousel-button prev">❮</button>
+    <button class="carousel-button next">❯</button>
+  </div>
+
+  <script>
+   const track = document.querySelector('.carousel-track');
+const prevButton = document.querySelector('.carousel-button.prev');
+const nextButton = document.querySelector('.carousel-button.next');
+
+let currentIndex = 0;
+
+function updateCarousel() {
+  const width = track.children[0].getBoundingClientRect().width;
+  track.style.transform = `translateX(-${currentIndex * width}px)`;
+}
+
+function autoScroll() {
+  currentIndex = (currentIndex + 1) % track.children.length;
+  updateCarousel();
+}
+
+nextButton.addEventListener('click', () => {
+  currentIndex = (currentIndex + 1) % track.children.length;
+  updateCarousel();
+  resetAutoScroll();
+});
+
+prevButton.addEventListener('click', () => {
+  currentIndex = (currentIndex - 1 + track.children.length) % track.children.length;
+  updateCarousel();
+  resetAutoScroll();
+});
+
+let scrollInterval = setInterval(autoScroll, 5000);
+
+function resetAutoScroll() {
+  clearInterval(scrollInterval);
+  scrollInterval = setInterval(autoScroll, 5000);
+}
+
+window.addEventListener('resize', updateCarousel);
+
+
+  </script>
+</body>
+
+</html>

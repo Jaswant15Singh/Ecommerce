@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+	<link rel="shortcut icon" href="<%= favicon %>" type="image/x-icon">
+<!-- Add this inside the <head> tag -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <title>
+    Nutrition-Testimonials
+  </title>
+
+  <!-- slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="../stylesheets/anh//bootstrap.css" />
+  <link href="../stylesheets/anh/style.css" rel="stylesheet" />
+  <link href="../stylesheets/anh/responsive.css" rel="stylesheet" />
+</head>
+
+<body>
+  <%- include('./header') %>
+
+  <!-- end hero area -->
+
+  <!-- client section -->
+
+  <section class="client_section layout_padding">
+    <div class="container">
+      <div class="heading_container heading_center">
+        <h2>
+          Testimonial
+        </h2>
+      </div>
+    </div>
+    <div class="container px-0">
+      <div id="customCarousel2" class="carousel  carousel-fade" data-ride="carousel">
+        <div class="carousel-inner">
+          <% result.forEach((testimonial,index)=> { %>
+          
+          <div class="carousel-item <%= index === 0?'active':'' %>">
+            <div class="box">
+              <div class="client_info">
+                <div class="client_name">
+                  <h5>
+                    <%= testimonial.customer_review_name %>
+                  </h5>
+                  <h6>
+                    <%= testimonial.review %>
+                  </h6>
+                </div>
+                <i class="fa fa-quote-left" aria-hidden="true"></i>
+              </div>
+              <div class="star-rating"
+              style="display: flex; flex-direction: row-reverse; gap: 2px; margin: 10px 0;cursor: default;">
+              <% for (let i=5; i>= 1; i--) { %>
+                  <% if (i <=testimonial.rating) { %>
+                      <span style="color: gold; font-size: 20px;">&#9733;</span>
+                      <% } else { %>
+                          <span style="color: #ccc; font-size: 20px;">&#9733;</span>
+                          <% } %>
+                              <% } %>
+          </div>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+        <div class="carousel_btn-box">
+          <a class="carousel-control-prev" href="#customCarousel2" role="button" data-slide="prev">
+            <i class="fa fa-angle-left" aria-hidden="true"></i>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#customCarousel2" role="button" data-slide="next">
+            <i class="fa fa-angle-right" aria-hidden="true"></i>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div style="text-align: center;margin-bottom: 2rem;display: flex;justify-content: center;">
+      <button class="button-box" style="display: flex;justify-content: center;align-items: center;" onclick="openModal()">Add
+          Reviews</button>
+          <button class="button-box" style="display: flex;justify-content: center;align-items: center;width: auto;">
+            <a  href="https://www.google.com/search?sca_esv=177fae3e0b1a050b&sxsrf=AHTn8zq0oGAd60cV4zf5z9EY2rXyJCUB0w:1746706497129&si=APYL9bs7Hg2KMLB-4tSoTdxuOx8BdRvHbByC_AuVpNyh0x2Kzfshd4M3yTtmNVxQBn-pn9zJbVIQp0apFsNWI7O7tpSJzG3GwGT8fBbpbVYthZWCej3QMoEROU7ex1d9APz0yf1lsXpcr65n7IfFuWvavoc8iaTJenvH-dQW1TLzmG0zFRJsWyVlBQs4MUxGJ69NQt5QVrrl&q=CableGuy+CATV+Business+Process+Automation+Pvt.+Ltd.+Reviews&sa=X&ved=2ahUKEwjO9qbi7JONAxWrZWwGHaNJLkYQ0bkNegQINhAE&biw=1366&bih=641&dpr=1" style="color: #f16179;">Add Google Review</a>
+          </button>    </div>
+        </button>
+    </div>
+    <div id="reviewModal" style="z-index: 10000;" class="modal-review">
+      <div class="modal-review-content">
+          <span class="close" onclick="closeModal()">&times;</span>
+  
+          <form id="reviewForm">
+              <div class="star-rating">
+                  <span class="star" data-value="5">&#9733;</span>
+                  <span class="star" data-value="4">&#9733;</span>
+                  <span class="star" data-value="3">&#9733;</span>
+                  <span class="star" data-value="2">&#9733;</span>
+                  <span class="star" data-value="1">&#9733;</span>
+              </div>
+              <textarea style="width: 100%;padding: 10px;" type="text" name="review" id="reviewInput" placeholder="Enter your review" cols="4" rows="4"
+                  required></textarea>
+              <input type="hidden" id="ratingValue" name="rating" value="0">
+              <button type="submit" class="button-box d-flex justify-content-center">Submit</button>
+          </form>
+      </div>
+  </div>
+  </section>
+  <!-- end client section -->
+
+  <!-- info section -->
+
+	<%-include("./footer.ejs")%>
+
+
+  <!-- end info section -->
+
+
+
+  <%- include("./newScript.ejs") %>
+<script>
+  function openModal() {
+                document.body.style.overflowY = "hidden"
+                document.getElementById("reviewModal").style.display = "flex";
+            }
+
+            function closeModal() {
+                document.body.style.overflowY = "auto"
+                document.getElementById("reviewModal").style.display = "none";
+            }
+            window.onclick = function (event) {
+                const modal = document.getElementById("reviewModal");
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+
+            document.addEventListener("DOMContentLoaded", function () {
+    const stars = document.querySelectorAll(".star");
+    const ratingValue = document.getElementById("ratingValue");
+
+    stars.forEach((star) => {
+        star.addEventListener("click", function () {
+            let value = this.getAttribute("data-value");
+            ratingValue.value = value;
+
+            stars.forEach((s) => s.classList.remove("selected"));
+            for (let i = 0; i < stars.length; i++) {
+                if (i >= 5 - value) {
+                    stars[i].classList.add("selected");
+                }
+            }
+        });
+    });
+
+    document.getElementById("reviewForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const review = document.getElementById("reviewInput").value;
+        const customer_review_name = localStorage.getItem("name");
+        const rating = ratingValue.value;
+        const contact=localStorage.getItem("contactid");
+        if (!rating || rating < 1 || rating > 5) {
+            showPopup('Oops', 'Please select a rating', 'failure');
+            
+            return;
+        }
+
+        fetch("<%= url_pathname %>create_review", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({  review, rating ,customer_review_name,contact})
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                showPopup("Done", data.message, "Success");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                console.log(data);
+                
+                showPopup('Oops', data.message, 'failure');
+          
+            }
+        })
+        .catch((e)=>{
+            console.log(e);
+            
+        })
+    });
+});
+</script>
+
+</body>
+
+</html>

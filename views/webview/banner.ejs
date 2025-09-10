@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .carousel-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .carousel-track {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        width: 100vw;
+    }
+
+    .carousel-image {
+        width: 100vw;
+        flex-shrink: 0;
+        height: calc(100vh - 100px);width: 100vw;background-repeat: no-repeat;min-height: calc(100vh - 152px); background-size: 100% 100%;
+
+    }
+
+    .prev-btn, .next-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .prev-btn { left: 10px; }
+    .next-btn { right: 10px; }
+    @media (max-width:767px){
+      .carousel-image{
+        height: 30vh !important;
+        min-height: 30vh !important;
+      }
+     }
+  </style>
+</head>
+<body>
+  <div class="carousel-container">
+    <div class="carousel-track">
+        <% banner.forEach((e, index) => { %>
+            <img src="<%= e.promotional_image %>" alt="<%= e.altText || 'Slide ' + (index + 1) %>" 
+                class="carousel-image" data-index="<%= index %>">
+        <% }) %>
+    </div>
+
+    <!-- Navigation Controls -->
+    <button class="prev-btn">&#10094;</button>
+    <button class="next-btn">&#10095;</button>
+</div>
+<script>
+  let index = 0;
+    const images = document.querySelectorAll(".carousel-image");
+    const totalImages = images.length;
+    const track = document.querySelector(".carousel-track");
+
+    function updateCarousel() {
+        track.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    function nextSlide() {
+        index = (index + 1) % totalImages;
+        updateCarousel();
+    }
+
+    function prevSlide() {
+        index = (index - 1 + totalImages) % totalImages;
+        updateCarousel();
+    }
+
+    document.querySelector(".next-btn").addEventListener("click", nextSlide);
+    document.querySelector(".prev-btn").addEventListener("click", prevSlide);
+
+    setInterval(nextSlide, 5000); 
+</script>
+</body>
+</html>

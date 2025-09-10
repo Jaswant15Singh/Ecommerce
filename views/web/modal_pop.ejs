@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Popup</title>
+    <style>
+        /* Popup Overlay */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 100000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            
+        }
+
+        .popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* Popup Content */
+        .popup-content {
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s ease-in-out;
+
+        }
+
+        .popup.active .popup-content {
+            transform: scale(1);
+        }
+
+        .popup-content h1 {
+            margin: 10px 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #f0331a;
+        }
+
+        .popup-content p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #f0331a;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .failure {
+            color: #dc3545;
+        }
+
+        .popup-content button {
+            padding: 10px 20px;
+            background-color: #f0331a;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup-content button:hover {
+            background-color: #d12b15;
+        }
+
+        /* Checkmark Circle */
+        .checkmark-circle {
+            border-radius: 50%;
+            height: 80px;
+            width: 80px;
+            background: #f8faf5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            display: none;
+        }
+
+        .checkmark {
+            display: none;
+            color: #f0331a;
+            font-size: 48px;
+            line-height: 80px;
+        }
+
+        .checkmarkt {
+            color: #9abc66;
+            font-size: 48px;
+            line-height: 80px;
+        }
+
+        #rearrange-btn {
+            display: none;
+        }
+
+        .close-btn {
+            font-size: 14px;
+            font-weight: 400;
+            right: 2px !important;
+            top: 2px !important;
+        }
+
+        @media (max-width:810px) {
+            .popup-content {
+                width: 300px;
+                padding: 15px;
+            }
+
+            .popup-content h1 {
+                font-size: 20px;
+            }
+
+            .popup-content p {
+                font-size: 16px;
+            }
+        }
+
+        .mouth {
+            position: absolute;
+            top: 55%;
+            left: 44%;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .happy {
+            border: 2px solid;
+            border-color: transparent #777 #777 transparent;
+            transform: rotate(45deg);
+        }
+
+        .sad {
+            top: 59%;
+            border: 2px solid;
+            border-color: #777 transparent transparent #777;
+            transform: rotate(45deg);
+        }
+
+        @keyframes bounce {
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes scale {
+            50% {
+                transform: scale(0.9);
+            }
+        }
+
+        @keyframes roll {
+            0% {
+                transform: rotate(0deg);
+                left: 25%;
+            }
+
+            50% {
+                left: 60%;
+                transform: rotate(168deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+                left: 25%;
+            }
+        }
+
+        @keyframes move {
+            0% {
+                left: 25%;
+            }
+
+            50% {
+                left: 60%;
+            }
+
+            100% {
+                left: 25%;
+            }
+        }
+
+        .face {
+            position: absolute;
+            width: 22%;
+            height: 27%;
+            background: #fcfcfc;
+            border-radius: 50%;
+            border: 1px solid #777;
+            top: 5%;
+            left: 41.5%;
+            z-index: 2;
+            animation: bounce 1s ease-in infinite;
+        }
+
+        .eye {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #777;
+            border-radius: 50%;
+            top: 40%;
+            left: 20%;
+        }
+
+        .right {
+            left: 68%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="feedbackBox" class="popup">
+        <div class="popup-content">
+            <div class="checkmark-circle">
+                <span id="checkmark">X</span>
+            </div>
+            <div class="face">
+                <div class="eye"></div>
+                <div class="eye right"></div>
+                <div class="mouth"></div>
+            </div> <span id="closePopup" class="close-btn"> &#10006;</span>
+            <h1 id="popupHeading" style="margin-top: 4rem;color: black;"></h1>
+            <p id="popupMessage"></p>
+            <button id="closePopupBtn">Continue</button>
+            <button id="rearrange-btn">Auto-fix</button>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(title, message, status, adjust) {
+            console.log(title);
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            const popupHeading = document.getElementById('popupHeading');
+            const popupMessage = document.getElementById('popupMessage');
+            const adjustbtn = document.getElementById("rearrange-btn");
+            const check = document.getElementById("checkmark");
+            const content=document.querySelector(".popup-content")
+            const mouth=document.querySelector(".mouth");
+            if (status === "Success") {
+                check.innerText = "✓";
+                check.classList.add("checkmarkt");
+                popupHeading.style.color = "#9abc66";
+                mouth.classList.add("happy");
+                content.style.background = "linear-gradient(to bottom right, #b0db7d 40%, #99dbb4 100%)";
+
+            }
+
+            else {
+                check.innerText = "X";
+                check.classList.add("checkmark");
+                popupHeading.classList.add("failure");
+                mouth.classList.add("sad");
+                content.style.background = "linear-gradient(to bottom left, #ef8d9c 40%, #ffc39e 100%)";
+
+            }
+
+            if (adjust) {
+                adjustbtn.style.display = "inline-block"
+            }
+            popupHeading.textContent = title;
+            popupMessage.textContent = message;
+            popupHeading.className = status;
+
+            feedbackBox.classList.add('active');
+        }
+
+        const closePopup = document.getElementById('closePopup');
+        const closePopupBtn = document.getElementById('closePopupBtn');
+        const feedbackBox = document.getElementById('feedbackBox');
+        const adjustbtn = document.getElementById("rearrange-btn");
+
+        adjustbtn.addEventListener("click", () => {
+            window.location.reload()
+        })
+        closePopup.addEventListener('click', () => {
+            feedbackBox.classList.remove('active');
+            // if(popupMessage.innexText="No Products for particular category"){
+            //     window.location.href="/"
+            // }
+        });
+
+        closePopupBtn.addEventListener('click', () => {
+            feedbackBox.classList.remove('active');
+            // if(popupMessage.innexText="No Products for particular category"){
+            //     window.location.href="/"
+            // }
+        });
+    </script>
+</body>
+
+</html>

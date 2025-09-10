@@ -1,0 +1,228 @@
+<script>
+    
+const menuBar = document.querySelector('#content nav .bx.bx-menu');
+// const main=document.querySelector(".main");
+const sidebar = document.getElementById('sidebar');
+
+
+menuBar.addEventListener('click', function () {
+    sidebar.classList.toggle('hide');
+    // main.classList.toggle("main-left")
+})
+
+const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li a');
+
+allSideMenu.forEach(item => {
+    const li = item.parentElement;
+
+    item.addEventListener('click', function () {
+        allSideMenu.forEach(i => {
+            i.parentElement.classList.remove('active');
+        })
+        li.classList.add('active');
+
+    })
+});
+
+
+const searchButton = document.querySelector('#content nav form .form-input button');
+const searchButtonIcon = document.querySelector('#content nav form .form-input button .bx');
+const searchForm = document.querySelector('#content nav form');
+
+searchButton.addEventListener('click', function (e) {
+    if (window.innerWidth < 576) {
+        e.preventDefault();
+        searchForm.classList.toggle('show');
+        if (searchForm.classList.contains('show')) {
+            searchButtonIcon.classList.replace('bx-search', 'bx-x');
+        } else {
+            searchButtonIcon.classList.replace('bx-x', 'bx-search');
+        }
+    }
+})
+
+
+
+
+
+if (window.innerWidth < 769) {
+    sidebar.classList.add('hide');
+} else if (window.innerWidth > 576) {
+    searchButtonIcon.classList.replace('bx-x', 'bx-search');
+    searchForm.classList.remove('show');
+}
+
+
+// window.addEventListener('resize', function () {
+//     if (this.innerWidth > 576) {
+//         searchButtonIcon.classList.replace('bx-x', 'bx-search');
+//         searchForm.classList.remove('show');
+//     }
+// })
+
+
+
+const switchMode = document.getElementById('switch-mode');
+
+switchMode.addEventListener('change', function () {
+    if (this.checked) {
+        document.body.classList.add('dark');
+    } else {
+        document.body.classList.remove('dark');
+    }
+})
+
+
+document.getElementById('logoutButton').addEventListener('click', function (event) {
+    localStorage.removeItem('authToken');
+    fetch('<%= (url_pathname) %>admin/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '<%= (url_pathname) %>admin/login';
+            } else {
+                console.error('Logout failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error during logout:', error);
+        });
+});
+
+let categoryData = [];
+// let categoryPage = 1;
+// const rowsPerCategoryPage = 5;
+
+
+
+// let products = [];
+let currentPage = 1;
+const rowsPerPage = 5;
+
+document.addEventListener('DOMContentLoaded', getCategoryCount);
+document.addEventListener('DOMContentLoaded', getProductCount);
+document.addEventListener('DOMContentLoaded', getOrdersCount);
+
+function getCategoryCount() {
+    let val = '';
+    const count_cat = document.getElementById("category-count");
+    fetch('<%= (url_pathname) %>category-count')
+        .then((res) => { return res.json() })
+        .then((data) => {
+            count_cat.innerText = data[0].count;
+
+        })
+        .catch((e) => {
+            // console.log(e);
+
+        });
+}
+
+function getOrdersCount() {
+    let val = '';
+    const count_order = document.getElementById("order-count");
+    fetch('<%= (url_pathname) %>order-count')
+        .then((res) => { return res.json() })
+        .then((data) => {
+            // console.log(data);
+            
+            count_order.innerText = data[0].count;
+
+        })
+        .catch((e) => {
+            // console.log(e);
+
+        });
+}
+
+
+function getProductCount() {
+    // console.log("wwo");
+    let val = '';
+    const count_cat = document.getElementById("product-count");
+    fetch('<%= (url_pathname) %>product-count')
+        .then((res) => { return res.json() })
+        .then((data) => {
+            count_cat.innerText = data[0].count;
+
+        })
+        .catch((e) => {
+        });
+}
+// window.onload = function () {
+//     fetchProducts();
+   
+// };
+
+
+
+
+
+
+
+function fetchOrderData() {
+    fetch('<%= (url_pathname) %>admin/get/recent-orders/Admin')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.data) {
+                categoryData = data.data;
+                // console.log(categoryData);
+                displayOrderPage(); 
+            } else {
+                console.error("No category data received.");
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching category data:', error);
+        });
+}
+
+function displayOrderPage() {
+    const tableBody = document.querySelector('#dashboardtable tbody');
+    tableBody.innerHTML = '';
+
+
+    let counter = 1; 
+    console.log("cat",categoryData);
+    if(categoryData.length<1){
+        tableBody.innerHTML = '<tr><td colspan="13">No data available</td></tr>';
+        return;  
+      }
+    categoryData.forEach(category => {
+        const insertedDate = new Date(category.inserted_date);
+        const formattedDateTime = `${insertedDate.getDate().toString().padStart(2, '0')}-${(insertedDate.getMonth() + 1).toString().padStart(2, '0')}-${insertedDate.getFullYear()} ${insertedDate.getHours().toString().padStart(2, '0')}:${insertedDate.getMinutes().toString().padStart(2, '0')}:${insertedDate.getSeconds().toString().padStart(2, '0')}`;
+        console.log("ca",category);
+        
+        const rowHTML = `
+            <tr class="${category.order_status==='SUCCESS'?'hover-red' : 'hover-blue'}">
+                <td>${counter}</td>
+                <td>${category.id}</td>
+                <td>${category.customer_name}</td> 
+                <td>${category.customer_email}</td>
+                <td>${category.customer_contact}</td>
+                 <td>${category.total_price}</td>
+                <td>${category.order_status}</td>
+                <td>${category.deleivery_status}</td>
+                <td>${formattedDateTime}</td>
+                <td><a class="dropdown-item" style="text-decoration:underline;" href="/admin/ind_orders/${category.id}">View</a></td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML('beforeend', rowHTML);
+        counter++; // Increment the counter
+    });
+}
+
+fetchOrderData();
+
+
+</script>

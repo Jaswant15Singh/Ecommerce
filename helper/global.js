@@ -1,0 +1,15 @@
+ global.siteLogo= "/images/cableguy.png";
+    global.siteTitle= "Cableguy";
+    global.favicon= "/images/cableguy.png";
+    global.map_address='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3765.297929450673!2d72.85055777425806!3d19.31287404449543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c8316d9480f5%3A0x77a9636438fdc48f!2sCableGuy%20CATV%20Business%20Process%20Automation%20Pvt.%20Ltd.!5e0!3m2!1sen!2sin!4v1746705989472!5m2!1sen!2sin';
+    global.instagram_link="#";
+    global.facebook_link="#";
+    global.youtube_link="#";
+    global.whatsapp_number="9702499222";
+    global.whatsapp_number_two="9702797021";
+    global.email="cableguytest@gmail.com";
+    global.address="Railway Station, 509, 5th Floor, Ostwal Shopping Center, opp. Bhayander, Bhayandar East, Mumbai, Maharashtra 401105";
+    global.about_us="Explore our wide range of high-quality products designed to meet your everyday needs. From the latest essentials to customer favorites, enjoy seamless shopping, competitive prices, and reliable delivery—everything you need, all in one place.";
+    global.need_help="We are committed to providing you with the best support for all. If you have any questions, we’re here to help!";
+    global.featured_heading="Grab the Best Savings on Top-Quality Services";
+    global.featured_data="Discover a wide range of quality products at competitive prices, with extra discounts available for valued customers.";

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="../stylesheets/popup.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <link rel="stylesheet" type="text/css" href="../stylesheets/anh//bootstrap.css" />
+  <link href="../stylesheets/anh/style.css" rel="stylesheet" />
+  <link href="../stylesheets/anh/responsive.css" rel="stylesheet" />
+  <script src="/webview_js/jquery-3.4.1.min.js" defer></script>
+  <script src="/webview_js/bootstrap.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" defer>
+  </script>
+  <script src="/webview_js/custom.js" defer></script>
+  <script async src="https://static.addtoany.com/menu/page.js" defer></script>
+
+
+  <style>
+     .customer {
+      display: none;
+      position: fixed;
+      top: 56%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 900px;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 320px;
+      background: white;
+      z-index: 10001;
+      height: 350px;
+      box-shadow: -4px -3px 60px -10px rgba(0, 0, 0, 0.7);
+      border: 2px solid black;
+    }
+
+    @media (min-width:768px) and (max-width:991px) and (max-height:680px) {
+      .customer {
+        top: 62% !important;
+        height: 320px !important;
+
+      }
+    }
+
+    .customer h1 {
+      color: black !important;
+    }
+
+    .customer:not(.account):not(.order) {
+      margin: 0 auto;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      text-align: center;
+    }
+
+    .customer form {
+      margin-top: 4rem;
+      display: block;
+      margin-top: 0em;
+      unicode-bidi: isolate;
+    }
+    .contact-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: none;
+  z-index: 10000
+}
+.button {
+    display: inline-flex;
+    padding: .625rem .875rem;
+    column-gap: .5rem;
+    align-items: center;
+    border-radius: .375rem;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    background: #6366f1;
+    border: none;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05)
+}
+
+.navbar-nav .nav-items{
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width:991px){
+  .search-product-web{
+    display: none !important;
+  }
+  .search-product-mobile{
+    display: block !important;
+  }
+}
+#snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  background-color: #f16179; /* Black background color */
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 2px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 50%; /* Center the snackbar */
+  bottom: 30px; /* 30px from the bottom */
+  transform: translate(-50%,-50%);
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+  visibility: visible; /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+@media (max-width:500px){
+  #snackbar{
+    width: 200px !important;
+    font-size: small !important;
+    min-width: 150px !important;
+  }
+  .alert-cart-image{
+    height: 100px !important;
+    width: 100px !important;
+  }
+}
+/* Add this to your CSS */
+@keyframes fadeOut {
+    0% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+.alert-cart {
+    position: fixed;
+    top: 3rem;
+    right: 1rem;
+    background: black;
+    z-index: 999999;
+    border: 1px solid black;
+    display: none;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+#scrollToTopBtn {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: #f16179;
+  border: none !important;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 48px;
+  width: 48px;
+  z-index: 9999;
+}
+.input-icon-wrapper {
+    position: relative;
+    width: fit-content;
+  }
+
+  .input-icon-wrapper input {
+    padding-left: 2rem; /* Make space for icon */
+  }
+
+  .input-icon-wrapper i {
+    position: absolute;
+    top: 50%;
+    left: 0.5rem;
+    transform: translateY(-50%);
+    color: #555; /* Optional: icon color */
+  }
+  </style>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+      integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <%-include('modal_pop')%>
+      <button id="scrollToTopBtn">
+        <i class="fa fa-angle-double-up return-to-top"></i>
+      </button>
+      <div class="alert-cart">
+        <img src="" alt="" height="100px" width="100px" class="alert-cart-image" style="padding: 0.5rem;">
+        <p style="margin: 0;padding: 0;width: 10rem;display: flex;
+        align-items: center;justify-content: center;padding: 0.5rem;color: white;text-shadow: 17px 4px 39px rgba(27,19,246,1);">Product has been added to cart</p>
+      </div>
+      <div id="cart-model" style="z-index:100001 !important" class="model hidden">
+        <div class="modal-content">
+          <span class="close-button">&times;</span>
+          <h3>Add Product to Cart!</h3>
+          <div class="product-details">
+            <img id="modal-image" src="" alt="Product Image" loading="lazy" />
+            <div class="modail-inner-contents">
+              <p>Product: <span id="modal-product-name" class="text-dark fw-bold"></span></p>
+              <p>Quantity: <span id="modal-quantity" class="text-dark fw-bold"></span></p>
+              <p>Total Price: <span id="modal-total-price" class="text-dark fw-bold"></span></p>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="continue-shopping-btn" class="button-box" style="display: inline-block;width: 40%;" >Cancel
+
+            <button id="view-cart-btn" class="button-box" style="display: inline-block;width: 40%;">Add to Cart</button>
+              </button>
+          </div>
+        </div>
+      </div>
+      <div id="cart-modals" style="z-index:100001 !important"  class="modals hidden">
+        <div class="modal-contents">
+          <span class="close-buttons">&times;</span>
+          <h3>Add Product to Cart!</h3>
+          <div class="product-details">
+            <img id="modal-images" src="" alt="Product Image" loading="lazy" />
+            <div class="modail-inner-contents">
+              <p style="margin-bottom: 0.5rem;">Product: <span id="modal-product-names" class="text-dark fw-bold"></span></p>
+              <p>Select Quantity:</p>
+              <div id="modal-categoriess" class="categoriess-container"></div>
+              <div id="flavour-categoriess" class="flavours-container"></div>
+              <p><span id="modal-quantitys" class="text-dark fw-bold"></span></p>
+              <p>Total Price: <span id="modal-total-prices" class="text-dark fw-bold"></span></p>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="continue-shopping-btns" class="button-box" style="display: inline-block;width: 40%;" >Cancel
+            </button>
+            <button id="view-cart-btns" class="button-box" style="display: inline-block;width: 40%;">Add to Cart</button>
+            
+          </div>
+        </div>
+      </div>
+      <div class="contact-overlay"></div>
+      <div class="customer register section-template--23394868298020__main-padding"
+        style="background-image: url('');background-repeat: no-repeat;object-fit: contain;background-position:center top;height: 350px;width: 320px;">
+        <svg style="display: none">
+          <symbol id="icon-error" viewBox="0 0 13 13">
+            <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"></circle>
+            <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"></circle>
+            <path
+              d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z"
+              fill="white"></path>
+            <path
+              d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z"
+              fill="white" stroke="#EB001B" stroke-width="0.7"></path>
+          </symbol>
+        </svg>
+        <div class="row">
+          <!-- <img src="images/contact_name_bg.png" height="80px" alt=""
+            style="position: absolute;top: 25px;margin-left: -0.5rem;"> -->
+          <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="right-otp">
+              <span style="position: absolute;top: 10px; right: 10px;cursor: pointer;color: black;font-weight: 600;"
+                onclick="closeContact()">&#10006;</span>
+              <form style="margin-top: 7rem;" action="#" id="create_user" accept-charset="UTF-8"
+                data-login-with-shop-sign-up="true" novalidate="novalidate">
+                <input type="hidden" name="form_type" value="create_customer">
+                <input type="hidden" name="utf8" value="✓">
+  
+                <div class="field input-icon-wrapper" id="otp-phone" style="display: flex; align-items: center; gap: 0.5rem;width: 100%;">
+                  
+                  <i class="fa-solid fa-mobile-screen"></i>
+                    <input type="text" name="phone" id="LoginForm-contact" aria-required="true"
+                    placeholder="Enter phone number" minlength="10"
+                    pattern="^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$"
+                    inputmode="numeric" maxlength="10"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+  
+                <button class="button otp-button" type="submit" style="width: 100%; margin-top: 1rem;display: flex;justify-content: center;">
+                  Generate OTP
+                </button>
+  
+              </form>
+              <div class="field " id="otp-contact" style="display: none;">
+                <input type="text" name="otp" aria-required="true" placeholder="Enter otp" minlength="10"
+                  pattern="^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$" inputmode="numeric"
+                  oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="10">
+              </div>
+              <button class="button verify-button" style="width: 100%; margin-top: 1rem;display: none;"
+                onclick="verifyOTP()">Verify</button>
+              <button class="button resend-button" type="submit" style="width: 100%; margin-top: 1rem;display: none;"
+                onclick="resendOtp()">
+                Resend OTP
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="search-overlay" style="z-index: 99999;"></div>
+     <div class="search-container" style="z-index: 100000;">
+      <div style="display: flex; justify-content: center; align-items: center; position: relative;">
+        <input type="text" placeholder="Search Products" id="search-input">
+        <span id="clear-btn">&times;</span>
+      </div>
+      <div style="padding: 1rem;text-align: center;font-size: small;" class="search-prod" >Search For products</div>
+      <div style="padding: 1rem;text-align: center;font-size: medium;display: none;" class="no-prod">No result</div>
+      <div id="suggestions" class="suggestions " style="width: 100%;">
+      </div>
+     </div>
+
+  <div class="hero_area">
+    <header class="header_section">
+      <nav class="navbar navbar-expand-lg custom_nav-container p-0">
+        <a class="navbar-brand" href="/">
+         <img src="<%= siteLogo %>"  width="200" height="55" alt="" loading="lazy">
+        </a>
+     
+          <div class="nav-item nav-items search-products search-product-mobile" style="display:none;cursor: pointer; color:#616260;font-weight: lighter;padding: 0 5px;font-size: 20px;"> 
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+          </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class=""></span>
+        </button>
+
+        <div class="collapse navbar-collapse innerpage_navbar" id="navbarSupportedContent">
+          <ul class="navbar-nav  ">
+            <li class="nav-item nav-items">
+              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item nav-items">
+              <a class="nav-link" href="/product">
+                Shop
+              </a>
+            </li>
+            <li class="nav-item nav-items">
+              <a class="nav-link" href="/why">
+                Why Us
+              </a>
+            </li>
+            <li class="nav-item nav-items">
+              <a class="nav-link" href="/testimonial">
+                Testimonial
+              </a>
+            </li>
+            <li class="nav-item nav-items">
+              <a class="nav-link" href="/blogs">
+                Blogs
+              </a>
+            </li>
+            <li>
+            </li>
+            <li class="nav-item nav-items">
+              <a class="nav-link" href="/contact">Contact Us</a>
+            </li>
+            <li class="nav-item nav-link userloginn nav-items" style="list-style: none;cursor: pointer;" onclick="userLogin()">
+              Login
+             </li>
+             <li class="nav-item nav-link userprofilee nav-items" style="list-style: none;cursor: pointer;">
+              <a class="text-dark" href="/profile">Hello</a>
+             </li>
+             <li class="nav-item nav-items search-product search-product-web" style="cursor: pointer; color:#616260;font-weight: lighter;padding: 0 5px;font-size: 20px;"> 
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </li>
+             <li class="nav-items"> <div style="position: relative;cursor: pointer;width: 50px;" class="cart-modals">
+              <button id="cart-push" class="p-1 mx-1 nos-style"  data-bs-target="#offcanvasCart"
+                aria-controls="offcanvasCart">
+                <div class="cartX"
+                  style="position: absolute; top: -2px;right: 3px;display: flex;justify-content: center;align-items: center;background-color:#6BB252;color:black;width: 25px;height: 25px;border-radius: 50%;">
+                </div>
+                <i style="font-size: 26px;color: #e64361;" class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div></li>
+           
+          </ul>
+ 
+           
+            <!-- <form class="form-inline ">
+              <button class="btn nav_search-btn" type="submit">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
+            </form> -->
+          </div>
+        </div>
+      </nav>
+    </header>
+
+  </div>
+
+  <script>
+
+
+     const customerLogin = document.querySelector(".customer");
+      const overlays = document.querySelector(".contact-overlay");
+      const otp_contact = document.getElementById("otp-contact");
+      const verify_button = document.querySelector(".verify-button")
+      const otp_phone = document.getElementById("otp-phone");
+      const otp_button = document.querySelector(".otp-button");
+      const resend_button = document.querySelector(".resend-button");
+      const userLogin = (e) => {
+        customerLogin.style.display = "block";
+        overlays.style.display = "block"
+      }
+      const closeContact = () => {
+        customerLogin.style.display = "none";
+        overlays.style.display = "none"
+      }
+      const userprofilee = document.querySelector(".userprofilee");
+      const usersigninn = document.querySelector(".userloginn");
+      const userDetail = localStorage.getItem("contactid");
+      let userName = localStorage.getItem("name");
+
+
+      if (userName) {
+        userName = userName.split(" ")[0];
+      }
+
+      if (userDetail) {
+
+        usersigninn.style.display = "none"
+        userprofilee.style.display = "flex";
+        if (userName) {
+          userprofilee.innerHTML = `<li class="nav-items"><a href="/profile" class="k text-dark ">
+            Hello ${userName} 
+        </a></li>`;
+          
+        }
+      }
+      else {
+
+        userprofilee.style.display = "none";
+        usersigninn.style.display = "flex"
+      }
+      document.getElementById("create_user").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formBody = {
+          phone: document.querySelector("[name=phone]").value
+        };
+
+        try {
+          let response = await fetch("<%= (url_pathname) %>send-otp", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formBody),
+          });
+
+          const responseData = await response.json();
+
+          if (!response.ok) {
+            console.error("Error Response:", responseData);
+            if (response.status === 400) {
+              showPopup("Error", "All fields are required.", "Failure");
+
+
+            } else {
+              showPopup("Error", "An unexpected error occurred.", "Failure");
+
+            }
+            return;
+          }
+
+          if (responseData.success) {
+            localStorage.setItem("contact", responseData.otpId)
+
+            verify_button.style.display = "block";
+            otp_button.style.display = "none";
+            otp_contact.style.display = "block";
+            otp_phone.style.display = "none";
+            resend_button.style.display = "block";
+
+          } else {
+            showPopup("Error", "Login failed due to unknown reasons.", "Failure");
+          }
+        } catch (error) {
+          console.error("Network Error:", error);
+          showPopup("Error", "A  error occurred. Please try again.", "Failure");
+        }
+      });
+      const resendOtp = () => {
+        verify_button.style.display = "none";
+        otp_button.style.display = "block";
+        otp_contact.style.display = "none";
+        otp_phone.style.display = "block";
+        resend_button.style.display = "none";
+      }
+      async function verifyOTP() {
+        const formBody = {
+          otp: document.querySelector("[name=otp]").value,
+          id: parseInt(localStorage.getItem("contact"))
+        }
+
+        let response = await fetch(`<%= (url_pathname) %>verify-otp`, {
+          method: "POST",
+          headers: { "CONTENT-TYPE": "application/json" },
+          body: JSON.stringify(formBody)
+        })
+        if (!response.ok) {
+          console.log("error");
+        }
+        response = await response.json();
+        if (!response.success) {
+
+          showPopup("Failure", response.message, "Failure");
+          // containers.classList.remove("showpopup")
+          // containers.classList.add("hidepopup");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000)
+        }
+        else {
+          // containers.classList.remove("showpopup");
+          // containers.classList.add("hidepopup");
+           if(response.name.length>0){
+            let names=response.name[0].customer_name;
+              names = names.split(" ")[0]
+
+              localStorage.setItem("name",names)
+           }
+
+          localStorage.setItem("contactid", response.data[0].phone)
+          showPopup("Success", response.message, "Success");
+          setTimeout(() => {
+            window.location.href = "/profile";
+          }, 1000)
+        }
+      }
+
+
+  </script>
+</body>
+</html>

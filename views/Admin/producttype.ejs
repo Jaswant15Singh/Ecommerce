@@ -1,0 +1,168 @@
+<%- include('./headerNav') %>
+
+
+	<ul class="side-menu top">
+		<li>
+			<a href="<%= (url_pathname) %>admin/dashboard">
+				<i class='bx bxs-dashboard'></i>
+				<span class="text">Dashboard</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/category">
+				<i class='bx  bx-category'></i>
+				<span class="text">Category</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/products">
+				<i class='bx bx-package'></i>
+				<span class="text">Products</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/deletedproducts">
+				<i class='bx bxs-trash'></i>
+				<span class="text">Deleted Products</span>
+			</a>
+		</li>
+
+		<li>
+			<a href="<%= (url_pathname) %>admin/blogs">
+				<i class='bx bxs-pencil'></i>
+				<span class="text">Blogs</span>
+			</a>
+		</li>
+
+		<li>
+			<a href="<%= (url_pathname) %>admin/banner">
+				<i class='bx bxs-megaphone'></i>
+				<span class="text">Banner</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/order_details">
+				<i class='bx bxs-shopping-bag-alt'></i>
+				<span class="text">Order Details</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/customerservice">
+				<i class='bx bxs-shopping-bag-alt'></i>
+				<span class="text">Customer Service</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/customerreview">
+				<i class='bx bxs-shopping-bag-alt'></i>
+				<span class="text">Customer Review</span>
+			</a>
+		</li>
+	</ul>
+	<ul class="side-menu logout">
+		<li>
+			<a href="/admin/login" class="logout" id="logoutButton">
+				<i class='bx bxs-log-out-circle'></i>
+				<span class="text">Logout</span>
+			</a>
+		</li>
+
+	</ul>
+	</section>
+
+	<main>
+
+
+		<div class="table-data">
+			<div class="order">
+				<div class="head">
+					<h3>Product Units</h3>
+					<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+						onclick="setTypeProducts()">
+						Add New Type
+					</button>
+
+
+					<div class="modal fade" style="width: 100%;" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h1 class="modal-title fs-5" id="exampleModalLabel">Add Product</h1>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<div class="container my-5">
+										<div class="row justify-content-center">
+											<div class="col-lg-9">
+												<form id="product-type-form">
+													<div class="row g-3">
+														<div class="col-md-12">
+															<label for="quantity" class="form-label">Labe
+																Name</label>
+																<select name="quantity" id="quantity" required>
+																	<option value="" disabled selected>Select a type</option> 
+																	<option value="kg">Kg</option>
+																	<option value="litres">Litres</option>
+																</select>
+																
+														</div>
+														<div class="col-md-12">
+															<label for="label_name" class="form-label">Labe
+																Name</label>
+															<input type="text" class="form-control"
+																id="label_name" name="label_name"
+																required style="border: 1px solid black;">
+														</div>
+														<div class="col-md-12">
+															<label for="batch_quantity" class="form-label">Batch Quantity(consider in terms of Kg and L,if 100g then 0.1)</label>
+															<input type="text" class="form-control" id="batch_quantity" inputmode="decimal" 
+																oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')" 
+																name="batch_quantity" required style="border: 1px solid black;">
+														</div>
+														<input type="hidden" id="product-id" name="product_id">
+
+														<div class="col-12">
+															<button type="submit" class="btn btn-dark w-100 fw-bold">Add
+																Product</button>
+														</div>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<table id="productype">
+					<thead>
+						<tr>
+							<th>Sr No</th>
+							<th>Type</th>
+							<th>Label Name</th>
+							<th>Batch Quantity</th>
+							<th>Inserted Date</th>
+							<th>Update</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+				<div id="pagination" style="margin-top: 20px;"></div>
+			</div>
+		</div>
+	</main>
+	</section>
+
+
+
+<%-include("../javascriptss/productype.ejs")%>
+
+	</body>
+
+	</html>

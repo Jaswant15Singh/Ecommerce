@@ -1,0 +1,133 @@
+<%- include('./headerNav') %>
+
+
+	<ul class="side-menu top">
+		<li>
+			<a href="<%= (url_pathname) %>admin/dashboard">
+				<i class='bx bxs-dashboard'></i>
+				<span class="text">Dashboard</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/category">
+				<i class='bx  bx-category'></i>
+				<span class="text">Category</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/brand">
+				<i class='bx  bx-category'></i>
+				<span class="text">Brand</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/flavour">
+				<i class='bx  bx-category'></i>
+				<span class="text">Flavour</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/products">
+				<i class='bx bx-package'></i>
+				<span class="text">Products</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/deletedproducts">
+				<i class='bx bxs-trash'></i>
+				<span class="text">Deleted Products</span>
+			</a>
+		</li>
+
+		<li>
+			<a href="<%= (url_pathname) %>admin/blogs">
+				<i class='bx bxs-pencil'></i>
+				<span class="text">Blogs</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/banner">
+				<i class='bx bxs-megaphone'></i>
+				<span class="text">Banner</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/order_details">
+				<i class='bx bxs-shopping-bag-alt'></i>
+				<span class="text">Order Details</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/customers">
+				<i class='bx bxs-user-check'></i>
+				<span class="text">Customers</span>
+			</a>
+		</li>
+        <li class="active">
+			<a href="<%= (url_pathname) %>admin/customerservice">
+				<i class='bx bx-user-voice'></i>
+				<span class="text">Customer Service</span>
+			</a>
+		</li>
+		<li>
+			<a href="<%= (url_pathname) %>admin/customerreview">
+				<i class='bx bx-comment-dots'></i>
+				<span class="text">Customer Review</span>
+			</a>
+		</li>
+	</ul>
+	<ul class="side-menu logout">
+		<li>
+			<a href="/admin/login" class="logout" id="logoutButton">
+				<i class='bx bxs-log-out-circle'></i>
+				<span class="text">Logout</span>
+			</a>
+		</li>
+	</ul>
+	</section>
+
+	<main>
+		<div class="head-title">
+			<div class="left">
+				<h1>Customer Service</h1>
+				<ul class="breadcrumb"></ul>
+			</div>
+			<div class="mb-3 sm-main d-none">
+				<input type="date" id="startDate" class="form-control d-inline"
+					style="width: auto; display: inline-block;" />
+				<input type="date" id="endDate" class="form-control d-inline"
+					style="width: auto; display: inline-block;" />
+				<button id="filterButton" class="btn btn-primary">Filter Categories</button>
+			</div>
+		</div>
+		<div class="table-data">
+			<div class="order">
+				<div class="head">
+					<h3>Customer service</h3>
+
+				</div>
+				<table id="individualtable">
+					<thead>
+						<tr>
+							<th>Sr No</th>
+							<th>Customer Name</th>
+							<th>Customer Contact</th>
+							<th>Customer Email</th>
+                            <th>Customer Query</th>
+                            <th>Query Date</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+				<div id="pagination" style="margin-top: 20px;"></div>
+
+			</div>
+		</div>
+	</main>
+	</section>
+
+	<%-include("../javascriptss/customerservice.ejs")%>
+
+	</body>
+
+	</html>

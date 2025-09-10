@@ -1,0 +1,1925 @@
+<script>
+  const modal_body = document.querySelector(".modal-body");
+  document.getElementById('product-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const labelNameSelect = document.getElementById("label-name-select");
+    // if (labelNameSelect.value.length > 1) {
+    //   showPopup("OOPS", 'Add batch', "Failed");
+    //   return
+    // }
+ let batchData = localStorage.getItem("tagsData");
+    if (batchData) {
+      try {
+        batchData = JSON.parse(batchData);
+      } catch (error) {
+        console.error("Error parsing batchData from localStorage:", error);
+        batchData = [];
+      }
+    } else {
+      batchData = [];
+    }
+
+    if (!Array.isArray(batchData)) {
+      console.warn("Batch data is not an array. Converting...");
+      batchData = [batchData];
+    }
+
+    const formData = new FormData(this);
+    for (let [key, value] of formData.entries()) {
+
+    }
+    const id = document.getElementById("product-id").value;
+
+
+    const url = id
+      ? `<%= (url_pathname) %>admin/update-product/${id}`
+      : "<%= (url_pathname) %>admin/create-product";
+    const method = id ? "PUT" : "POST";
+
+    fetch(url, {
+      method: method,
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          showPopup("Success", data.message, "Success");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else if (data.message === "Missing fields") {
+          showPopup("Error", 'Missing Fields', "Failed");
+        } else {
+
+          showPopup("Error", data.message, "Failed");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
+        document.querySelector("#product-id").value = "";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  });
+
+  document.getElementById("stock-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const filteredData = {};
+
+    for (const [key, value] of formData.entries()) {
+      if (value.trim() !== "") {
+        filteredData[key] = value;
+      }
+    }
+
+
+    fetch("<%= url_pathname %>admin/stock_update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(filteredData)
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          showPopup("Success", data.message, "Success");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
+        else {
+          showPopup("Error", data.message, "Failed");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  });
+
+
+  let operation = "";
+  let amountinstock;
+
+  function handleOperationChange() {
+    const creditRadio = document.getElementById("credit");
+    const debitRadio = document.getElementById("debit");
+    const amountInputContainer = document.getElementById("amount-input-container");
+
+    if (creditRadio.checked) {
+      operation = "credit";
+      amountInputContainer.style.display = "block";
+
+    } else if (debitRadio.checked) {
+      operation = "debit";
+      amountInputContainer.style.display = "block";
+
+    }
+  }
+
+
+  const deleteProduct = (id) => {
+    const price_overlays = document.querySelector(".price_overlays");
+    const deleteConfirm = document.getElementById("deleteConfirm");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    price_overlays.style.display = "block";
+    deleteConfirm.style.display = "block";
+
+    cancelBtn.addEventListener("click", () => {
+      price_overlays.style.display = "none";
+      deleteConfirm.style.display = "none";
+    })
+
+    confirmBtn.addEventListener("click", (e) => {
+      fetch(`<%= url_pathname %>admin/delete_product/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json"
+        }
+      })
+        .then((res) => { return res.json() })
+        .then((data) => {
+          price_overlays.style.display = "none";
+          deleteConfirm.style.display = "none";
+          if (data.success) {
+
+            showPopup("Success", data.message, "Success");
+            setTimeout(() => {
+              window.location.reload()
+            }, 1000)
+          }
+          else {
+            showPopup("Error", data.message, "Failed");
+
+            // setTimeout(() => {
+            //   window.location.reload()
+
+            // }, 1000)
+            showPopup("Error", data.message, "Failed");
+          }
+
+        })
+        .catch((e) => {
+          console.log(e);
+
+        })
+
+    })
+  }
+
+  function openUpdateModal(id, type, name, image, image_two, image_three, description, stock, mrp_price, product_price, cat_id,brand_id, featured, health_benefits,seo, subname) {
+    //} POSITION CHNAGED SINCE I WAS GETTING ERROR,IF ANY ISSUES HAPPENS CHECK THE CURLY BRACKETS
+    document.querySelector(".add-product-header").innerText="Update Product";
+    document.querySelector(".product-add").innerText="Update Product";
+
+    let products;
+    amountinstock = stock;
+    if (type === "UNITS") {
+      // document.getElementById("manage-stock").style.display="block"
+      document.getElementById("prod-instock").style.display = "none";
+      // document.getElementById("transaction-type-container").style.display = "block";
+
+      const in_stock = document.getElementById("product-instock");
+      in_stock.value = stock;
+      in_stock.readOnly = true
+    }
+
+    document.getElementById("product_type").addEventListener("mousedown", function (e) {
+      e.preventDefault(); // Stops the dropdown from opening
+    });
+
+    document.getElementById("product_type").addEventListener("keydown", function (e) {
+      e.preventDefault(); // Stops keyboard interaction
+    });
+    document.getElementById("product_type").value = type;
+    document.querySelector("#product-name").value = name;
+    document.getElementById("product-description").value = description;
+    document.getElementById("product-id").value = id;
+
+    document.getElementById("category_id").value = cat_id;
+    document.getElementById("brand_id").value = brand_id;
+    document.getElementById("product-instock").value = stock;
+    document.getElementById("product-instock").readOnly = true;
+
+    document.getElementById("product-featured").checked = (featured === 'true');
+    document.getElementById("health-benefits").value = health_benefits;
+    document.getElementById("seo-tags").value = seo;
+    // document.getElementById("transaction-type-container").style.display = "block";
+    tagInput1.destroy();
+    tagInput1 = new TagsInput({
+      selector: 'health-benefits',
+      duplicate: false,
+      max: 10
+    });
+
+    
+    seoTagsInput.destroy();
+    seoTagsInput = new TagsInputSEO({
+      selector: 'seo-tags',
+      duplicate: false,
+      max: 10
+    });
+    if (health_benefits) {
+      const benefitsArray = health_benefits.split('|');
+      tagInput1.addData(benefitsArray);
+    }
+    if (seo) {
+      const seoData = seo.split('|');
+
+      seoTagsInput.addData(seoData);
+
+    }
+
+    const imagePreview = document.querySelector("#product-image-preview");
+    const imagePreviewTwo = document.querySelector("#product-image-preview-two");
+    const imagePreviewThree = document.querySelector("#product-image-preview-three");
+    const fileInput = document.querySelector("#product-image-upload");
+    const fileInputTwo = document.querySelector("#product-image-upload-two");
+    const fileInputThree = document.querySelector("#product-image-upload-three");
+    const uploadButton = document.querySelector("#upload-button");
+    const uploadButtonTwo = document.querySelector("#upload-button-two");
+    const uploadButtonThree = document.querySelector("#upload-button-three");
+    const cancelButton = document.querySelector("#cancel-upload");
+    const cancelButtonTwo = document.querySelector("#cancel-upload-two");
+    const cancelButtonThree = document.querySelector("#cancel-upload-three");
+    imagePreview.src = `<%= (url_pathname) %>${image}`;
+    imagePreviewTwo.src = `<%= (url_pathname) %>${image_two}`;
+    imagePreviewThree.src = `<%= (url_pathname) %>${image_three}`;
+    imagePreview.style.display = "block";
+    imagePreviewTwo.style.display = "block";
+    imagePreviewThree.style.display = "block";
+    uploadButton.style.display = "inline-block";
+    uploadButtonTwo.style.display = "inline-block";
+    uploadButtonThree.style.display = "inline-block";
+    fileInput.style.display = "none";
+    fileInputTwo.style.display = "none";
+    fileInputThree.style.display = "none";
+    cancelButton.style.display = "none";
+    cancelButtonTwo.style.display = "none";
+    cancelButtonThree.style.display = "none";
+
+    uploadButton.addEventListener("click", () => {
+      imagePreview.style.display = "none";
+      fileInput.style.display = "block";
+      cancelButton.style.display = "inline-block";
+      uploadButton.style.display = "none";
+    });
+    uploadButtonTwo.addEventListener("click", () => {
+      imagePreviewTwo.style.display = "none";
+      fileInputTwo.style.display = "block";
+      cancelButtonTwo.style.display = "inline-block";
+      uploadButtonTwo.style.display = "none";
+    });
+    uploadButtonThree.addEventListener("click", () => {
+      imagePreviewThree.style.display = "none";
+      fileInputThree.style.display = "block";
+      cancelButtonThree.style.display = "inline-block";
+      uploadButtonThree.style.display = "none";
+    });
+
+    fileInput.addEventListener("change", (event) => {
+      if (event.target.files.length > 0) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreview.src = e.target.result;
+          imagePreview.style.display = "block";
+          fileInput.style.display = "none";
+          uploadButton.style.display = "none";
+          cancelButton.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imagePreview.style.display = "block";
+        fileInput.style.display = "none";
+        uploadButton.style.display = "inline-block";
+        cancelButton.style.display = "none";
+      }
+    });
+    fileInputTwo.addEventListener("change", (event) => {
+      if (event.target.files.length > 0) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreviewTwo.src = e.target.result;
+          imagePreviewTwo.style.display = "block";
+          fileInputTwo.style.display = "none";
+          uploadButtonTwo.style.display = "none";
+          cancelButtonTwo.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imagePreviewTwo.style.display = "block";
+        fileInputTwo.style.display = "none";
+        uploadButtonTwo.style.display = "inline-block";
+        cancelButtonThree.style.display = "none";
+      }
+    });
+
+    fileInputThree.addEventListener("change", (event) => {
+      if (event.target.files.length > 0) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreviewThree.src = e.target.result;
+          imagePreviewThree.style.display = "block";
+          fileInputThree.style.display = "none";
+          uploadButtonThree.style.display = "none";
+          cancelButtonThree.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imagePreviewThree.style.display = "block";
+        fileInputThree.style.display = "none";
+        uploadButtonThree.style.display = "inline-block";
+        cancelButtonThree.style.display = "none";
+      }
+    });
+
+
+    cancelButton.addEventListener("click", () => {
+      imagePreview.style.display = "block";
+      fileInput.style.display = "none";
+      uploadButton.style.display = "inline-block";
+      cancelButton.style.display = "none";
+    });
+    cancelButtonTwo.addEventListener("click", () => {
+      imagePreviewTwo.style.display = "block";
+      fileInputTwo.style.display = "none";
+      uploadButtonTwo.style.display = "inline-block";
+      cancelButtonTwo.style.display = "none";
+    });
+    cancelButtonThree.addEventListener("click", () => {
+      imagePreviewThree.style.display = "block";
+      fileInputThree.style.display = "none";
+      uploadButtonThree.style.display = "inline-block";
+      cancelButtonThree.style.display = "none";
+    });
+    closeMenu();
+  }
+  document.querySelector(".product-closes").addEventListener("click", () => {
+    window.location.reload();
+  })
+  document.querySelector(".batch-closes").addEventListener("click", () => {
+    window.location.reload();
+  })
+  document.querySelector(".stock-closes").addEventListener("click", () => {
+    window.location.reload();
+  })
+  function addStock() {
+    let productData = [];
+    const update_select = document.getElementById("update_select");
+    const batch_stock = document.getElementById("batch_stock");
+    const current_stock = document.querySelector(".current_stock");
+    const current_batch_stock = document.querySelector(".current_batch_stock");
+    const total_stock = document.querySelector(".total_stock");
+    const total_batch_stock = document.querySelector(".total_batch_stock");
+    closeMenu();
+
+    fetch("<%= url_pathname %>admin/stock_get")
+      .then((res) => res.json())
+      .then((data) => {
+        productData = data.data;
+        data.data.forEach((e) => {
+          const opt = document.createElement("option");
+          opt.innerText = e.product_name;
+          opt.value = e.id;
+          update_select.append(opt);
+        });
+
+        update_select.addEventListener("change", (e) => {
+          const manage_stock = document.getElementById("manage-stock")
+          manage_stock.style.display = "none";
+
+          document.querySelectorAll('input[name="operation"]').forEach((radio) => {
+            radio.checked = false;
+          });
+          document.getElementById("amount-input-container").style.display = "none"
+          const amount = document.getElementById("amount");
+          amount.value = "";
+          current_batch_stock.style.display = "none";
+          total_stock.style.display = "none";
+          total_batch_stock.style.display = "none"
+          const selectedValue = parseInt(e.target.value, 10);
+          const isProductPresent = productData.find((e) => e.id === selectedValue);
+          if (isProductPresent.type === "UNITS") {
+            batch_stock.style.display = "none";
+            batch_stock.value = ""
+            manage_stock.style.display = "block"
+            fetch(`<%= url_pathname %>admin/units_update/${isProductPresent.id}`)
+              .then((res) => res.json())
+              .then((data) => {
+                current_stock.style.display = "block";
+                current_batch_stock.style.display = "none";
+                total_batch_stock.style.display = "none";
+                total_stock.style.display = "block";
+                total_stock.innerText = `New updated stock is:${data.data.in_stock}`
+                current_stock.innerText = `current stock is : ${data.data.in_stock}`;
+              
+                amount.addEventListener("input", (e) => {
+                  const operation = document.querySelector("input[name='operation']:checked")?.value || "";
+                  const val = parseFloat(e.target.value);
+                  const instock_val = parseFloat(data.data.in_stock);
+
+
+                  if (e.target.value.trim() === "") {
+                    total_stock.innerText = `New updated stock is : ${instock_val}`;
+                    return;
+                  }
+
+                  if (isNaN(val)) {
+                    total_stock.innerText = `New updated stock is : ${instock_val}`;
+                    return;
+                  }
+
+                  if (operation === "credit") {
+                    total_stock.innerText = `New updated stock is : ${instock_val + val}`;
+                  } else {
+                    total_stock.innerText = `New updated stock is : ${instock_val - val}`;
+                  }
+                });
+              });
+          }
+          else {
+
+            batch_stock.style.display = "block";
+            batch_stock.value = ""
+            batch_stock.innerHTML = "";
+
+            const defaultOption = document.createElement("option");
+            defaultOption.innerText = "Select a batch";
+            defaultOption.value = ""
+            batch_stock.append(defaultOption);
+
+            current_stock.style.display = "none";
+
+            fetch(`<%= url_pathname %>admin/batch_update/${isProductPresent.id}`)
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.data.length === 0) {
+                  const noBatchOption = document.createElement("option");
+                  noBatchOption.innerText = "No batches available";
+                  noBatchOption.value = "";
+                  batch_stock.append(noBatchOption);
+                } else {
+                  data.data.forEach((e) => {
+                    const opt = document.createElement("option");
+                    opt.innerText = `${e.label_name} ${e.flavour_name?"-"+e.flavour_name:""}`;
+                    opt.value = e.id;
+                    batch_stock.append(opt);
+                  });
+                }
+              })
+              .catch((e) => {
+                console.error(e);
+                alert("An error occurred while fetching batches. Please try again.");
+              });
+
+            if (!batch_stock.dataset.listenerAdded) {
+              batch_stock.addEventListener("change", (e) => {
+                current_batch_stock.style.display = "block";
+                total_batch_stock.style.display = "block";
+                total_stock.style.display = "none"
+                manage_stock.style.display = "block"
+
+                const batchId = e.target.value;
+                fetch(`<%= url_pathname %>admin/batch_stock/${batchId}`)
+                  .then((res) => res.json())
+                  .then((data) => {
+                    current_batch_stock.innerText = `current stock is : ${data.data.in_stock}`;
+                    total_batch_stock.innerText = `total stock is : ${data.data.in_stock}`;
+                    amount.addEventListener("input", (e) => {
+                  const operation = document.querySelector("input[name='operation']:checked")?.value || "";
+                  const val = parseFloat(e.target.value);
+                  const instock_val = parseFloat(data.data.in_stock);
+
+                  if (e.target.value.trim() === "") {
+                    total_batch_stock.innerText = `New updated stock is : ${instock_val}`;
+                    return;
+                  }
+
+                  if (isNaN(val)) {
+                    total_batch_stock.innerText = `New updated stock is : ${instock_val}`;
+                    return;
+                  }
+
+                  if (operation === "credit") {
+                    total_batch_stock.innerText = `New updated stock is : ${instock_val + val}`;
+                  } else {
+                    total_batch_stock.innerText = `New updated stock is : ${instock_val - val}`;
+                  }
+                });
+
+                  })
+                  .catch((e) => {
+                    console.log(e);
+
+                  })
+                 
+              });
+              batch_stock.dataset.listenerAdded = "true";
+       
+            }
+
+   
+          }
+        });
+      })
+      .catch((error) => console.error("Error :", error));
+  }
+
+  function setProducts() {
+
+
+    document.querySelector("#product-name").value = '';
+    document.getElementById("product-description").value = '';
+
+    document.getElementById("category_id").value = '';
+    document.getElementById("brand_id").value = '';
+    document.getElementById("product-featured").checked = false;
+    document.getElementById("health-benefits").value = '';
+    document.getElementById("seo-tags").value = '';
+
+    // document.getElementById("transaction-type-container").style.display = "none";
+
+    const imagePreview = document.querySelector("#product-image-preview");
+    const imagePreviewTwo = document.querySelector("#product-image-preview-two");
+    const imagePreviewThre = document.querySelector("#product-image-preview-three");
+    const fileInput = document.querySelector("#product-image-upload");
+    const fileInputTwo = document.querySelector("#product-image-upload-two");
+    const fileInputThree = document.querySelector("#product-image-upload-three");
+    const uploadButton = document.querySelector("#upload-button");
+    const uploadButtonTwo = document.querySelector("#upload-button-two");
+    const uploadButtonThree = document.querySelector("#upload-button-three");
+    const cancelButton = document.querySelector("#cancel-upload");
+    const cancelButtonTwo = document.querySelector("#cancel-upload-two");
+    const cancelButtonThree = document.querySelector("#cancel-upload-three");
+
+    document.querySelector("#product-id").value = '';
+
+    imagePreview.style.display = "none";
+    imagePreviewTwo.style.display = "none";
+    imagePreviewThre.style.display = "none";
+    fileInput.style.display = "block";
+    fileInputTwo.style.display = "block";
+    fileInputThree.style.display = "block";
+    uploadButton.style.display = "none";
+    uploadButtonTwo.style.display = "none";
+    uploadButtonThree.style.display = "none";
+    cancelButton.style.display = "none";
+    cancelButtonTwo.style.display = "none";
+    cancelButtonThree.style.display = "none";
+
+    closeMenu();
+  }
+  (function () {
+    "use strict";
+
+    var TagsInput = function (opts) {
+      this.options = Object.assign(TagsInput.defaults, opts);
+      this.init();
+    };
+
+    TagsInput.prototype.init = function (opts) {
+      this.options = opts ? Object.assign(this.options, opts) : this.options;
+
+      if (this.initialized) this.destroy();
+
+      if (!(this.orignal_input = document.getElementById(this.options.selector))) {
+        console.error("tags-input couldn't find an element with the specified ID");
+        return this;
+      }
+
+      this.arr = [];
+      this.wrapper = document.createElement('div');
+      this.input = document.createElement('input');
+      init(this);
+      initEvents(this);
+
+      this.initialized = true;
+      return this;
+    };
+
+    TagsInput.prototype.addTag = function (string) {
+      if (this.anyErrors(string)) return;
+
+      this.arr.push(string);
+      const tagInput = this;
+
+      const tag = document.createElement('span');
+      tag.className = this.options.tagClass;
+      tag.innerText = string;
+
+      const closeIcon = document.createElement('a');
+      closeIcon.innerHTML = '&times;';
+
+      closeIcon.addEventListener('click', function (e) {
+        e.preventDefault();
+        tagInput.deleteTag(tag);
+      });
+
+      tag.appendChild(closeIcon);
+      this.wrapper.insertBefore(tag, this.input);
+
+      this.orignal_input.value = this.arr.join('|');
+
+      return this;
+    };
+
+    TagsInput.prototype.deleteTag = function (tag) {
+
+      const tagText = tag.innerText.slice(0, -1).trim();
+
+      const index = this.arr.indexOf(tagText);
+      if (index !== -1) {
+        tag.remove();
+        this.arr.splice(index, 1);
+        this.orignal_input.value = this.arr.join('|');
+
+
+      } else {
+        console.error('Tag not found in array:', tagText);
+      }
+
+      return this;
+    };
+
+
+    TagsInput.prototype.anyErrors = function (string) {
+      if (this.options.max != null && this.arr.length >= this.options.max) {
+        return true;
+      }
+
+      if (!this.options.duplicate && this.arr.indexOf(string) !== -1) {
+        return true;
+      }
+
+      return false;
+    };
+
+    // Add tags programmatically 
+    TagsInput.prototype.addData = function (array) {
+      var plugin = this;
+
+      array.forEach(function (string) {
+        plugin.addTag(string);
+      });
+      return this;
+    };
+
+    // Get the Input String
+    TagsInput.prototype.getInputString = function () {
+      return this.arr.join(',');
+    };
+
+    TagsInput.prototype.destroy = function () {
+      this.orignal_input.removeAttribute('hidden');
+
+      delete this.orignal_input;
+      var self = this;
+
+      Object.keys(this).forEach(function (key) {
+        if (self[key] instanceof HTMLElement) self[key].remove();
+
+        if (key != 'options') delete self[key];
+      });
+
+      this.initialized = false;
+    };
+
+    function init(tags) {
+      tags.wrapper.append(tags.input);
+      tags.wrapper.classList.add(tags.options.wrapperClass);
+      tags.orignal_input.setAttribute('hidden', 'true');
+      tags.orignal_input.parentNode.insertBefore(tags.wrapper, tags.orignal_input);
+    }
+
+    function initEvents(tags) {
+      tags.wrapper.addEventListener('click', function () {
+        tags.input.focus();
+      });
+
+      tags.input.addEventListener('keydown', function (e) {
+        var str = tags.input.value.trim();
+
+        if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
+          e.preventDefault();
+          tags.input.value = "";
+          if (str !== "") tags.addTag(str);
+        }
+      });
+    }
+
+    TagsInput.defaults = {
+      selector: '',
+      wrapperClass: 'tags-input-wrapper',
+      tagClass: 'tag',
+      max: null,
+      duplicate: false,
+    };
+
+    window.TagsInput = TagsInput;
+  })();
+
+  // Initialize the TagsInput
+  var tagInput1 = new TagsInput({
+    selector: 'health-benefits',
+    duplicate: false,
+    max: 10,
+  });
+  tagInput1.addData([]);
+
+
+
+  
+  (function () {
+    "use strict";
+
+    var TagsInputSEO = function (opts) {
+      this.options = Object.assign(TagsInputSEO.defaults, opts);
+      this.init();
+    };
+
+    TagsInputSEO.prototype.init = function (opts) {
+      this.options = opts ? Object.assign(this.options, opts) : this.options;
+
+      if (this.initialized) this.destroy();
+
+      if (!(this.original_input = document.getElementById(this.options.selector))) {
+        console.error("tags-input couldn't find an element with the specified ID");
+        return this;
+      }
+
+      this.arr = [];
+      this.wrapper = document.createElement('div');
+      this.input = document.createElement('input');
+      initSEO(this);
+      initEventsSEO(this);
+
+      this.initialized = true;
+      return this;
+    };
+
+    TagsInputSEO.prototype.addTag = function (string) {
+      if (this.anyErrors(string)) return;
+
+      this.arr.push(string);
+      const tagInput = this;
+
+      const tag = document.createElement('span');
+      tag.className = this.options.tagClass;
+      tag.innerText = string;
+
+      const closeIcon = document.createElement('a');
+      closeIcon.innerHTML = '&times;';
+
+      closeIcon.addEventListener('click', function (e) {
+        e.preventDefault();
+        tagInput.deleteTag(tag);
+      });
+
+      tag.appendChild(closeIcon);
+      this.wrapper.insertBefore(tag, this.input);
+
+      this.original_input.value = this.arr.join('|');
+
+      return this;
+    };
+
+    TagsInputSEO.prototype.deleteTag = function (tag) {
+      const tagText = tag.innerText.slice(0, -1).trim();
+      const index = this.arr.indexOf(tagText);
+
+      if (index !== -1) {
+        tag.remove();
+        this.arr.splice(index, 1);
+        this.original_input.value = this.arr.join('|');
+      } else {
+        console.error('Tag not found in array:', tagText);
+      }
+
+      return this;
+    };
+
+    TagsInputSEO.prototype.anyErrors = function (string) {
+      if (this.options.max != null && this.arr.length >= this.options.max) {
+        return true;
+      }
+
+      if (!this.options.duplicate && this.arr.indexOf(string) !== -1) {
+        return true;
+      }
+
+      return false;
+    };
+
+    TagsInputSEO.prototype.addData = function (array) {
+      var plugin = this;
+      array.forEach(function (string) {
+        plugin.addTag(string);
+      });
+      return this;
+    };
+
+    TagsInputSEO.prototype.getInputString = function () {
+      return this.arr.join(',');
+    };
+
+    TagsInputSEO.prototype.destroy = function () {
+      this.original_input.removeAttribute('hidden');
+
+      delete this.original_input;
+      var self = this;
+
+      Object.keys(this).forEach(function (key) {
+        if (self[key] instanceof HTMLElement) self[key].remove();
+        if (key != 'options') delete self[key];
+      });
+
+      this.initialized = false;
+    };
+
+    function initSEO(tags) {
+      tags.wrapper.append(tags.input);
+      tags.wrapper.classList.add(tags.options.wrapperClass);
+      tags.original_input.setAttribute('hidden', 'true');
+      tags.original_input.parentNode.insertBefore(tags.wrapper, tags.original_input);
+    }
+
+    function initEventsSEO(tags) {
+      tags.wrapper.addEventListener('click', function () {
+        tags.input.focus();
+      });
+
+      tags.input.addEventListener('keydown', function (e) {
+        var str = tags.input.value.trim();
+
+        if (!!(~[9, 13, 188].indexOf(e.keyCode))) {
+          e.preventDefault();
+          tags.input.value = "";
+          if (str !== "") tags.addTag(str);
+        }
+      });
+    }
+
+    TagsInputSEO.defaults = {
+      selector: '',
+      wrapperClass: 'tags-input-wrapper',
+      tagClass: 'tag',
+      max: null,
+      duplicate: false,
+    };
+
+    window.TagsInputSEO = TagsInputSEO;
+  })();
+
+  var seoTagsInput = new TagsInputSEO({
+    selector: 'seo-tags',
+    duplicate: false,
+    max: 10,
+  });
+  seoTagsInput.addData([]);
+
+  const getBatchData = (id, type) => {
+
+
+    const batchTableBody = document.getElementById("batch-table-body");
+    const batchBody = document.getElementById("batch-table-pieces-head");
+    batchBody.style.display = "none"
+    const product_id = parseInt(id);
+    let selectedBatchId = null;
+
+    // Fetch batch data and populate the table
+    async function fetchBatch() {
+      try {
+        let res = await fetch(`<%= url_pathname %>admin/get_batch/${product_id}`);
+        if (!res.ok) throw new Error("Error fetching batch data");
+
+        let data = await res.json();
+        
+        batchTableBody.innerHTML = ""; // Clear table before adding new data
+        data.data.forEach((e) => {
+          const removeBtn = e.visibility
+            ? `<button class="remove-btn btn btn-danger" data-batch-id="${e.id}">Remove</button>`
+            : `<button class="remove-btn btn btn-success" data-batch-id="${e.id}">Restore</button>`;
+            const updateBtn=e.visibility?
+            ` <button class="update-btn btn btn-primary" 
+                data-id="${e.id}" 
+                data-mrp="${e.mrp}" 
+                data-discount="${e.discount_price}" 
+                data-label="${e.label_name}" 
+                data-quantity="${e.batch_quantity}"
+                data-flavour="${e.flavour_id}">
+                Update
+            </button>`:
+            `
+            <button disabled class="btn btn-primary">Update</button>
+            `
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
+        <td>${e.mrp}</td>
+        <td>${e.discount_price}</td>
+        <td>${e.label_name}</td>
+        <td>${e.batch_quantity}</td>
+        <td>
+            ${updateBtn}
+        </td>
+        
+        <td>
+            ${removeBtn}
+        </td>
+    `;
+          batchTableBody.appendChild(newRow);
+        });
+
+
+
+
+        document.querySelectorAll(".update-btn").forEach((btn) => {
+          btn.addEventListener("click", (event) => {
+            event.preventDefault();
+            const batchId = event.target.getAttribute("data-id");
+            updateBatch(batchId, event.target);
+          });
+        });
+        document.querySelectorAll(".remove-btn").forEach((btn) => {
+          btn.addEventListener("click", (event) => {
+            event.preventDefault();
+            const batchId = event.target.getAttribute("data-batch-id");
+            deleteBatch(batchId);
+          });
+        });
+
+
+
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    fetchBatch(); // Fetch batch data when function is called
+
+
+    async function deleteBatch(batchId) {
+      try {
+        let res = await fetch(`<%= url_pathname %>admin/delete_batch/${batchId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) throw new Error("Error deleting batch");
+
+        showPopup("Success", "Batch visibility toggled!", "Success");
+        fetchBatch();
+      } catch (error) {
+        console.error("Error:", error);
+        showPopup("Error", error, "FAILURE");
+      }
+
+    }
+
+    function updateBatch(batch_id, button) {
+      selectedBatchId = batch_id;
+      document.getElementById("mrp").value = button.getAttribute("data-mrp");
+      document.getElementById("discount-price").value = button.getAttribute("data-discount");
+      document.getElementById("label-name-input").value = button.getAttribute("data-label");
+      document.getElementById("batch-quantity-input").value = button.getAttribute("data-quantity");
+      document.getElementById("flavour_id").value=button.getAttribute("data-flavour")
+      document.getElementById("product_batch").innerText = "Update Batch"; 
+    }
+
+    // Function to clear form fields
+    function clearFormFields() {
+      document.getElementById("mrp").value = "";
+      document.getElementById("discount-price").value = "";
+      document.getElementById("label-name-input").value = "";
+      document.getElementById("batch-quantity-input").value = "";
+      document.getElementById("flavour_id").value = "";
+
+    }
+
+    // Handle batch creation or update
+    const productBatchBtn = document.getElementById("product_batch");
+
+    // Ensure event listener is added only once
+    if (!productBatchBtn.dataset.listenerAdded) {
+      document.getElementById("product-type-form").addEventListener("submit", async function(e) {
+        e.preventDefault();  
+              try {
+          const labelNameInput = document.getElementById("label-name-input").value.trim();
+          const batchQuantityInput = document.getElementById("batch-quantity-input").value.trim();
+          let mrp = parseInt(document.getElementById("mrp").value.trim());
+          let discountPrice = parseInt(document.getElementById("discount-price").value.trim());
+          let flavour_id=document.getElementById("flavour_id").value;
+          if (!mrp || !discountPrice || !labelNameInput || !batchQuantityInput) {
+            showPopup("OOPS", "Please fill all fields before submitting.", "FAILURE");
+            return;
+          }
+
+          let url = selectedBatchId
+            ? `<%= url_pathname %>admin/update_batch/${selectedBatchId}`
+            : `<%= url_pathname %>admin/create_batch`;
+
+          let method = selectedBatchId ? "PUT" : "POST"; // Determine request method
+
+          let res = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              product_id,
+              mrp,
+              discount_price: discountPrice,
+              label_name: labelNameInput,
+              batch_quantity: batchQuantityInput,
+              type,
+              flavour_id
+            }),
+          });
+
+          if (!res.ok) throw new Error("Error in submission");
+
+
+          showPopup("Success", selectedBatchId ? "Batch updated!" : "Batch created!", "Success");
+
+          selectedBatchId = null; // Reset batch ID after update
+          document.getElementById("product_batch").innerText = "Add Batch";
+          clearFormFields();
+          fetchBatch(); // Refresh batch list
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      });
+
+      productBatchBtn.dataset.listenerAdded = "true"; // Prevent duplicate event listeners
+    }
+  };
+
+
+  const getBatchPiecesData = (id, type) => {
+    // document.getElementById("product_batch").innerText="Update Batch";
+    // document.querySelector(".batch-add-header").innerText="Update Batch";
+    // document.querySelector(".batch-add-subheader").innerText="Update Batch";
+    const batchTableBody = document.getElementById("batch-table-pieces-body");
+    const batchBody = document.getElementById("batch-table-head");
+    batchBody.style.display = "none"
+    const product_id = parseInt(id);
+    let selectedBatchId = null;
+    document.getElementById("batch-quantity-input").value = "1";
+    document.getElementById("batch-quantity-input").setAttribute("readonly", true);
+    document.querySelector(".pieces-stock").style.display = "block"
+
+    async function fetchBatch() {
+      try {
+        let res = await fetch(`<%= url_pathname %>admin/get_pieces_batch/${product_id}`);
+        if (!res.ok) throw new Error("Error fetching batch data");
+
+        let data = await res.json();
+        batchTableBody.innerHTML = ""; // Clear table before adding new data
+
+        data.data.forEach((e) => {
+          const removeBtn = e.visibility
+            ? `<button class="remove-btn btn btn-danger" data-batch-id="${e.id}">Remove</button>`
+            : `<button class="remove-btn btn btn-success" data-batch-id="${e.id}">Restore</button>`;
+            
+
+            const updateBtn=e.visibility?
+            `  <button class="update-btn btn btn-primary" 
+                            data-id="${e.id}" 
+                            data-mrp="${e.mrp}" 
+                            data-discount="${e.discount_price}" 
+                            data-label="${e.label_name}" 
+                            data-quantity="${e.batch_quantity}"
+                            data-instock="${e.in_stock}"
+                            data-flavour="${e.flavour_id}"
+                          > 
+                            Update
+                        </button>`:
+            `
+            <button disabled class="btn btn-primary">Update</button>
+            `
+          const newRow = document.createElement("tr");
+          newRow.innerHTML = `
+                    <td>${e.mrp}</td>
+                    <td>${e.discount_price}</td>
+                    <td>${e.label_name}</td>
+                    <td>${e.batch_quantity}</td>
+                    <td>${e.in_stock}</td> 
+                    <td>
+                    ${updateBtn}
+                    </td>
+                    <td>
+                        ${removeBtn}
+                    </td>
+                `;
+          batchTableBody.appendChild(newRow);
+        });
+
+        // Attach event listeners to "Update" buttons
+        document.querySelectorAll(".update-btn").forEach((btn) => {
+          btn.addEventListener("click", (event) => {
+            event.preventDefault();
+            const batchId = event.target.getAttribute("data-id");
+            updateBatch(batchId, event.target);
+          });
+        });
+
+        document.querySelectorAll(".remove-btn").forEach((btn) => {
+          btn.addEventListener("click", (event) => {
+            event.preventDefault();
+            const batchId = event.target.getAttribute("data-batch-id");
+            deleteBatch(batchId);
+          });
+        });
+
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    fetchBatch();
+    async function deleteBatch(batchId) {
+      try {
+        let res = await fetch(`<%= url_pathname %>admin/delete_batch/${batchId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) throw new Error("Error deleting batch");
+
+        showPopup("Success", "Batch visibility toggled!", "Success");
+        fetchBatch();
+      } catch (error) {
+        console.error("Error:", error);
+        showPopup("Error", error, "FAILURE");
+      }
+
+    }
+    function updateBatch(batch_id, button) {
+      
+      selectedBatchId = batch_id;
+      document.getElementById("mrp").value = button.getAttribute("data-mrp");
+      document.getElementById("discount-price").value = button.getAttribute("data-discount");
+      document.getElementById("label-name-input").value = button.getAttribute("data-label");
+      document.getElementById("batch-quantity-input").value = "1"; 
+      document.getElementById("flavour_id").value=button.getAttribute("data-flavour")
+      document.getElementById("batch-quantity-input").setAttribute("readonly", true); // Make it readonly
+      document.getElementById("batch-instock").value = button.getAttribute("data-instock");
+      document.getElementById("batch-instock").disabled=true;
+      document.getElementById("product_batch").innerText = "Update Batch";
+    }
+
+
+    function clearFormFields() {
+      document.getElementById("mrp").value = "";
+      document.getElementById("discount-price").value = "";
+      document.getElementById("label-name-input").value = "";
+      document.getElementById("batch-quantity-input").value = 1;
+      document.getElementById("batch-instock").value = ""; // Clear in_stock field
+    }
+
+    const productBatchBtn = document.getElementById("product_batch");
+
+    if (!productBatchBtn.dataset.listenerAdded) {
+      document.getElementById("product-type-form").addEventListener("submit", async function(e) {
+        e.preventDefault();
+       const formdata=new FormData(this);        
+        try {
+          const labelNameInput = document.getElementById("label-name-input").value.trim();
+          const inStockInput = document.getElementById("batch-instock").value.trim();
+          let mrp = parseInt(document.getElementById("mrp").value.trim());
+          let discountPrice = parseInt(document.getElementById("discount-price").value.trim());
+          let flavour_id=document.getElementById("flavour_id").value;
+          if (!mrp || !discountPrice || !labelNameInput || !inStockInput) {
+            showPopup("OOPS", "Please fill all fields before submitting.", "FAILURE")
+            return;
+          }
+          
+          let batchQuantityInput = "1"; // Always set to 1
+
+          let url = selectedBatchId
+            ? `<%= url_pathname %>admin/update_batch/${selectedBatchId}`
+            : `<%= url_pathname %>admin/create_batch`;
+
+          let method = selectedBatchId ? "PUT" : "POST";
+
+          let res = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              product_id,
+              mrp,
+              discount_price: discountPrice,
+              label_name: labelNameInput,
+              batch_quantity: batchQuantityInput, // Always 1
+              in_stock: inStockInput,
+              type,
+              flavour_id
+            }),
+          });
+
+          if (!res.ok) throw new Error("Error in submission");
+
+          document.getElementById("batch-instock").disabled=false;
+
+          showPopup("Success", selectedBatchId ? "Batch updated!" : "Batch created!", "Success")
+          selectedBatchId = null;
+          document.getElementById("product_batch").innerText = "Add Batch";
+          clearFormFields();
+          fetchBatch();
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      });
+
+      productBatchBtn.dataset.listenerAdded = "true";
+    }
+
+  };
+//   document.getElementById("batch_image").addEventListener("change", function (e) {
+//   const previewContainer = document.getElementById("image-preview-container");
+//   previewContainer.innerHTML = "";
+//   const files = Array.from(e.target.files);
+
+//   files.forEach((file, index) => {
+//     const reader = new FileReader();
+
+//     reader.onload = function (event) {
+//       const imageBox = document.createElement("div");
+//       imageBox.style.position = "relative";
+
+//       const img = document.createElement("img");
+//       img.src = event.target.result;
+//       img.style.width = "100px";
+//       img.style.height = "100px";
+//       img.style.objectFit = "cover";
+//       img.style.border = "1px solid #ccc";
+//       img.style.borderRadius = "4px";
+
+//       const deleteBtn = document.createElement("span");
+//       deleteBtn.innerHTML = "&times;";
+//       deleteBtn.style.position = "absolute";
+//       deleteBtn.style.top = "0";
+//       deleteBtn.style.right = "0";
+//       deleteBtn.style.background = "rgba(0,0,0,0.6)";
+//       deleteBtn.style.color = "white";
+//       deleteBtn.style.padding = "2px 6px";
+//       deleteBtn.style.cursor = "pointer";
+//       deleteBtn.style.borderRadius = "0 4px 0 4px";
+
+//       deleteBtn.addEventListener("click", () => {
+//         files.splice(index, 1); 
+//         const dataTransfer = new DataTransfer();
+//         files.forEach(f => dataTransfer.items.add(f));
+//         document.getElementById("batch_image").files = dataTransfer.files;
+//         imageBox.remove();
+//       });
+
+//       imageBox.appendChild(img);
+//       imageBox.appendChild(deleteBtn);
+//       previewContainer.appendChild(imageBox);
+//     };
+
+//     reader.readAsDataURL(file);
+//   });
+// });
+
+  const select_cat = document.querySelector(".category_select");
+  fetch("<%= (url_pathname) %>categoriess")
+    .then((res) => {
+      return res.json()
+    })
+    .then((data) => {
+
+      data.forEach((e) => {
+        const opt = document.createElement("option");
+        opt.innerText = e.category_name;
+        opt.value = e.id;
+        select_cat.append(opt)
+      })
+    })
+
+    const select_brand = document.querySelector(".brand_select");
+      fetch("<%= (url_pathname) %>admin/get/brands/Admin")
+        .then((res) => {
+          return res.json()
+        })
+        .then((data) => {
+          data.data.forEach((e) => {        
+            const opt = document.createElement("option");
+            opt.innerText = e.brand_name;
+            opt.value = e.id;
+            select_brand.append(opt)
+          })
+    })
+
+    document.addEventListener("DOMContentLoaded", () => {
+    const product_type = document.querySelector(".product_type");
+    const PRODUCT_TYPES = [{ id: 1,name:"LOOSE Product", name_value: 'UNITS' }, { id: 2,name:"PACKED Product", name_value: 'PIECES' }];
+    PRODUCT_TYPES.forEach((e) => {
+      const opt = document.createElement("option");
+      opt.innerText = e.name;
+      opt.value = e.name_value;
+      product_type.append(opt)
+    })
+  })
+  // document.addEventListener("DOMContentLoaded", () => {
+  //   const product_type = document.querySelector(".product_type");
+  //   const PRODUCT_TYPES = [{ id: 1, name: 'UNITS' }, { id: 2, name: 'PIECES' }];
+  //   PRODUCT_TYPES.forEach((e) => {
+  //     const opt = document.createElement("option");
+  //     opt.innerText = e.name;
+  //     opt.value = e.name;
+  //     product_type.append(opt)
+  //   })
+  // })
+
+
+  document.getElementById("product_type").addEventListener("change", function () {
+    const productType = document.getElementById("product_type");
+    const product_batch = document.getElementById("product_batch");
+
+    const productInStock = document.getElementById("product-instock");
+    const prod_instock = document.getElementById("prod-instock");
+
+    const type = productType.value;
+    if (type === "UNITS") {
+      // const productTypeElement = document.getElementById("product_type_select").style.display = "block";
+
+      prod_instock.style.display = "block"
+    }
+    else {
+      // const productTypeElement = document.getElementById("product_type_select").style.display = "none";
+      prod_instock.style.display = "none"
+    }
+    // fetch("<%= (url_pathname) %>admin/get_product_type")
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     console.log(data.data);
+
+    //     const filteredData = data.data.filter((item) => item.product_type_name === type);
+    //     console.log("filteredData", filteredData);
+
+    //     if (filteredData.length > 0) {
+
+    //       productInStock.setAttribute("step", "any");
+    //       productInStock.value = "";
+    //       productInStock.removeAttribute("oninput");
+
+
+    //     } else {
+    //       const productTypeElement = document.getElementById("product_type_select").style.display = "none";
+    //       productInStock.setAttribute("step", "1");
+    //       productInStock.value = Math.floor(productInStock.value);
+
+    //       productInStock.setAttribute("oninput", "this.value = this.value.replace(/[^0-9]/g, '')");
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     console.error("Error fetching data:", e);
+    //   });
+  });
+
+
+  function clearSelect() {
+    productTypeElement.innerHTML = '<option value="">Select a subcategory</option>';
+    productTypeElement.style.display = "none";
+  }
+
+  function closeMenu() {
+    const sideMenu = document.querySelector("#sidebar");
+    sideMenu.style.display = "none";
+  }
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const productModal = document.getElementById("exampleModal");
+
+    productModal.addEventListener("hidden.bs.modal", function () {
+      // console.log("Modal closed");
+      const sideMenu = document.querySelector("#sidebar");
+      window.location.reload()
+      if (sideMenu) {
+        sideMenu.style.display = "block";
+      } else {
+        console.log("Sidebar not found");
+      }
+    });
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const productModal = document.getElementById("stockModal");
+
+    productModal.addEventListener("hidden.bs.modal", function () {
+      // console.log("Modal closed");
+      const sideMenu = document.querySelector("#sidebar");
+      window.location.reload();
+
+      if (sideMenu) {
+        sideMenu.style.display = "block";
+      } else {
+        console.log("Sidebar not found");
+      }
+    });
+  });
+
+  const menuBar = document.querySelector('#content nav .bx.bx-menu');
+  const sidebar = document.getElementById('sidebar');
+  if (window.innerWidth < 769) {
+    sidebar.classList.add('hide');
+  }
+  menuBar.addEventListener('click', function () {
+    sidebar.classList.toggle('hide');
+  })
+
+  document.querySelectorAll('input[type="number"]').forEach(function (input) {
+    input.addEventListener('wheel', function (event) {
+      event.preventDefault();
+    });
+  });
+
+  let categoryData = [];
+  let filteredCategoryData = [];
+  let categoryPage = 1;
+  const rowsPerCategoryPage = 5;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const paginationContainer = document.getElementById("pagination");
+    const filterButton = document.getElementById("filterButton");
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const maxDate = `${year}-${month}-${day}`;
+    const formattedDate = `${year}-${month}-${day}`;
+
+    startDateInput.value = formattedDate;
+    endDateInput.value = formattedDate;
+    startDateInput.setAttribute("max", maxDate);
+    endDateInput.setAttribute("max", maxDate);
+    searchInput.addEventListener("input", function () {
+      const searchQuery = searchInput.value.trim();
+      if (searchQuery.length > 0) {
+        searchCategories(searchQuery);
+      } else {
+        fetchCategoryData();
+      }
+    });
+
+
+    filterButton.addEventListener("click", function () {
+      const startDateInputValue = startDateInput.value.trim();
+      const endDateInputValue = endDateInput.value.trim();
+
+      const startDate = new Date(startDateInputValue);
+      const endDate = new Date(endDateInputValue);
+
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        showPopup("OOPS", "Please select valid start and end dates.", "FAILURE");
+        return;
+      }
+
+      if (startDate > endDate) {
+        showPopup("OOPS", "Start date cannot be later than end date.", "FAILURE");
+        return;
+      }
+
+      // Filter the categories based on selected dates
+      filteredCategoryData = categoryData.filter(category => {
+        let categoryDate = new Date(category.inserted_date).toISOString().split('T')[0];
+        let formattedStartDate = startDate.toISOString().split('T')[0];
+        let formattedEndDate = endDate.toISOString().split('T')[0];
+
+        return categoryDate >= formattedStartDate && categoryDate <= formattedEndDate;
+      });
+
+      if (filteredCategoryData.length === 0) {
+        showPopup("No Data", "No Products found for the selected time period.", "INFO");
+        displayCategoryPage(categoryPage);
+        setupCategoryPagination(filteredCategoryData.length)
+      } else {
+        categoryPage = 1; // Reset to the first page
+        displayCategoryPage(categoryPage);
+        setupCategoryPagination(filteredCategoryData.length);
+      }
+    });
+
+
+    fetchCategoryData();
+
+    function fetchCategoryData() {
+      fetch('<%= (url_pathname) %>admin/get/product/Admin')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data && data.data) {
+
+            categoryData = data.data;
+            filteredCategoryData = categoryData;
+            displayCategoryPage(categoryPage);
+            setupCategoryPagination(filteredCategoryData.length);
+          } else {
+            console.error("No product data received.");
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching product data:', error);
+        });
+    }
+
+    function searchCategories(searchQuery) {
+      fetch(`/search-query?search=${encodeURIComponent(searchQuery)}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch search results');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data && data.length > 0) {
+            filteredCategoryData = data;
+          } else {
+            filteredCategoryData = [];
+          }
+          categoryPage = 1;
+          displayCategoryPage(categoryPage);
+          setupCategoryPagination(filteredCategoryData.length);
+        })
+        .catch(error => {
+          console.error("Error fetching search results:", error);
+        });
+    }
+
+    function filterByDate(startDate, endDate) {
+      filteredCategoryData = categoryData.filter(product => {
+        const productDate = new Date(product.inserted_date);
+        return productDate >= startDate && productDate <= endDate;
+      });
+
+      categoryPage = 1; // Reset to the first page after filtering
+      displayCategoryPage(categoryPage);
+      setupCategoryPagination(filteredCategoryData.length);
+    }
+
+    function displayCategoryPage(page) {
+      const tableBody = document.querySelector('#productTable tbody');
+      tableBody.innerHTML = '';
+
+      const start = (page - 1) * rowsPerCategoryPage;
+      const end = start + rowsPerCategoryPage;
+
+      const paginatedCategoryData = filteredCategoryData.slice(start, end);
+      if (paginatedCategoryData.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="12">No data available</td></tr>';
+        return;
+      }
+      paginatedCategoryData.forEach((product, index) => {
+        const stock = product.in_stock ? product.in_stock : "-"
+
+        const rowNumber = start + index + 1;
+      
+        const rowHTML = `
+        <tr>
+        <td>${rowNumber}</td>
+          <td>${product.product_name}</td>
+          <td>
+            <img src="<%= (url_pathname) %>${product.product_image}" alt="${product.product_name}" style="width:70px;height:70px;">
+          </td>
+          <td>${product.product_description}</td>
+
+          <td>${new Date(product.inserted_date).toLocaleDateString()}</td>
+        
+          <td><button class="btn btn-primary" onclick="createBatch('${product.type}','${product.id}')">Batch</button></td>
+            <td>
+            <button 
+              type="button" 
+              class="btn btn-primary" 
+              data-bs-toggle="modal" 
+              data-bs-target="#exampleModal" 
+             onclick="openUpdateModal(
+                  '${product.id}', 
+                  '${product.type}',
+                  '${product.product_name.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', 
+                  '${product.product_image}',
+                  '${product.product_image_two}',
+                  '${product.product_image_three}', 
+                  '${product.product_description.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', 
+                  '${product.in_stock}', 
+                  '${product.mrp_price}', 
+                  '${product.product_price}', 
+                  '${product.category_id}', 
+                  '${product.brand_id}',
+                  '${product.featured}',
+                  '${(product.health_benefits || '').replace(/'/g, "\\'").replace(/"/g, '&quot;')}', 
+                  '${(product.seo || '').replace(/'/g, "\\'").replace(/"/g, '&quot;')}',  
+                  '${product.product_type_subname}' 
+                   )"
+                >
+              Update
+            </button>
+          </td>
+            <td> <button  type="button" 
+              class="btn btn-primary" 
+              onclick="deleteProduct('${product.id}')">Delete</button></td>
+        </tr>
+      `;
+        tableBody.insertAdjacentHTML('beforeend', rowHTML);
+      });
+    }
+
+    function setupCategoryPagination(totalItems) {
+
+      const paginationDiv = document.querySelector('#pagination');
+      paginationDiv.innerHTML = '';
+
+      const totalPages = Math.ceil(totalItems / rowsPerCategoryPage);
+      const maxButtons = 5;
+
+      let startPage, endPage;
+
+      if (totalPages <= maxButtons) {
+        startPage = 1;
+        endPage = totalPages;
+      } else {
+        if (categoryPage <= maxButtons) {
+          startPage = 1;
+          endPage = maxButtons;
+        } else if (categoryPage + maxButtons >= totalPages) {
+          startPage = totalPages - maxButtons + 1;
+          endPage = totalPages;
+        } else {
+          startPage = categoryPage - maxButtons;
+          endPage = categoryPage + maxButtons;
+        }
+      }
+
+      if (categoryPage > 1) {
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Previous';
+        prevButton.className = 'pagination-btn';
+        prevButton.addEventListener('click', () => {
+          categoryPage--;
+          displayCategoryPage(categoryPage);
+          setupCategoryPagination(totalItems);
+        });
+        paginationDiv.appendChild(prevButton);
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.className = 'pagination-btn';
+        if (i === categoryPage) {
+          button.classList.add('active');
+        }
+
+        button.addEventListener('click', () => {
+          categoryPage = i;
+          displayCategoryPage(categoryPage);
+          setupCategoryPagination(totalItems);
+        });
+
+        paginationDiv.appendChild(button);
+      }
+
+      if (categoryPage < totalPages) {
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Next';
+        nextButton.className = 'pagination-btn';
+        nextButton.addEventListener('click', () => {
+          categoryPage++;
+          displayCategoryPage(categoryPage);
+          setupCategoryPagination(totalItems);
+        });
+        paginationDiv.appendChild(nextButton);
+      }
+    }
+  });
+  let table;
+  const price_overlay = document.querySelector(".price_overlay");
+  close_btn = document.createElement("div");
+
+  function getMrpPrice(id) {
+    table = document.createElement("table");
+    table.style.position = "relative"
+    const thead = document.createElement("thead");
+    const th_row = document.createElement("tr");
+    const theaders = ["Product Quantity", "MRP"];
+    close_btn.textContent = "X"
+    close_btn.classList.add("prices_close_btn");
+    close_btn.style.position = "absolute";
+    close_btn.style.top = "7px";
+    close_btn.style.right = "7px";
+    close_btn.style.fontWeight = "700";
+    close_btn.style.cursor = "pointer"
+    theaders.forEach((header) => {
+      const theader = document.createElement("th");
+      theader.textContent = header;
+      th_row.appendChild(theader);
+    });
+
+    thead.appendChild(th_row);
+    table.appendChild(close_btn)
+    table.appendChild(thead);
+
+    async function fetchTableData() {
+      const tbody = document.createElement("tbody");
+
+      let response = await fetch(`<%= (url_pathname) %>admin/get_units_prices/${id}`);
+      let data = await response.json();
+
+
+      if (data && Array.isArray(data)) {
+        data.forEach((e) => {
+
+          const tr_row = document.createElement("tr");
+
+          const tname = document.createElement("td");
+          tname.textContent = e.label_name;
+
+          const tmrp = document.createElement("td");
+          tmrp.textContent = e.mrp;
+
+          tr_row.appendChild(tname);
+          tr_row.appendChild(tmrp);
+          tbody.appendChild(tr_row);
+        });
+      }
+
+      table.appendChild(tbody);
+    }
+
+    fetchTableData();
+
+    table.style.width = "30%";
+    table.style.margin = "20px auto";
+    table.style.zIndex = 9999;
+    table.style.backgroundColor = "white";
+    table.style.position = "absolute";
+    table.style.top = "50%";
+    table.style.left = "50%";
+    table.style.transform = "translate(-50%,-50%)"
+    table.style.borderCollapse = "collapse";
+    table.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
+    table.classList.add("mrp_discount_table")
+    price_overlay.style.display = "block"
+    const cells = table.getElementsByTagName("td");
+    for (let cell of cells) {
+      cell.style.padding = "10px";
+      cell.style.textAlign = "center";
+      cell.style.borderBottom = "1px solid #ddd";
+    }
+
+    document.body.appendChild(table);
+  }
+  function getDiscountPrice(id) {
+    table = document.createElement("table");
+    table.style.position = "relative"
+    const thead = document.createElement("thead");
+    const th_row = document.createElement("tr");
+    const theaders = ["Product Quantity", "Discount Price"];
+    close_btn.textContent = "X"
+    close_btn.classList.add("prices_close_btn");
+    close_btn.style.position = "absolute";
+    close_btn.style.top = "7px";
+    close_btn.style.right = "7px";
+    close_btn.style.fontWeight = "700";
+    close_btn.style.cursor = "pointer"
+    theaders.forEach((header) => {
+      const theader = document.createElement("th");
+      theader.textContent = header;
+      th_row.appendChild(theader);
+    });
+
+    thead.appendChild(th_row);
+    table.appendChild(close_btn)
+    table.appendChild(thead);
+
+    async function fetchTableData() {
+      const tbody = document.createElement("tbody");
+
+      let response = await fetch(`<%= (url_pathname) %>admin/get_units_prices/${id}`);
+      let data = await response.json();
+
+
+      if (data && Array.isArray(data)) {
+        data.forEach((e) => {
+
+          const tr_row = document.createElement("tr");
+
+          const tname = document.createElement("td");
+          tname.textContent = e.label_name;
+
+          const tdiscount = document.createElement("td");
+          tdiscount.textContent = e.discount_price;
+
+          tr_row.appendChild(tname);
+          tr_row.appendChild(tdiscount);
+          tbody.appendChild(tr_row);
+        });
+      }
+
+      table.appendChild(tbody);
+    }
+
+    fetchTableData();
+
+    table.style.width = "30%";
+    table.style.margin = "20px auto";
+    table.style.zIndex = 9999;
+    table.style.backgroundColor = "white";
+    table.style.position = "absolute";
+    table.style.top = "50%";
+    table.style.left = "50%";
+    table.style.transform = "translate(-50%,-50%)"
+    table.style.borderCollapse = "collapse";
+    table.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
+    table.classList.add("mrp_discount_table")
+    price_overlay.style.display = "block"
+    const cells = table.getElementsByTagName("td");
+    for (let cell of cells) {
+      cell.style.padding = "10px";
+      cell.style.textAlign = "center";
+      cell.style.borderBottom = "1px solid #ddd";
+    }
+
+    document.body.appendChild(table);
+  }
+  close_btn.addEventListener("click", (event) => {
+
+    table.remove();
+    price_overlay.style.display = "none";
+
+  });
+
+  const BatchModel = document.getElementById("BatchModel");
+  const overlay = document.querySelector(".overlay");
+  const loose_products = document.querySelector(".loose_products");
+
+  const sideMenu = document.querySelector("#sidebar");
+  const createBatch = (type, id) => {
+    BatchModel.classList.add("show");
+    BatchModel.style.display = "block";
+    overlay.style.display = "block";
+    sideMenu.style.display = "none";
+    if (type === "PIECES") {
+      // packaged_products.style.display="block";
+      // loose_products.style.display="none";
+      getBatchPiecesData(id, type)
+    }
+
+    else {
+      getBatchData(id, type);
+
+      // loose_products.style.display="block"
+      // packaged_products.style.display="none";
+
+    }
+
+  }
+  const closeBatch = () => {
+    window.location.reload()
+    BatchModel.classList.remove("show");
+    BatchModel.style.display = "none";
+    overlay.style.display = "none";
+    sideMenu.style.display = "block";
+  }
+
+
+const flavours_list=document.getElementById("flavour_id");
+document.addEventListener("DOMContentLoaded",async()=>{
+  fetch("<%= url_pathname %>admin/get/flavours/Admin")
+  .then(res=>res.json())
+  .then((data)=>{
+    const dataList=data.data;
+    flavours_list.innerHTML="";
+    const options=document.createElement("option");
+    options.textContent='Select a flavour';
+    options.value="";
+    flavours_list.append(options)
+
+    dataList.forEach((e)=>{
+      const options=document.createElement("option");
+      options.textContent=e.flavour_name;
+      options.value=e.id;
+      flavours_list.append(options)
+    })    
+    
+  })
+  .catch(e=>{console.log(e);
+  })
+})
+</script>

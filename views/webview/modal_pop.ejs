@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Popup Overlay */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            
+        }
+
+        .popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* Popup Content */
+        .popup-content {
+            padding:30px;
+            /* border-radius: 15px; */
+            text-align: center;
+            width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s ease-in-out;
+            background-color: white;
+
+        }
+
+        .popup.active .popup-content {
+            transform: scale(1);
+        }
+
+        .popup-content h1 {
+            margin: 10px 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #f0331a;
+        }
+
+        .popup-content p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #f0331a;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .failure {
+            color: #dc3545;
+        }
+
+        #closePopupBtn{
+            padding: 10px 20px;
+            background-color: #f84545;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup-content button:hover {
+            background-color: #d12b15;
+        }
+
+        /* Checkmark Circle */
+        .checkmark-circle {
+            border-radius: 50%;
+            height: 40px;
+            width: 80px;
+            background: #f8faf5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            display: none;
+        }
+
+        .checkmark {
+            display: none;
+            color: #f0331a;
+            font-size: 48px;
+            line-height: 80px;
+        }
+
+        .checkmarkt {
+            color: #9abc66;
+            font-size: 48px;
+            line-height: 80px;
+        }
+
+        #rearrange-btn {
+            display: none;
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;        }
+
+        .close-btn {
+            font-size: 14px;
+            font-weight: 400;
+            right: 10px !important;
+            top: 10px !important;
+        }
+
+        @media (max-width:810px) {
+            .popup-content {
+                width: 300px;
+                padding: 15px;
+            }
+
+            .popup-content h1 {
+                font-size: 20px;
+            }
+
+            .popup-content p {
+                font-size: 16px;
+            }
+        }
+
+        .mouth {
+            position: absolute;
+            top: 55%;
+            left: 44%;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .happy {
+            border: 2px solid;
+            border-color: transparent #777 #777 transparent;
+            transform: rotate(45deg);
+        }
+
+        .sad {
+            top: 59%;
+            border: 2px solid;
+            border-color: #777 transparent transparent #777;
+            transform: rotate(45deg);
+        }
+
+        @keyframes bounce {
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes scale {
+            50% {
+                transform: scale(0.9);
+            }
+        }
+
+        @keyframes roll {
+            0% {
+                transform: rotate(0deg);
+                left: 25%;
+            }
+
+            50% {
+                left: 60%;
+                transform: rotate(168deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+                left: 25%;
+            }
+        }
+
+        @keyframes move {
+            0% {
+                left: 25%;
+            }
+
+            50% {
+                left: 60%;
+            }
+
+            100% {
+                left: 25%;
+            }
+        }
+
+        .face {
+            position: absolute;
+            width: 22%;
+            height: 27%;
+            background: #fcfcfc;
+            border-radius: 50%;
+            border: 1px solid #777;
+            top: 5%;
+            left: 41.5%;
+            z-index: 2;
+            animation: bounce 1s ease-in infinite;
+        }
+
+        .eye {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #777;
+            border-radius: 50%;
+            top: 40%;
+            left: 20%;
+        }
+
+        .right {
+            left: 68%;
+        }
+        /* .success-icon {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #7abb89;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+} */
+
+@keyframes glowSuccess {
+    0% {
+        box-shadow: 0 0 10px #7abb89, 0 0 30px #7abb89;
+    }
+    100% {
+        box-shadow: 0 0 20px #7abb89, 0 0 40px #7abb89;
+    }
+}
+/* .failure-icon {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #d76974;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+
+} */
+
+@keyframes glowFailure {
+    0% {
+        box-shadow: 0 0 10px #d76974, 0 0 30px #d76974;
+    }
+    100% {
+        box-shadow: 0 0 20px #d76974, 0 0 40px #d76974;
+    }
+}
+
+@media (max-width:767px){
+    /* .failure-icon,.success-icon{
+        height: 80px !important;
+        width: 80px !important;
+        font-weight: 500 !important;
+        font-size: 20px !important;
+    } */
+}
+    </style>
+</head>
+
+<body>
+    <div id="feedbackBox" class="popup">
+        <div class="popup-content">
+            <div class="checkmark-circle">
+                <span id="checkmark">X</span>
+            </div>
+            <div class="success-icon" style="display: none;"><img src="/images/success.png"  height="80px" width="80px" style="margin: 0 auto;" loading="lazy" alt=""></div>
+            <div class="failure-icon" style="display: none;"><img src="/images/error.png"  height="80px" width="80px"  style="margin: 0 auto;" loading="lazy"></div>
+
+            
+            <span id="closePopup" class="close-btn"> &#10006;</span>
+            <p id="popupHeading" style="margin-top: 1rem;color: black;font-size: medium;"></p>
+            <!-- <p id="popupMessage"></p> -->
+            <button id="closePopupBtn">Continue</button>
+            <button id="rearrange-btn">Auto-fix</button>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(title, message, status, adjust) {
+            console.log(title);
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            const popupHeading = document.getElementById('popupHeading');
+            // const popupMessage = document.getElementById('popupMessage');
+            const adjustbtn = document.getElementById("rearrange-btn");
+            const check = document.getElementById("checkmark");
+            const content=document.querySelector(".popup-content");
+            const closePopupBtn = document.getElementById('closePopupBtn');
+            const failure_icon=document.querySelector(".failure-icon");
+            const success_icon=document.querySelector(".success-icon");
+
+            // const mouth=document.querySelector(".mouth");
+            if (status === "Success") {
+                check.innerText = "✓";
+                check.classList.add("checkmarkt");
+                popupHeading.style.color = "#9abc66";
+                success_icon.style.display="block";
+                closePopupBtn.style.backgroundColor="#2dcb70";
+                failure_icon.style.display="none"
+                // mouth.classList.add("happy");
+                // content.style.background = "linear-gradient(to bottom right, #b0db7d 40%, #99dbb4 100%)";
+
+            }
+
+            else {
+                check.innerText = "X";
+                check.classList.add("checkmark");
+                popupHeading.style.color="#e6637d";
+                closePopupBtn.style.backgroundColor="#f84545";
+                failure_icon.style.display="block";
+                success_icon.style.display="none";
+
+                // mouth.classList.add("sad");
+                // content.style.background = "linear-gradient(to bottom left, #ef8d9c 40%, #ffc39e 100%)";
+
+            }
+
+            if (adjust) {
+                adjustbtn.style.display = "inline-block"
+            }
+            popupHeading.textContent = `${title+"." + message}`;
+            // popupMessage.textContent = message;
+            popupHeading.className = status;
+
+            feedbackBox.classList.add('active');
+        }
+
+        const closePopup = document.getElementById('closePopup');
+        const feedbackBox = document.getElementById('feedbackBox');
+        const adjustbtn = document.getElementById("rearrange-btn");
+
+        adjustbtn.addEventListener("click", () => {
+            window.location.reload()
+        })
+        closePopup.addEventListener('click', () => {
+            feedbackBox.classList.remove('active');
+            // if(popupMessage.innexText="No Products for particular category"){
+            //     window.location.href="/"
+            // }
+        });
+
+        closePopupBtn.addEventListener('click', () => {
+            feedbackBox.classList.remove('active');
+            // if(popupMessage.innexText="No Products for particular category"){
+            //     window.location.href="/"
+            // }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggrepay</title>
+</head>
+<body onload="document.querySelector('form').submit()">
+    <form
+        style="display: none;"
+        action="https://biz.aggrepaypayments.com/v2/paymentrequest"
+        method="post"
+        name="aggrepayForm"
+      >
+      
+        <input name="name" value="<%=body.name%>" />
+        <input name="email" value="<%=body.email%>"/>
+        <input name="address_line_2" value="<%=body.address_line_2%>"/>
+        <input name="phone" value="<%=body.phone%>"/>
+        <input name="amount" value="<%=body.amount%>"/>
+        <input name="address_line_1" value="<%=body.address_line_1%>"/>
+        <input name="country" value="<%=body.country%>"/>
+        <input name="zip_code" value="<%=body.zip_code%>"/>
+        <input name="state" value="<%=body.state%>"/>
+        <input name="city" value="<%=body.city%>"/>
+        <input name="description" value="<%=body.description%>"/>
+        <input name="api_key" value="<%=body.api_key%>"/>
+        <input name="hash" value="<%=body.hash%>"/>
+        <input name="order_id" value="<%=body.order_id%>"/>
+        <input name="mode" value="<%=body.mode%>"/>
+        <input name="return_url" value="<%=body.return_url%>"/>
+        <input name="currency" value="<%=body.currency%>"/>
+        <input name="udf1" value="<%=body.udf1%>"/>
+        <input name="udf2" value="<%=body.udf2%>"/>
+        <input name="udf3" value="<%=body.udf3%>"/>
+        <input name="udf4" value="<%=body.udf4%>"/>
+        <input name="udf5" value="<%=body.udf5%>"/>
+    </form>
+    <div>
+        <h4>Please wait......</h4>
+    </div>
+</body>
+</html>

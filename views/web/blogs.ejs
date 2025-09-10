@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en" style="
+    -ms-overflow-style: none;
+    scrollbar-width: none;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%- title %></title>
+    <link rel="icon" href="/images/LOGOG.png" type="image/png">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+
+    <style>
+        *,
+        * ::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            box-sizing: border-box;
+            font-family: Roboto, sans-serif;
+            color: #333333;
+            letter-spacing: 0.01rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .main {
+            width: 100%;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+            overflow: hidden;
+            background-color: whitesmoke;
+        }
+
+        .testimonial-main {
+            margin-top: 117px;
+
+        }
+
+        .container {
+            max-width: 80rem;
+            height: 100%;
+            overflow: hidden;
+            margin: 0 auto;
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            padding: 3rem 0;
+        }
+
+        .container .deco {
+            height: 3rem;
+            width: 23rem;
+            filter: brightness(120%);
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            /* Ensures cards wrap to the next line if there's not enough space */
+            gap: 2rem;
+            /* Adds consistent spacing between cards */
+            margin-top: 3rem;
+            width: 100%;
+        }
+
+        .cards-container {
+            padding: 2rem;
+        }
+
+        .card-box {
+            display: flex;
+            flex-flow: column;
+            background-color: white;
+            font-size: 0.92rem;
+            box-shadow: 0px 3px 4px gray;
+            margin-bottom: 2rem;
+            height: 550px;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            /* Ensures vertical spacing for rows */
+        }
+
+        .card-box img {
+            min-height: 350px !important;
+            object-fit: contain;
+        }
+
+        .rows {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .card-img {
+            height: 23rem;
+            width: 23rem;
+            /* margin: 5px;
+            margin: 10px !important; */
+            margin-top: 1rem;
+        }
+
+        .card-data,
+        .card-title,
+        .card-description {
+            padding: 0 1.5rem;
+            text-align: justify;
+        }
+
+        .card-description {
+            height: 70px;
+            overflow: hidden;
+        }
+
+        .conitnue-reading {
+            padding: 0 1.5rem;
+
+        }
+
+        .card-data {
+            padding-top: 2rem;
+            padding-bottom: 1.3rem;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .card-data p {
+            display: inline-block;
+        }
+
+        .text-right {
+            margin-left: 9.4rem;
+            margin-right: 1rem;
+        }
+
+        .autor {
+            font-weight: bold;
+        }
+
+        .card-title {
+            display: block;
+            margin: 0;
+            margin-bottom: 1.3rem;
+            font-size: 1.5em;
+            font-weight: 500;
+            transition: 0.3s;
+            text-decoration: none;
+            color: black !important;
+        }
+
+        .card-title:hover {
+            color: #84A935 !important;
+            /* background-color: rgb(238, 234, 234); */
+        }
+
+        .card-description {
+            font-size: 1.15rem;
+            line-height: 1.7rem;
+            padding-bottom: 2rem;
+        }
+
+        .modal-review {
+            display: none;
+            /* Initially hidden */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-review-content {
+            background: white;
+            width: 70%;
+            max-width: 776px;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            overflow-y: auto;
+            max-height: 70vh;
+            scrollbar-width: none;
+            /* Scrollable */
+
+        }
+
+        .close {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .testimonial-container {
+            width: 100%;
+            max-width: 700px;
+            margin: auto;
+            overflow: hidden;
+            text-align: center;
+            position: relative;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            scrollbar-width: none;
+        }
+
+        .testimonial-slider {
+            min-height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .testimonial-item {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .review-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #555;
+        }
+
+        .reviewer-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .review-date {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .btn {
+            margin: 10px 5px;
+            background-color: #6BB252 !important;
+            color: black !important;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: darkblue;
+        }
+
+
+        @media all and (max-width: 1200px) {
+            .card-box {
+                height: 550px !important;
+            }
+
+            .card-box {
+                width: 30rem;
+            }
+
+            .container {
+                padding: 1%;
+            }
+
+            .card-data {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .text-right {
+                margin: 0;
+            }
+
+            .card-img {
+                height: 20rem;
+            }
+        }
+
+        /* 
+        @media all and (max-width: 1000px) {
+            .flex-container {
+                flex-flow: column;
+                justify-content: center;
+                align-items: center;
+                width: 80%;
+            }
+
+            .card-box {
+                width: 100%;
+            }
+
+            .card-img {
+                height: 27rem;
+            }
+        } */
+
+        @media (min-width:768px) and (max-width:991px) {
+
+            .testimonial-main {
+                margin-top: 250px !important;
+
+            }
+        }
+
+        @media all and (max-width: 767px) {
+            .main {}
+
+            .testimonial-main {
+                margin-top: 67px !important;
+                height: 70vh !important;
+
+            }
+
+            .test-cont {
+                height: 70vh !important;
+            }
+
+            .flex-container {
+                width: 95%;
+            }
+
+            .card-box {
+                height: 500px;
+            }
+
+            .card-img {
+                height: 20rem;
+            }
+
+            /* .card-text{
+                padding: 5px;
+            } */
+            .data-text {
+                font-size: 0.85rem;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+
+            .card-description {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width:600px) {
+            .modal-review-content {
+                width: 90% !important;
+            }
+
+            .reviews-container {
+                max-height: 50vh !important;
+            }
+
+            .modal-review-content {
+                max-height: 90vh !important;
+
+            }
+
+            .testimonial-container {
+                font-size: 0.8rem !important;
+                padding: 5px;
+
+            }
+        }
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .testimonial-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .testimonial-card h3 {
+            margin: 0;
+            color: #007bff;
+        }
+
+        .testimonial-card p {
+            font-style: italic;
+            color: #555;
+            flex-grow: 1;
+            /* ✅ Allows text to expand evenly */
+        }
+
+        .testimonial-card small {
+            color: #777;
+        }
+
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        .star {
+            color: gray;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .star:hover,
+        .star:hover~.star,
+        .star.selected {
+            color: gold;
+        }
+    </style>
+</head>
+
+
+<body>
+    <%- include('header') %>
+        <div class="testimonial-main"
+            style="max-width: 900px; margin:117px auto;margin-bottom: 2rem; font-family: Arial, sans-serif; text-align: center;">
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <% testimonials.forEach((testimonial)=> { %>
+                        <div class="swiper-slide">
+                            <div class="test-cont"
+                                style="background: #f9f9f9; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); min-height: 340px;">
+                                <h3 style="margin: 0; color: #007bff;">
+                                    <%= testimonial.customer_review_name %>
+                                </h3>
+                                <p style="font-style: italic; color: #555; overflow: auto;">"<%= testimonial.review %>"
+                                </p>
+                                <!-- Star Rating Section -->
+                                <div class="star-rating"
+                                    style="display: flex; flex-direction: row-reverse; gap: 2px; margin: 10px 0;cursor: default;">
+                                    <% for (let i=5; i>= 1; i--) { %>
+                                        <% if (i <=testimonial.rating) { %>
+                                            <span style="color: gold; font-size: 20px;">&#9733;</span>
+                                            <% } else { %>
+                                                <span style="color: #ccc; font-size: 20px;">&#9733;</span>
+                                                <% } %>
+                                                    <% } %>
+                                </div>
+
+
+                                <p style="color: #777;margin-top: 1rem;">Posted on: <%= new
+                                        Date(testimonial.inserted_date).toLocaleString("en-IN", {
+                                        timeZone: "Asia/Kolkata" , hour12: true }) %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <% }); %>
+
+                </div>
+
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </div>
+      <div style="text-align: center;margin-bottom: 2rem;">
+        <button class="btn"  onclick="openModal()">Add
+            Reviews</button>
+      </div>
+        <div id="reviewModal" style="z-index: 10000;" class="modal-review">
+            <div class="modal-review-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+
+                <form id="reviewForm">
+                    <div class="star-rating">
+                        <span class="star" data-value="5">&#9733;</span>
+                        <span class="star" data-value="4">&#9733;</span>
+                        <span class="star" data-value="3">&#9733;</span>
+                        <span class="star" data-value="2">&#9733;</span>
+                        <span class="star" data-value="1">&#9733;</span>
+                    </div>
+                    <textarea type="text" name="review" id="reviewInput" placeholder="Enter your review" cols="4"
+                        required></textarea>
+                    <input type="hidden" id="ratingValue" name="rating" value="0">
+                    <button type="submit" class="btn">Submit</button>
+                </form>
+            </div>
+        </div>
+
+
+        <section class="main">
+
+            <div class="container cards-container">
+
+                <h1>Latest News from Blog</h1>
+                <h5 style="text-align: center;">Nothing speaks louder than our customers and well wishers.</h5>
+                <img class="deco"
+                    src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fpluspng.com%2Fimg-png%2Fdivider-png-hd-divider-png-1589-304-1589.png&f=1&nofb=1">
+
+                <div class="flex-container">
+                    <div class="row rows">
+                        <% blogs.forEach((post, index)=> { %>
+                            <div class="col-lg-5 col-md-12 col-sm-12 card-box">
+                                <video src="<%= post.blog_image %>" class="card-img blog-video" controls></video>
+                                <div class="card-text">
+                                    <a href="/blog/<%= post.id %>" class="card-title">
+                                        <%= post.blog_header %>
+                                    </a>
+                                    <p class="card-description">
+                                        <%= post.blog_content %>
+                                    </p>
+                                    <a href="/blog/<%= post.id %>" style="padding-left: 1.5rem;"
+                                        class="continue-reading">
+                                        Continue Reading...
+                                    </a>
+                                </div>
+                            </div>
+                            <% }) %>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script>
+            function openModal() {
+                document.body.style.overflowY = "hidden"
+                document.getElementById("reviewModal").style.display = "flex";
+            }
+
+            function closeModal() {
+                document.body.style.overflowY = "auto"
+                document.getElementById("reviewModal").style.display = "none";
+            }
+            window.onclick = function (event) {
+                const modal = document.getElementById("reviewModal");
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+
+            document.addEventListener("DOMContentLoaded", function () {
+    const stars = document.querySelectorAll(".star");
+    const ratingValue = document.getElementById("ratingValue");
+
+    stars.forEach((star) => {
+        star.addEventListener("click", function () {
+            let value = this.getAttribute("data-value");
+            ratingValue.value = value;
+
+            stars.forEach((s) => s.classList.remove("selected"));
+            for (let i = 0; i < stars.length; i++) {
+                if (i >= 5 - value) {
+                    stars[i].classList.add("selected");
+                }
+            }
+        });
+    });
+
+    document.getElementById("reviewForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const review = document.getElementById("reviewInput").value;
+        const customer_review_name = localStorage.getItem("name");
+        const rating = ratingValue.value;
+
+        if (!rating || rating < 1 || rating > 5) {
+            showPopup('Oops', 'Please select a rating', 'failure');
+            return;
+        }
+
+        fetch("<%= url_pathname %>create_review", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ customer_review_name, review, rating })
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                showPopup("Success", data.message, "Success");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showPopup('Oops', data.message, 'failure');
+                // setTimeout(() => {
+                //     window.location.href = "/account/usersignin";
+                // }, 1000);
+            }
+        });
+    });
+});
+
+            const testimonialSlider = document.getElementById("testimonialSlider");
+
+            // fetch("<%= url_pathname %>get_reviews")
+            //     .then(res => res.json())
+            //     .then((response) => {
+            //         console.log("Full Response:", response);
+
+            //         if (response.success && Array.isArray(response.data)) {
+            //             testimonialSlider.innerHTML = ""; 
+
+            //             response.data.forEach((review, index) => {
+            //                 const testimonial = document.createElement("div");
+            //                 testimonial.classList.add("testimonial-item");
+
+            //                 const reviewText = document.createElement("p");
+            //                 reviewText.classList.add("review-text");
+            //                 reviewText.innerText = `"${review.review}"`;
+
+            //                 const reviewer = document.createElement("h4");
+            //                 reviewer.classList.add("reviewer-name");
+            //                 reviewer.innerText = `- ${review.customer_review_name}`;
+
+            //                 let formattedDate = "No date available";
+            //                 if (review.inserted_date) {
+            //                     const date = new Date(review.inserted_date);
+            //                     formattedDate = date.toISOString().split("T")[0];
+            //                 }
+
+            //                 const reviewDate = document.createElement("small");
+            //                 reviewDate.classList.add("review-date");
+            //                 reviewDate.innerText = formattedDate;
+
+            //                 testimonial.appendChild(reviewText);
+            //                 testimonial.appendChild(reviewer);
+            //                 testimonial.appendChild(reviewDate);
+
+            //                 testimonialSlider.appendChild(testimonial);
+            //             });
+
+            //             startTestimonialSlider();
+            //         } else {
+            //             console.error("Invalid response format:", response);
+            //         }
+            //     })
+            //     .catch(error => console.error("Error fetching reviews:", error));
+
+            function startTestimonialSlider() {
+                let index = 0;
+                const testimonials = document.querySelectorAll(".testimonial-item");
+
+                function showNextTestimonial() {
+                    testimonials.forEach((item, i) => {
+                        item.style.display = i === index ? "block" : "none";
+                    });
+
+                    index = (index + 1) % testimonials.length;
+                }
+
+                showNextTestimonial(); // Show first review
+                setInterval(showNextTestimonial, 3000); // Auto-switch every 3 seconds
+            }
+            document.addEventListener("DOMContentLoaded", function () {
+                const videos = document.querySelectorAll(".blog-video");
+
+                videos.forEach(video => {
+                    video.addEventListener("play", function () {
+                        videos.forEach(otherVideo => {
+                            if (otherVideo !== video) {
+                                otherVideo.pause();
+                                otherVideo.currentTime = 0; // Reset to start
+                            }
+                        });
+                    });
+                });
+            });
+            document.addEventListener("DOMContentLoaded", function () {
+                var swiper = new Swiper(".mySwiper", {
+                    slidesPerView: 1,  // Show one testimonial at a time
+                    spaceBetween: 20,
+                    loop: true,  // Infinite loop
+                    autoplay: {
+                        delay: 300000,  // Auto-slide every 3 seconds
+                        disableOnInteraction: false,
+                    },
+                    pagination: {
+                        el: ".swiper-pagination",
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: ".swiper-button-next",
+                        prevEl: ".swiper-button-prev",
+                    },
+                });
+            });
+        </script>
+        <%- include("./addToCart.ejs") %>
+</body>
+
+</html>
