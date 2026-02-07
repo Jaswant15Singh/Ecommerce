@@ -1,13 +1,11 @@
 var express = require('express');
 const { isAuthenticated } = require('../helper/utils');
-const sendsms = require('../helper/sendsms');
 
 const { API_KEY, SALT_KEY ,Pay_Mode} = require('../helper/constant');
 var router = express.Router();
 const { glob } = require('fs');
 const crypto = require('crypto');
 const nodemailer = require("nodemailer");
-const sendSMS = require('../helper/sendsms');
 const axios = require('axios');
 const { generateInvoiceAndSendEmail } = require('../utils/function');
 const { log } = require('console');
@@ -1301,7 +1299,6 @@ router.post('/send-otp', async (req, res) => {
   try {
     // const otp = Math.floor(1000 + Math.random() * 9000);
     const otp = 1234;
-    // await sendSMS(phone, otp);
 
     const InsertOtp = await global.Database.executeQuery(
       `
