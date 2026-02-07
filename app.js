@@ -86,7 +86,7 @@ schedule.scheduleJob('1 * * * *', async () => {
 //   cert: fs.readFileSync(path.join(__dirname, 'ssl', 'certificate.crt'))
 // };
 
-const PORT = process.env.PORT || 5559;
+const PORT = process.env.PORT || 5555;
 console.log(PORT);
 
 try {
