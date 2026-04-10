@@ -16,5 +16,11 @@ jobs:
           node-version: 22
 
       - name: Installing dependencies
-        run: npm ci    
+        run: npm ci
+
+      - name: "Docker build images"
+        run: docker build -t ecommerce-app .
+
+      - name: "Docker container run"
+        run: docker run -d -p 3000:5555 --name ecommerce-container ecommerce-app
           
