@@ -166,7 +166,7 @@ router.put("/update-cat/:id", isAuthenticated, fileUploader.upload.single('categ
 });
 
 router.get('/getproduct', isAuthenticated, (req, res) => {
-  global.Database.executeQuery('SELECT * FROM product_def')
+  global.Database.executeQuery('SELECT * FROM public.product_def')
     .then(result => {
       const datas = result;
       res.json({ data: datas });
@@ -200,7 +200,7 @@ router.post(
         brand_id=null
       }
       const trimmedProductName = product_name.trim();
-      const isProduct = await global.Database.executeQuery('SELECT * FROM product_def where LOWER(product_name) =LOWER($1)', [trimmedProductName]);
+      const isProduct = await global.Database.executeQuery('SELECT * FROM public.product_def where LOWER(product_name) =LOWER($1)', [trimmedProductName]);
 
       if (isProduct.length > 0) {
         return res.status(200).json({ success: false, message: "Product already exists" })
@@ -211,10 +211,10 @@ router.post(
       const product_image_three = req.body.filename?.product_image_three?.[0] || "";
 
       let query = `
-      INSERT INTO product_def 
+      INSERT INTO public.product_def 
       (product_name, product_description, 
        product_image, product_image_two, product_image_three, inserted_date, category_id, 
-       featured, health_benefits, type, seo,brand_id)`;
+       featured, health_benefits, type, seo,brand_id`;
 
       let params = [
         trimmedProductName,
@@ -233,11 +233,14 @@ router.post(
 
  
       if (type === 'UNITS') {
-        query += `, in_stock`;
+        query += `, in_stock)`;
         params.push(in_stock || 0);
       }
+      else if(type==="PIECES"){
+        query+=`)`;
+      }
 
-      query += ` VALUES (` + params.map((_, i) => `$${i + 1}`).join(", ") + `) RETURNING *;`;
+      query += ` VALUES (` + params.map((_, i) => `$${i + 1}`).join(", ") + `) RETURNING *`;
 
       const result = await global.Database.executeQuery(query, params);
       let product_id = result[0].id;
@@ -259,7 +262,7 @@ router.post(
         [result[0].id, category_id, trimmedProductName, product_description, product_image, product_image_two, product_image_three, featured || false, health_benefits || null, 1, seo]);
 
       const updateProductCode = `
-        UPDATE product_def 
+        UPDATE public.product_def 
         SET product_code = $1 
         WHERE id = $2 `;
 
@@ -307,7 +310,7 @@ router.put("/update-product/:id", fileUploader.upload.fields([
     
     const { id } = req.params;
     const isProduct = await global.Database.executeQuery(
-      'SELECT * FROM product_def WHERE product_name = $1 AND id <> $2',
+      'SELECT * FROM public.product_def WHERE product_name = $1 AND id <> $2',
       [product_name, id]
     );
 
@@ -316,7 +319,7 @@ router.put("/update-product/:id", fileUploader.upload.fields([
     }
 
     const GetImagePath = await global.Database.executeQuery(
-      "SELECT * FROM product_def WHERE id = $1",
+      "SELECT * FROM public.product_def WHERE id = $1",
       [id]
     );
 
@@ -349,7 +352,7 @@ router.put("/update-product/:id", fileUploader.upload.fields([
 
 
     const Update = await global.Database.executeQuery(
-      `UPDATE product_def 
+      `UPDATE public.product_def 
        SET product_name = $1, product_description = $2,  featured = $3, category_id = $4, 
            product_image = $5, updated_date = $6, health_benefits = $7, 
            type = $8, product_type_subname = $9, product_image_two = $10, 
@@ -649,7 +652,7 @@ router.post('/get/calendar_category/Admin', isAuthenticated, (req, res) => {
 });
 
 router.get('/get/product/Admin', isAuthenticated, (req, res) => {
-  global.Database.executeQuery('SELECT * FROM product_def where visibility = TRUE order by inserted_date desc')
+  global.Database.executeQuery('SELECT * FROM public.product_def where visibility = TRUE order by inserted_date desc')
     .then(result => {
       const datas = result;
       res.json({ data: datas });
@@ -662,7 +665,7 @@ router.get('/get/product/Admin', isAuthenticated, (req, res) => {
 router.post('/get/calendar_product/Admin', isAuthenticated, (req, res) => {
   const { start_date, end_date } = req.body;
 
-  global.Database.executeQuery('SELECT * FROM product_def where Date(inserted_date) between $1 and $2 order by inserted_date', [start_date, end_date])
+  global.Database.executeQuery('SELECT * FROM public.product_def where Date(inserted_date) between $1 and $2 order by inserted_date', [start_date, end_date])
     .then(result => {
       const datas = result;
       res.json({ data: datas });
@@ -768,7 +771,7 @@ router.get("/get/ind_orders/Admin/:id", isAuthenticated, async (req, res, next) 
         FROM 
             order_items_def oi 
         INNER JOIN 
-            product_def p ON oi.product_id = p.id 
+            public.product_def p ON oi.product_id = p.id 
             inner join product_batch_details pbd on oi.batch_id =pbd.id
          left join 
          	flavour_def fd on fd.id=pbd.flavour_id 
@@ -848,7 +851,7 @@ router.get('/generate-excel-all', async (req, res) => {
     const orders = await global.Database.executeQuery(`
           SELECT oi.order_id, c.customer_name, c.customer_email, c.customer_contact, c.customer_address, c.customer_pincode, p.product_name, oi.quantity, oi.price, o.order_status as payment_status, o.deleivery_status, oi.order_time, o.delivery_date  
           FROM order_items_def oi 
-          INNER JOIN product_def p ON oi.product_id = p.id 
+          INNER JOIN public.product_def p ON oi.product_id = p.id 
           INNER JOIN order_def o ON oi.order_id = o.id
           INNER JOIN customer_def c ON o.customer_id = c.id
           ORDER BY oi.order_id DESC
@@ -919,7 +922,7 @@ router.get('/individual-excel/:id', async (req, res) => {
       FROM 
         order_items_def oi 
       INNER JOIN 
-        product_def p ON oi.product_id = p.id 
+        public.product_def p ON oi.product_id = p.id 
       INNER JOIN 
         order_def o ON oi.order_id = o.id
       INNER JOIN 
@@ -1176,7 +1179,7 @@ router.get("/scheduler", async (req, res) => {
       FROM order_def od
       INNER JOIN order_items_def oi ON oi.order_id = od.id
       LEFT JOIN product_batch_details pbd ON pbd.product_id = oi.product_id AND pbd.id = oi.batch_id
-      INNER JOIN product_def pd ON pd.id = pbd.product_id OR oi.product_id = pd.id
+      INNER JOIN public.product_def pd ON pd.id = pbd.product_id OR oi.product_id = pd.id
       LEFT JOIN inventory_def id 
       ON (pd.type = 'PIECES' AND id.batch_id = pbd.id) 
       OR (pd.type <> 'PIECES' AND id.product_id = pd.id)
@@ -1188,7 +1191,7 @@ router.get("/scheduler", async (req, res) => {
       const { order_id, product_id, returned_value,type,batch_id } = row;
       
       // await global.Database.executeQuery(
-      //   "UPDATE public.product_def SET in_stock = in_stock + $1 WHERE id = $2;",
+      //   "UPDATE public.public.product_def SET in_stock = in_stock + $1 WHERE id = $2;",
       //   [returned_value, product_id]
       // );
 
@@ -1294,7 +1297,7 @@ router.get("/emailsending/:order_id", async (req, res) => {
         from order_def od 
         inner join order_items_def od2 on
         od2.order_id = od.id
-        inner join product_def pd on 
+        inner join public.product_def pd on 
         pd.id = od2.product_id
         inner join product_batch_details pbd on
         pbd.id = od2.batch_id 
@@ -1569,7 +1572,7 @@ router.put("/update_batch/:id", async (req, res) => {
 router.get("/get_batch/:id", async (req, res) => {
   try {
     const id = req.params.id
-    const data = await global.Database.executeQuery('SELECT pbd.* from product_batch_details pbd inner join product_def pd on pbd.product_id=pd.id where pbd.product_id = $1 order by pbd.visibility desc', [id]);
+    const data = await global.Database.executeQuery('SELECT pbd.* from product_batch_details pbd inner join public.product_def pd on pbd.product_id=pd.id where pbd.product_id = $1 order by pbd.visibility desc', [id]);
     res.json({ data })
   } catch (error) {
     console.error(error);
@@ -1580,7 +1583,7 @@ router.get("/get_batch/:id", async (req, res) => {
 router.get("/get_pieces_batch/:id", async (req, res) => {
   try {
     const id = req.params.id
-    const data = await global.Database.executeQuery('SELECT  pbd.*,ind.in_stock FROM product_batch_details pbd INNER JOIN product_def pd ON pbd.product_id = pd.id INNER JOIN inventory_def ind ON pd.id = ind.product_id WHERE pbd.product_id = $1 and pbd.id = ind.batch_id order by pbd.visibility desc', [id]);
+    const data = await global.Database.executeQuery('SELECT  pbd.*,ind.in_stock FROM product_batch_details pbd INNER JOIN public.product_def pd ON pbd.product_id = pd.id INNER JOIN inventory_def ind ON pd.id = ind.product_id WHERE pbd.product_id = $1 and pbd.id = ind.batch_id order by pbd.visibility desc', [id]);
     res.json({ data })
   } catch (error) {
     console.error(error);
@@ -1608,7 +1611,7 @@ router.put("/delete_batch/:id", async (req, res) => {
 // router.get("/get_batch/:id",async(req,res)=>{
 //   try {
 //     const id=req.params.id
-//     const data=await global.Database.executeQuery('SELECT pbd.* from product_batch_details pbd inner join product_def pd on pbd.product_id=pd.id where pbd.product_id = $1',[id]);
+//     const data=await global.Database.executeQuery('SELECT pbd.* from product_batch_details pbd inner join public.product_def pd on pbd.product_id=pd.id where pbd.product_id = $1',[id]);
 //     res.json({data})
 //   } catch (error) {
 //     console.error(error);
@@ -1619,7 +1622,7 @@ router.put("/delete_product/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const updateproduct = await global.Database.executeQuery('UPDATE product_def set visibility=FALSE where id=$1', [id]);
+    const updateproduct = await global.Database.executeQuery('UPDATE public.product_def set visibility=FALSE where id=$1', [id]);
 
     const InsertProductDeleted = await global.Database.executeQuery('INSERT INTO deleted_product (product_id, update_date) VALUES($1, now())', [id]);
 
@@ -1633,7 +1636,7 @@ router.put("/restore_product/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const updateproduct = await global.Database.executeQuery(`UPDATE product_def set visibility= 'TRUE' where id=$1`, [id]);
+    const updateproduct = await global.Database.executeQuery(`UPDATE public.product_def set visibility= 'TRUE' where id=$1`, [id]);
 
     res.status(200).json({ success: true, message: "Product has been restored" })
   } catch (error) {
@@ -1652,7 +1655,7 @@ SELECT DISTINCT ON (pd.id)
     pd.product_name,
     d.update_date
 FROM deleted_product d
-INNER JOIN product_def pd 
+INNER JOIN public.product_def pd 
     ON pd.id = d.product_id
 WHERE pd.visibility = 'false'
 ORDER BY pd.id, d.update_date DESC;
@@ -1666,7 +1669,7 @@ ORDER BY pd.id, d.update_date DESC;
 
 router.get("/stock_get", isAuthenticated, async (req, res) => {
   try {
-    const data = await global.Database.executeQuery(`SELECT distinct on (pbd.product_id)pd.product_name,pd.id,pd.type FROM product_def pd inner join product_batch_details pbd on pd.id=pbd.product_id where pd.visibility = true`);
+    const data = await global.Database.executeQuery(`SELECT distinct on (pbd.product_id)pd.product_name,pd.id,pd.type FROM public.product_def pd inner join product_batch_details pbd on pd.id=pbd.product_id where pd.visibility = true`);
     res.json({ data })
   } catch (error) {
     console.log(error.message);
@@ -1781,7 +1784,7 @@ router.get("/pos_products", isAuthenticated, async (req, res) => {
       FROM inventory_def ind 
       WHERE ind.product_id = pd.id) ELSE ind.in_stock END) > 0 
       THEN TRUE ELSE FALSE END AS in_stock_status
-      FROM product_def pd INNER join
+      FROM public.product_def pd INNER join
       product_batch_details pbd ON 
       pd.id = pbd.product_id 
       left join flavour_def fd on fd.id =pbd.flavour_id 
@@ -1916,14 +1919,14 @@ router.post("/pos_place_order", async (req, res) => {
           unit_stock = data.batch_quantity;
           productResult = await t.query(
             `SELECT ind.in_stock, pb.discount_price as product_price, p.product_name, p.type FROM product_batch_details pb
-             INNER JOIN product_def p ON p.id = pb.product_id INNER JOIN inventory_def ind  on ind.product_id = p.id  WHERE pb.id = $1 and pb.id = ind.batch_id`,
+             INNER JOIN public.product_def p ON p.id = pb.product_id INNER JOIN inventory_def ind  on ind.product_id = p.id  WHERE pb.id = $1 and pb.id = ind.batch_id`,
             [data.batchId]
           );
         } else {
           unit_stock = data.batch_quantity;
           productResult = await t.query(
             `SELECT ind.in_stock, pb.discount_price as product_price, p.product_name, p.type FROM product_batch_details pb 
-            INNER JOIN product_def p ON p.id = pb.product_id inner join inventory_def ind on ind.product_id = p.id
+            INNER JOIN public.product_def p ON p.id = pb.product_id inner join inventory_def ind on ind.product_id = p.id
             WHERE pb.id = $1`,
             [data.batchId]
           );

@@ -19,11 +19,11 @@ class DatabaseClass {
 
     setConfig() {
         this.config = {
-            connectionLimit: 10,
-            host: process.env.DB_HOST || 'localhost',
-            user: process.env.DB_USER || 'postgres',
-            password: process.env.DB_PASSWORD || 'postgres',
-            database: process.env.DB_NAME || 'ecommerce',
+          connectionLimit: 10,
+          host: process.env.DB_HOST || "localhost",
+          user: process.env.DB_USER || "postgres",
+          password: process.env.DB_PASSWORD || "postgres",
+          database: process.env.DB_NAME || "ecommerce_new",
         };
     }
 
