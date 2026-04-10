@@ -1,6 +1,6 @@
- global.siteLogo= "/images/cableguy.png";
+ global.siteLogo= "/images/new_logo.jpg";
     global.siteTitle= "Jaswant Ecommerce";
-    global.favicon= "/images/cableguy.png";
+    global.favicon= "/images/new_logo.jpg";
     global.map_address =
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2872.756696222193!2d72.82213617373561!3d19.045530452931263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c947cb9c26bf%3A0x5f4a0a86ed38bb65!2sKadeshwari%20Mandir%20Rd%2C%20Mount%20Mary%2C%20Bandra%20West%2C%20Mumbai%2C%20Maharashtra%20400050%2C%20India!5e1!3m2!1sen!2sie!4v1772907498389!5m2!1sen!2sie';
     global.instagram_link="#";

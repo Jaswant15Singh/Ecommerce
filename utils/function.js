@@ -167,7 +167,7 @@ currentPage.drawText(`${totalAmountInWords}`, { x: 15, y: y - 70, size: fontSize
 
 // **Terms and Conditions**
 currentPage.drawText("Terms And Conditions", { x: 10, y: y - 100, size: 12, font: fontBold, color: rgb(0, 0, 0) });
-currentPage.drawText("Good day, and thank you for choosing CableGuy CATV! We", { x: 14, y: y - 122, size: fontSize, font, color: rgb(0, 0, 0) });
+currentPage.drawText("Good day, and thank you for choosing us! We", { x: 14, y: y - 122, size: fontSize, font, color: rgb(0, 0, 0) });
 currentPage.drawText("truly appreciate your trust and look forward to serving you", { x: 14, y: y - 134, size: fontSize, font, color: rgb(0, 0, 0) });
 currentPage.drawText("even more in the future", { x: 14, y: y - 147, size: fontSize, font, color: rgb(0, 0, 0) });
 
