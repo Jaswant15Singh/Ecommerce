@@ -10,12 +10,12 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v4
 
-      - name: Setting up node js
+      - name: "Setting up Node.js"
         uses: actions/setup-node@v3
         with:
           node-version: 22
 
-      - name: Installing dependencies
+      - name: "Installing dependencies"
         run: npm ci
 
       - name: "Login to Docker Hub"
@@ -24,14 +24,15 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_KEY }}
 
-      - name: "Docker build images"
-        run: docker build -t ${{secrets.DOCKER_USER}}/ecommerce-app:latest .
+      - name: "Docker build image"
+        run: docker build -t ${{ secrets.DOCKER_USER }}/ecommerce-app:latest .
 
-      - name: "Docker Push Images to Docker Hub"
-        run: docker push ${{secrets.DOCKER_USER}}/ecommerce-app:latest
+      - name: "Push image to Docker Hub"
+        run: docker push ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
 
-      - name: "Docker container run"
+      - name: "Smoke test"
         run: |
-          docker pull ${{secrets.DOCKER_USER}}/ecommerce-app:latest
-          docker run -d -p 3000:3000 --name ecommerce-app ${{secrets.DOCKER_USER}}/ecommerce-app:latest
-          
+          docker run -d -p 3000:3000 --name ecommerce-app ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
+          sleep 5
+          docker ps
+          curl --fail http://localhost:3000 || exit 1
