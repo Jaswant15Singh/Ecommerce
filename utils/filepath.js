@@ -1,0 +1,1 @@
+global.url_pathname="http://localhost:5555/";
