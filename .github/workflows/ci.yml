@@ -37,13 +37,6 @@ jobs:
     steps:
       - name: "Deploy to production"
         run: echo "Deploying to production environment..."
-
-      - name : "Ec2 Deploy"
-        uses: easingthemes/ssh-deploy@v2.1.5
-        with:
-          ssh-private-key: ${{ secrets.EC2_SECRET }}
-          remote-user: ${{ secrets.EC2_USER }}
-          server-ip: ${{ secrets.EC2_HOST }}
           
       - name: "Deployment"
         run: |
