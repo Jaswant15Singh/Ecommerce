@@ -27,7 +27,7 @@ jobs:
       - name: "Docker build images"
         run: docker build -t ${{secrets.DOCKER_USER}}/ecommerce-app:latest .
 
-      - name: "Docker Push"
+      - name: "Docker Push Images to Docker Hub"
         run: docker push ${{secrets.DOCKER_USER}}/ecommerce-app:latest
 
       - name: "Docker container run"
