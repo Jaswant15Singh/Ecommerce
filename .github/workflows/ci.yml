@@ -32,7 +32,9 @@ jobs:
 
       - name: "Smoke test"
         run: |
-          docker run -d -p 3000:5555 --name ecommerce-app ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
+          docker run -d -p 3000:5555 \
+          -e PORT=5555 \
+          --name ecommerce-app ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
           sleep 10
           docker logs ecommerce-app
           docker ps
