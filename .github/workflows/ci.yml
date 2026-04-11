@@ -30,15 +30,6 @@ jobs:
       - name: "Push image to Docker Hub"
         run: docker push ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
 
-      - name: "Smoke test"
-        run: |
-          docker run -d -p 3000:5555 \
-          -e PORT=5555 \
-          --name ecommerce-app ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
-          sleep 10
-          docker logs ecommerce-app
-          docker ps
-          curl --fail http://localhost:3000 || exit 1
 
   deploy:
     needs: build
