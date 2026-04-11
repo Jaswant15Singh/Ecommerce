@@ -47,7 +47,7 @@ jobs:
           
       - name: "Deployment"
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << SCRIPT
           #!/bin/bash
           if command -v docker &> /dev/null
           then
@@ -60,7 +60,7 @@ jobs:
               echo "Docker installed successfully."
           fi 
 
-          if command -v nodejs &> /dev/null
+          if command -v node &> /dev/null
           then
               echo "Node.js is already installed."
           else
@@ -78,4 +78,4 @@ jobs:
           --name ecommerce-app ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
           docker logs ecommerce-app
           docker ps -a
-          EOF
+          SCRIPT
