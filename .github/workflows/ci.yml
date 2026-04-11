@@ -33,6 +33,7 @@ jobs:
       - name: "Smoke test"
         run: |
           docker run -d -p 3000:3000 --name ecommerce-app ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
-          sleep 5
+          sleep 10
+          docker logs ecommerce-app
           docker ps
           curl --fail http://localhost:3000 || exit 1
