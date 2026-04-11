@@ -31,5 +31,8 @@ jobs:
         run: docker push ${{secrets.DOCKER_USER}}/ecommerce-app:latest
 
       - name: "Docker container run"
-        run: docker run -d -p 3000:5555 --name ecommerce-container ${{secrets.DOCKER_USER}}/ecommerce-app:latest
+        run: |
+          docker pull ${{secrets.DOCKER_USER}}/ecommerce-app:latest
+          echo "${docker images}"
+          docker run -d -p 3000:3000 --name ecommerce-app ${{secrets.DOCKER_USER}}/ecommerce-app:latest
           
