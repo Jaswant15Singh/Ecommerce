@@ -78,14 +78,6 @@ schedule.scheduleJob('1 * * * *', async () => {
 });
 
 
-
-
-// SSL setup
-// var options = {
-//   key: fs.readFileSync(path.join(__dirname, 'ssl', 'private.key')),
-//   cert: fs.readFileSync(path.join(__dirname, 'ssl', 'certificate.crt'))
-// };
-
 const PORT = process.env.PORT || 5555;
 console.log(PORT);
 
