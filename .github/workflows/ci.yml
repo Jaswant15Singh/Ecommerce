@@ -10,17 +10,75 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v4
 
-      - name: Setting up node js
+      - name: "Setting up Node.js"
         uses: actions/setup-node@v3
         with:
           node-version: 22
 
-      - name: Installing dependencies
+      - name: "Installing dependencies"
         run: npm ci
 
-      - name: "Docker build images"
-        run: docker build -t ecommerce-app .
+      - name: "Login to Docker Hub"
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_KEY }}
 
-      - name: "Docker container run"
-        run: docker run -d -p 3000:5555 --name ecommerce-container ecommerce-app
+      - name: "Docker build image"
+        run: docker build -t ${{ secrets.DOCKER_USER }}/ecommerce-app:latest .
+
+      - name: "Push image to Docker Hub"
+        run: docker push ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
+
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Deploy to production"
+        run: echo "Deploying to production environment..."
+
+      - name: "Setup SSH Key"
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SECRET }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa  
           
+      - name: "Deployment"
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << SCRIPT
+          #!/bin/bash
+          if command -v docker &> /dev/null
+          then
+              echo "Docker is already installed."
+          else
+              echo "Docker not found. Installing Docker..."
+              sudo apt-get update && sudo apt-get install -y docker.io
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              echo "Docker installed successfully."
+          fi 
+
+          if command -v node &> /dev/null
+          then
+              echo "Node.js is already installed."
+          else
+              echo "Node.js not found. Installing Node.js..."
+              sudo curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
+              sudo apt-get install -y nodejs
+              echo "Node.js installed successfully."
+          fi 
+          sudo docker pull ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
+          sudo docker images
+          sudo docker stop ecommerce-app || true
+          sudo docker rm ecommerce-app || true
+          sudo docker run -d -p 3000:5555 \
+          -e PORT=5555 -e DB_HOST=${{ secrets.DB_HOST }} \
+          -e DB_USER=${{ secrets.DB_USER }} \
+          -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+          -e DB_NAME=${{ secrets.DB_NAME }} \
+          -e DB_SSL=true \
+          --name ecommerce-app ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
+          sudo docker logs ecommerce-app
+          sudo docker ps -a
+          SCRIPT
