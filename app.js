@@ -21,10 +21,12 @@ var app = express();
 const cors = require('cors');
 const { log } = require('console');
 
-app.use(cors({
-  origin: 'url_pathname',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "http://51.20.248.6:3000/",
+    credentials: true,
+  }),
+);
 
 // Session setup
 app.use(session({

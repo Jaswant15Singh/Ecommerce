@@ -1,1 +1,1 @@
-global.url_pathname="http://localhost:5555/";
+global.url_pathname = "http://51.20.248.6:3000/";
