@@ -78,6 +78,9 @@ jobs:
           -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
           -e DB_NAME=${{ secrets.DB_NAME }} \
           -e DB_SSL=true \
+          -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+          -e SESSION_SECRET=${{ secrets.SESSION_SECRET }} \
+          -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
           --name ecommerce-app ${{ secrets.DOCKER_USER }}/ecommerce-app:latest
           sudo docker logs ecommerce-app
           sudo docker ps -a
