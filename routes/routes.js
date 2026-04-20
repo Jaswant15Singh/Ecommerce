@@ -609,7 +609,6 @@ router.post("/user-login", async (req, res, next) => {
 //         user: 'singhjaswant0932@gmail.com'
 //       }
 //     });
-//     const resetLink = `http://localhost:5559/reset-password/${resetToken}`;
 
 //     await transporter.sendMail({
 //       from: 'singhjaswant0932@gmail.com',
