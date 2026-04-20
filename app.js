@@ -87,7 +87,7 @@ try {
   // const server = http.createServer(app);
   // const server = https.createServer(app);
   app.listen(PORT, function () {
-    console.log(`Server running at https://localhost:${PORT}`);
+    console.log(`Server running at ${url_pathname}:${PORT}`);
   });
 } catch (error) {
   console.error('Error starting HTTPS server:', error);
