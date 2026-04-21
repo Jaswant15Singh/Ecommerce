@@ -74,6 +74,7 @@ jobs:
           sudo docker rm ecommerce-app || true
           sudo docker run -d -p 3000:5555 \
           -e PORT=5555 \
+          -e BASE_URL=http://51.20.248.6:3000/ \
           -e DB_HOST=${{ secrets.DB_HOST }} \
           -e DB_USER=${{ secrets.DB_USER }} \
           -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
