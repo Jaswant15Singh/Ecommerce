@@ -82,12 +82,12 @@ schedule.scheduleJob('1 * * * *', async () => {
 
 const PORT = process.env.PORT;
 console.log(PORT);
-
+console.log(url_pathname);
 try {
   // const server = http.createServer(app);
   // const server = https.createServer(app);
   app.listen(PORT, function () {
-    console.log(`Server running at ${url_pathname}:${PORT}`);
+    console.log(`Server running at ${url_pathname}`);
   });
 } catch (error) {
   console.error('Error starting HTTPS server:', error);
