@@ -220,15 +220,15 @@ currentPage.drawImage(signImage, {
 
     // **Send email with attachment**
     const transporter = nodemailer.createTransport({
-      service: 'gmail', // or any email provider you use
+      service: "gmail", // or any email provider you use
       auth: {
-      user: 'cableguytest@gmail.com',
-        pass: 'nakz rgby tzwk pnnw'
-      }
+        user: "singhjaswant0932@gmail.com",
+        pass: "boij jtan oazg uckw",
+      },
     });
 
     const mailOptions = {
-      from: 'cableguytest@gmail.com',
+      from: 'singhjaswant0932@gmail.com',
       to: `${customer_email}`, 
       subject: `Invoice for Order ${order_id}`,
       text: 'Please find attached the invoice for your order.',

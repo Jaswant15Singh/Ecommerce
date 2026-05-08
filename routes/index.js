@@ -1104,7 +1104,7 @@ router.post("/place_order", async (req, res, next) => {
       const orderResult = await t.query(
         `INSERT INTO order_def (customer_id, total_price, order_status,order_address,order_pincode, inserted_date,new_customer_id)
          VALUES ($1, $2, $3,$4,$5, now(),$6) RETURNING id;`,
-        [customerId, totalPrice, "PENDING", customer_address, customer_pincode,new_customer_id]
+        [customerId, totalPrice, "SUCCESS", customer_address, customer_pincode,new_customer_id]
       );
       const orderId = orderResult[0].id;
 
@@ -1142,21 +1142,21 @@ router.post("/place_order", async (req, res, next) => {
         "address_line_1": "NA",
         "address_line_2": "NA",
         "amount": totalPrice,
-        "api_key": API_KEY,
+        // "api_key": API_KEY,
         "city": "MUMBAI",
         "country": "IN",
         "currency": "INR",
         "description": "NA",
         "email": customer_email,
-        "mode": Pay_Mode,
+        // "mode": Pay_Mode,
         "name": customer_name,
         "order_id": 'PH' + '10000' + orderId,
         "phone": customer_contact,
-        "return_url": url_pathname + "paymentResponse",
+        // "return_url": url_pathname + "paymentResponse",
         "state": "MAHARASHTRA",
-        "udf1": customerId,
-        "udf2":new_customer_id,
-        "zip_code": "401101"
+        // "udf1": customerId,
+        // "udf2":new_customer_id,
+        // "zip_code": "401101"
       };
 
       const hashColumns = [
@@ -1178,7 +1178,7 @@ router.post("/place_order", async (req, res, next) => {
         ['PH' + '10000' + orderId, resultKey, paymentId]
       );
       
-      res.render('aggrepay', { body: paymentBody });
+      res.render('successmodel', { redirectUrl: '/' });
     });
   } catch (error) {
     console.error("Error placing order:", error);
